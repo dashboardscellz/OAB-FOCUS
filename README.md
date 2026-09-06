@@ -1,4 +1,4 @@
-# OAB Focus — Super v8
+# OAB Focus — Super v8.1
 
 Versão pronta para GitHub Pages.
 
@@ -15,10 +15,10 @@ O `index.html` já contém internamente:
 - JavaScript;
 - Super Material;
 - banco ativo de questões;
-- foto da página de entrada;
+- foto da página de entrada em alta resolução;
 - configuração de conexão com Firebase.
 
-Não existe mais pasta `data/`, `assets/` ou arquivo privado obrigatório para o site funcionar.
+Não existe arquivo privado obrigatório para o conteúdo acadêmico funcionar. As credenciais de acesso não são exibidas no site nem documentadas no repositório.
 
 ## GitHub Pages
 Settings → Pages → Deploy from a branch → `main` → `/(root)`.
@@ -32,9 +32,9 @@ Realtime Database: mantenha as regras já configuradas. Se precisar reaplicá-la
 
 ## Administrador
 Usuário: `Manassés`
-Senha inicial: `12345`
+Senha do administrador: definida no Firebase Authentication e não publicada no repositório.
 
-## v8
+## v8.1
 - correção da tela presa em “Preparando seu ambiente de estudos”;
 - Firebase sem dependência do SDK modular externo na inicialização;
 - watchdog de carregamento;
@@ -46,3 +46,8 @@ Senha inicial: `12345`
 - 85 insígnias comuns/raras;
 - metadados de fontes editoriais removidos do banco exibido/embutido;
 - questões continuam auditadas e desatualizadas removidas conservadoramente.
+
+- login legado migrado automaticamente para o padrão atual sem publicar senha;
+- credenciais removidas da tela e do README;
+- retrato do fundador reposicionado e otimizado em alta resolução;
+- texto do fundador revisado sem travessões.
