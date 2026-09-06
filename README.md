@@ -1,57 +1,88 @@
-# OAB Focus — Super Material v10
+# OAB Focus — Super Material v12
 
-Esta versão substitui a lógica de “resumir os materiais” por uma lógica de **conteúdo integral organizado**.
+Versão com foco em estabilidade, leitura robusta e gestão de usuários.
 
-## Material de estudo
+## Estrutura do estudo
 
-O conteúdo principal da área Estudar agora vem de blocos integrais incorporados ao site:
+A ordem de leitura agora é intencional:
 
-- Resumos Semana 01 a 06, separados por disciplina e assunto;
-- cadernos legislativos enviados, com artigos, súmulas e observações;
-- compilação ampla de legislação, separada por disciplina;
-- materiais aprofundados de Ética, Licitações e Improbidade;
-- camada textual disponível dos mapas mentais;
-- cronogramas enviados preservados para planejamento/trilhas.
+1. **Material explicado** — base principal, com os blocos completos dos materiais explicativos incorporados.
+2. **Mapas mentais** — revisão visual, com páginas dos mapas renderizadas diretamente no site.
+3. **Legislação e súmulas** — consulta complementar, separada e recolhida por padrão.
+4. **Questões** — prática relacionada ao assunto.
 
-O processamento **não reescreve nem resume os blocos integrais**. Ele remove somente itens que não pertencem ao conteúdo acadêmico, como cabeçalhos repetitivos, marcas técnicas e dados pessoais presentes nos PDFs.
+O conteúdo acadêmico integral já incorporado não é substituído por resumos. Cabeçalhos repetitivos, marcas técnicas e dados pessoais presentes nos PDFs não fazem parte da experiência de estudo.
 
-Os antigos resumos rápidos continuam no sistema somente como apoio opcional e não substituem o material completo.
+## Mapas mentais
 
-## Leitor
+A pasta `maps/` contém 465 páginas visuais, otimizadas em WebP e carregadas sob demanda (`loading="lazy"`).
+O arquivo `data/map-manifest.js` relaciona as páginas às disciplinas e assuntos.
 
-- a barra superior e a busca não ficam mais “grudadas” acompanhando a rolagem;
-- cada assunto mostra os blocos completos relacionados;
-- o botão `Material integral` abre todos os blocos da disciplina;
-- busca interna por palavra, artigo, súmula ou conceito;
-- blocos podem ser recolhidos/expandidos;
-- o tempo de estudo continua sendo registrado.
+## Navegação
 
-## Arquivos obrigatórios
+A navegação possui uma camada delegada de segurança para evitar botões sem ação. Isso cobre:
 
-Na publicação, envie tudo desta pasta para a raiz do repositório, inclusive:
+- menu Estudar;
+- continuar/retomar assunto;
+- trilha inteligente da home;
+- cards de disciplina/assunto;
+- navegação desktop e mobile.
 
-- `index.html`
-- `data/integral-material.js`
-- `.nojekyll`
-- `database.rules.json`
-- `AUDITORIA_JURIDICA_2026.md`
+## Usuários
 
-## GitHub Pages
+- cadastro próprio pelo botão **Criar minha conta**;
+- novos cadastros ficam pendentes até aprovação;
+- administrador aprova/recusa, ativa/desativa e pode promover outro usuário a ADM;
+- configurações para alterar nome e senha;
+- RESET do progresso;
+- exclusão definitiva da própria conta com confirmação e senha atual.
+
+## Ranking
+
+Ranking compartilhado com atualização em tempo real pelo Firebase Realtime Database:
+
+- posição;
+- nome;
+- level;
+- horas estudadas;
+- questões respondidas.
+
+## Administração
+
+Painel com:
+
+- total de contas;
+- pendentes;
+- contas ativas nos últimos 30 dias;
+- contas sem atividade há 30 dias ou mais;
+- novos cadastros nos últimos 30 dias;
+- desativados;
+- alteração de permissão de aluno/ADM.
+
+## Compartilhamento
+
+A home possui **Compartilhar com amigos** com WhatsApp, Facebook e Instagram/Web Share.
+
+## Publicação no GitHub Pages
+
+Envie todo o conteúdo desta pasta para a raiz do repositório. A pasta `data/` e a pasta `maps/` são obrigatórias.
+
+Estrutura principal:
+
+```text
+index.html
+data/
+  integral-material.js
+  map-manifest.js
+maps/
+database.rules.json
+.nojekyll
+```
+
+Em GitHub Pages:
 
 `Settings → Pages → Deploy from a branch → main → /(root)`
 
 ## Firebase
 
-O Firebase continua sendo usado para contas e progresso. O material acadêmico é entregue pelo próprio site.
-
-
-## Engenharia v10
-
-- busca refeita com correspondência por termos e ranking de relevância;
-- busca global também alcança o conteúdo integral;
-- correção do menu móvel e navegação do ADM no celular;
-- layout responsivo para desktop, tablet e celular;
-- áreas de toque ampliadas em dispositivos touch;
-- controles internos do leitor não acompanham mais a rolagem;
-- remoção de microcopy técnica desnecessária;
-- auditoria estrutural documentada em `QA_ENGENHARIA_v10.md`.
+Publique também as regras de `database.rules.json` no Realtime Database. O site continua usando Firebase Authentication + Realtime Database para contas, permissões, progresso e ranking.
