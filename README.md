@@ -1,4 +1,4 @@
-# OAB Focus — Super Material v9
+# OAB Focus — Super Material v10
 
 Esta versão substitui a lógica de “resumir os materiais” por uma lógica de **conteúdo integral organizado**.
 
@@ -43,3 +43,15 @@ Na publicação, envie tudo desta pasta para a raiz do repositório, inclusive:
 ## Firebase
 
 O Firebase continua sendo usado para contas e progresso. O material acadêmico é entregue pelo próprio site.
+
+
+## Engenharia v10
+
+- busca refeita com correspondência por termos e ranking de relevância;
+- busca global também alcança o conteúdo integral;
+- correção do menu móvel e navegação do ADM no celular;
+- layout responsivo para desktop, tablet e celular;
+- áreas de toque ampliadas em dispositivos touch;
+- controles internos do leitor não acompanham mais a rolagem;
+- remoção de microcopy técnica desnecessária;
+- auditoria estrutural documentada em `QA_ENGENHARIA_v10.md`.
