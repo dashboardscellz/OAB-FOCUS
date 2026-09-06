@@ -1,61 +1,48 @@
-# OAB Focus — Super Material v7
+# OAB Focus — Super v8
 
-Plataforma estática para GitHub Pages com conteúdo consolidado no próprio repositório e Firebase apenas para usuários/progresso.
+Versão pronta para GitHub Pages.
 
-## Publicação no GitHub Pages
-
-Envie **o conteúdo desta pasta** para a raiz do repositório `OAB-FOCUS`:
+## O que vai para o GitHub
+Envie **estes arquivos diretamente para a raiz do repositório**:
 
 - `index.html`
-- `assets/`
-- `data/`
-- `AUDITORIA_JURIDICA_2026.md`
-- `audit-report.json`
 - `.nojekyll`
 - `database.rules.json`
-- `firebase.json`
-- `.firebaserc`
+- `AUDITORIA_JURIDICA_2026.md`
 
-Em **Settings → Pages**: `Deploy from a branch` → `main` → `/(root)`.
+O `index.html` já contém internamente:
+- CSS;
+- JavaScript;
+- Super Material;
+- banco ativo de questões;
+- foto da página de entrada;
+- configuração de conexão com Firebase.
+
+Não existe mais pasta `data/`, `assets/` ou arquivo privado obrigatório para o site funcionar.
+
+## GitHub Pages
+Settings → Pages → Deploy from a branch → `main` → `/(root)`.
 
 ## Firebase
+O Firebase continua apenas para usuários e progresso. O conteúdo acadêmico está embutido no site.
 
-O conteúdo de estudo **não fica no Firebase**. Ele está nos arquivos `data/` e é igual para todos os usuários.
+Authentication: mantenha **E-mail/senha** ativado.
 
-O Firebase Realtime Database guarda apenas:
-- perfis/controle de acesso;
-- respostas;
-- tempo de estudo;
-- favoritos e anotações;
-- XP, nível, insígnias e estatísticas.
+Realtime Database: mantenha as regras já configuradas. Se precisar reaplicá-las, use `database.rules.json`.
 
-### Regras
+## Administrador
+Usuário: `Manassés`
+Senha inicial: `12345`
 
-No Realtime Database, substitua as regras pelas de `database.rules.json`.
-
-### Primeiro acesso do administrador
-
-- Usuário: `Manassés`
-- Senha: `12345`
-
-No primeiro acesso, se a conta técnica ainda não existir, o site cria a conta ADM automaticamente. A senha digitada é transformada internamente para atender ao mínimo do Firebase Auth.
-
-Depois: **Administração → Novo usuário**.
-
-## Auditoria jurídica
-
-A base original tinha 3.174 questões. A versão atual aplica deduplicação e uma auditoria conservadora até 05/09/2026. Questões atingidas por reformas ou pertencentes a coortes históricas de alto risco em disciplinas profundamente reformadas foram **removidas**, e não adaptadas artificialmente.
-
-Consulte `AUDITORIA_JURIDICA_2026.md` e `audit-report.json`.
-
-
-## Novidades da v7
-
-- página de entrada com foto e apresentação do criador;
-- visual refinado com paleta azul-marinho + vinho;
-- área **Estudar** reorganizada, com busca estável e trilha por disciplina/assunto;
-- leitura do material em blocos mais limpos e confortáveis;
-- busca dentro do assunto sem perder foco no campo;
-- mais de 70 insígnias, separadas entre comuns e raras;
-- interface de questões sem exibir fontes editoriais;
-- manutenção da auditoria jurídica conservadora sobre questões desatualizadas.
+## v8
+- correção da tela presa em “Preparando seu ambiente de estudos”;
+- Firebase sem dependência do SDK modular externo na inicialização;
+- watchdog de carregamento;
+- tela de entrada com foto/apresentação;
+- Home profissional com plano diário e trilha recomendada;
+- Estudar com apenas 8 disciplinas inicialmente e expansão sob demanda;
+- buscas que mantêm o foco enquanto o usuário digita;
+- leitor de assunto refeito em blocos claros;
+- 85 insígnias comuns/raras;
+- metadados de fontes editoriais removidos do banco exibido/embutido;
+- questões continuam auditadas e desatualizadas removidas conservadoramente.
