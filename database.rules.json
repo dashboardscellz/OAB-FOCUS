@@ -2,38 +2,16 @@
   "rules": {
     ".read": false,
     ".write": false,
-    "settings": {
-      ".read": "auth != null",
-      "adminUid": {
-        ".write": "auth != null && ((!data.exists() && newData.val() === auth.uid && auth.token.email === 'manasses@oabfocus.app') || auth.uid === data.val())"
-      }
-    },
-    "profiles": {
+    "users": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('profile').child('role').val() === 'admin'",
       "$uid": {
-        ".read": "auth != null",
-        ".write": "auth != null && (auth.uid === root.child('settings/adminUid').val() || (auth.uid === $uid && !data.exists() && !root.child('settings/adminUid').exists() && auth.token.email === 'manasses@oabfocus.app'))"
-      }
-    },
-    "usernames": {
-      ".read": "auth != null",
-      "$name": {
-        ".write": "auth != null && (auth.uid === root.child('settings/adminUid').val() || (!root.child('settings/adminUid').exists() && $name === 'manasses' && auth.token.email === 'manasses@oabfocus.app' && newData.val() === auth.uid))"
-      }
-    },
-    "content": {
-      ".read": "auth != null && root.child('profiles').child(auth.uid).child('active').val() === true",
-      ".write": "auth != null && auth.uid === root.child('settings/adminUid').val()"
-    },
-    "progress": {
-      "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || auth.uid === root.child('settings/adminUid').val())",
-        ".write": "auth != null && auth.uid === $uid && root.child('profiles').child(auth.uid).child('active').val() === true"
-      }
-    },
-    "leaderboard": {
-      ".read": "auth != null && root.child('profiles').child(auth.uid).child('active').val() === true",
-      "$uid": {
-        ".write": "auth != null && auth.uid === $uid && root.child('profiles').child(auth.uid).child('active').val() === true"
+        ".read": "auth != null && auth.uid === $uid",
+        "profile": {
+          ".write": "auth != null && (root.child('users').child(auth.uid).child('profile').child('role').val() === 'admin' || (auth.uid === $uid && !data.exists() && auth.token.email === 'manasses@oabfocus.app' && newData.child('role').val() === 'admin'))"
+        },
+        "progress": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('profile').child('role').val() === 'admin')"
+        }
       }
     }
   }
