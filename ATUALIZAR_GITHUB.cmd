@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v16 - ATUALIZACAO DO REPOSITORIO
+echo   OAB FOCUS v17 - ATUALIZACAO DO REPOSITORIO
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -16,13 +16,13 @@ echo.
 
 if not exist "%SRC%index.html" (
   echo ERRO: index.html nao foi encontrado ao lado deste arquivo.
-  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v16.
+  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v17.
   pause
   exit /b 2
 )
 
 if not exist "%SRC%data\integral-material.js" (
-  echo ERRO: a pasta data da v16 nao foi encontrada.
+  echo ERRO: a pasta data da v17 nao foi encontrada.
   pause
   exit /b 3
 )
@@ -35,7 +35,7 @@ if not exist "%DST%\.git" (
   exit /b 5
 )
 
-echo Copiando a v16...
+echo Copiando a v17...
 echo.
 robocopy "%SRC%" "%DST%" /E /R:1 /W:1 /XD ".git" /XF "ATUALIZAR_GITHUB.cmd"
 set "RC=%ERRORLEVEL%"
@@ -62,17 +62,18 @@ if not exist "%DST%\data\v15-study-map.js" goto :verify_error
 if not exist "%DST%\data\v15-patch.js" goto :verify_error
 if not exist "%DST%\data\v16-question-map.js" goto :verify_error
 if not exist "%DST%\data\v16-patch.js" goto :verify_error
+if not exist "%DST%\data\v17-patch.js" goto :verify_error
 if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v16 copiada e arquivos essenciais validados.
+echo OK: v17 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v16 - leitor profissional e revisao inteligente
+echo 2. Summary: OAB Focus v17 - novo leitor e grifagem definitiva
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

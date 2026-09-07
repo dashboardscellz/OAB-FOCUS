@@ -1,25 +1,27 @@
-# OAB Focus SUPER v16
+# OAB Focus SUPER v17
 
-Versão consolidada sobre a v15, com foco em **leitura profissional, correspondência estrita entre material e questões e revisão adaptativa pela curva do esquecimento**. O conteúdo jurídico do acervo permanece integral: a v16 reorganiza apresentação e navegação, sem criar resumos para substituir a matéria.
+A v17 consolida as funções da v16 e refaz especificamente a **experiência de leitura** e a **grifagem**, sem resumir ou reduzir o conteúdo jurídico.
 
-## Principais mudanças da v16
+## O que mudou na v17
 
-- **Novo leitor acadêmico:** largura de leitura controlada, tipografia mais confortável, hierarquia visual, índice lateral, progresso, breadcrumbs e navegação anterior/próximo.
-- **Voltar de verdade:** as telas internas passam a manter histórico de navegação e oferecem `← Voltar`.
-- **Modo foco, modo noturno e tamanho de fonte** dentro do leitor.
-- **Grifagem reconstruída:** captura da seleção antes do clique, barra contextual próxima ao texto, lápis flutuante, persistência por unidade e recuperação por trecho/âncora textual.
-- **Meus grifos e anotações** acessíveis durante a leitura.
-- **Limpeza editorial:** referências órfãs como “tabela para não confundir”, “tabela abaixo”, mapas/figuras/quadro inexistentes foram auditadas. Nenhum conteúdo jurídico substantivo foi resumido para realizar essa limpeza.
-- **Questões com vínculo estrito:** 2.336 questões preservadas; 1.448 possuem vínculo confiável de capítulo e 797 chegam também a vínculo confiável de subassunto. Se não houver correspondência segura, o sistema não apresenta a questão como “deste conteúdo”.
-- **Mais cobrados reconstruído:** só encaminha para capítulos reais do material e usa questões classificadas com confiança suficiente.
-- **Prepare-se recalibrado:** caminho diário parte de material realmente existente e encaminha para questões da mesma unidade validada.
-- **Revisão inteligente / curva do esquecimento:** acompanha domínio, fragilidade, reincidência, variedade de acertos, tempo e intervalo de revisão. Erros recorrentes podem fazer uma questão do mesmo microtema retornar posteriormente na sessão.
-- **Sem mapas mentais**, conforme decisão da v14.2.
-- Sidebar rolável, Firebase, ranking, desempenho, progresso e recursos anteriores foram preservados.
+- **Leitor documental redesenhado:** visual menos “card de site” e mais próximo de um leitor acadêmico/documentação profissional.
+- Coluna central de leitura controlada, maior respiro, hierarquia tipográfica e menor sensação de “parede de texto”.
+- Índice lateral mais discreto, com indicação do ponto atual da leitura.
+- Painel lateral de progresso simplificado.
+- Cabeçalho compacto com `← Voltar`, busca, índice, anotações, grifos, tamanho de fonte, modo noturno e modo foco.
+- Navegação anterior/próximo e questões validadas continuam preservadas.
+- **Grifagem v17 reconstruída:** a seleção é capturada antes do clique, não é perdida quando o botão recebe foco e o trecho é salvo com âncoras textuais resilientes.
+- Paleta de cores aparece perto da seleção e uma barra de grifo acompanha o aluno durante toda a leitura.
+- Grifos que atravessam mais de um parágrafo da mesma seção são suportados.
+- Grifos são reaplicados quando a unidade é reaberta.
+- Persistência é disparada imediatamente ao criar, recolorir ou remover o destaque.
+- Compatibilidade com grifos já salvos nas versões anteriores.
+- Limpeza editorial adicional para títulos/instruções visuais órfãs, sem eliminar menções jurídicas legítimas a tabelas normativas.
+- **Revisão inteligente, Prepare-se, Mais cobrados e vínculo estrito material ↔ questões da v16 permanecem ativos.**
+- **2.336 questões permanecem no banco.**
+- Mapas mentais continuam removidos.
 
-## Pacote autossuficiente
-
-Publique a pasta inteira. Os arquivos essenciais incluem:
+## Arquivos essenciais
 
 ```text
 index.html
@@ -30,28 +32,24 @@ data/
   v15-patch.js
   v16-question-map.js
   v16-patch.js
+  v17-patch.js
 database.rules.json
 .nojekyll
 ATUALIZAR_GITHUB.cmd
 ```
 
-## Atualização pelo GitHub Desktop
+## Atualização do GitHub
 
-O atualizador está configurado para:
+O atualizador usa como destino:
 
 ```text
 C:\Users\endoa\Documents\GitHub\OAB-FOCUS
 ```
 
 1. Extraia o ZIP inteiro.
-2. Abra `OAB_Focus_SUPER_v16_GITHUB`.
+2. Entre na pasta `OAB_Focus_SUPER_v17_GITHUB`.
 3. Execute `ATUALIZAR_GITHUB.cmd`.
-4. Confira `Changes` no GitHub Desktop.
-5. Summary sugerido: `OAB Focus v16 - leitor profissional e revisão inteligente`.
-6. `Commit to main`.
-7. `Push origin`.
-8. No site publicado, use `Ctrl + F5` na primeira abertura para eliminar cache da versão anterior.
-
-## Regra de segurança pedagógica
-
-Uma questão só é apresentada como vinculada a uma unidade quando a classificação atinge o nível de confiança exigido. Em um subassunto, o botão de questões usa somente vínculos específicos daquele subassunto; se o banco não tiver correspondência suficientemente segura, o OAB Focus informa isso em vez de misturar outro tema.
+4. Confira a aba `Changes` no GitHub Desktop.
+5. Faça commit com `OAB Focus v17 - novo leitor e grifagem definitiva`.
+6. `Push origin`.
+7. No site publicado, use `Ctrl + F5` na primeira abertura.
