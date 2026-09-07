@@ -1,23 +1,25 @@
-# OAB Focus SUPER v15
+# OAB Focus SUPER v16
 
-Versão consolidada a partir da **v14.3**, preservando o material integral e corrigindo o fluxo `estudar → praticar → revisar`.
+Versão consolidada sobre a v15, com foco em **leitura profissional, correspondência estrita entre material e questões e revisão adaptativa pela curva do esquecimento**. O conteúdo jurídico do acervo permanece integral: a v16 reorganiza apresentação e navegação, sem criar resumos para substituir a matéria.
 
-## Principais mudanças da v15
+## Principais mudanças da v16
 
-- **Grifagem corrigida:** a seleção não é mais perdida ao clicar na cor.
-- **Lápis flutuante:** a paleta de grifo acompanha a leitura no canto da tela, inclusive no celular e no modo foco.
-- **Questões ligadas à unidade estudada:** capítulo e subassunto montam um caderno próprio de questões. Quando não há correspondência estreita, o sistema informa que está usando o caderno do capítulo.
-- **Mais cobrados com destino real:** a lista de estudo mostra somente temas que possuem um capítulo confiável no material incorporado. Temas sem material correspondente não recebem botão “Estudar” artificial.
-- **Prepare-se virou caminho diário:** cada sessão indica disciplina, capítulo, subassunto, tempo de leitura, questões do mesmo tema e revisão.
-- **59 temas de alta recorrência mapeados** para capítulos reais do acervo atual.
-- **Conteúdo-base transparente:** quando um tema possui apenas lei seca/súmulas no acervo, esse material pode ser usado como leitura principal, mas o site deixa claro que não existe bloco teórico separado — não inventa resumo.
-- **Sidebar com rolagem da v14.3 preservada.**
-- **Sem mapas mentais**, conforme decisão tomada na v14.2.
-- `De onde parou`, progresso, Firebase, ranking, desempenho e demais recursos anteriores foram preservados.
+- **Novo leitor acadêmico:** largura de leitura controlada, tipografia mais confortável, hierarquia visual, índice lateral, progresso, breadcrumbs e navegação anterior/próximo.
+- **Voltar de verdade:** as telas internas passam a manter histórico de navegação e oferecem `← Voltar`.
+- **Modo foco, modo noturno e tamanho de fonte** dentro do leitor.
+- **Grifagem reconstruída:** captura da seleção antes do clique, barra contextual próxima ao texto, lápis flutuante, persistência por unidade e recuperação por trecho/âncora textual.
+- **Meus grifos e anotações** acessíveis durante a leitura.
+- **Limpeza editorial:** referências órfãs como “tabela para não confundir”, “tabela abaixo”, mapas/figuras/quadro inexistentes foram auditadas. Nenhum conteúdo jurídico substantivo foi resumido para realizar essa limpeza.
+- **Questões com vínculo estrito:** 2.336 questões preservadas; 1.448 possuem vínculo confiável de capítulo e 797 chegam também a vínculo confiável de subassunto. Se não houver correspondência segura, o sistema não apresenta a questão como “deste conteúdo”.
+- **Mais cobrados reconstruído:** só encaminha para capítulos reais do material e usa questões classificadas com confiança suficiente.
+- **Prepare-se recalibrado:** caminho diário parte de material realmente existente e encaminha para questões da mesma unidade validada.
+- **Revisão inteligente / curva do esquecimento:** acompanha domínio, fragilidade, reincidência, variedade de acertos, tempo e intervalo de revisão. Erros recorrentes podem fazer uma questão do mesmo microtema retornar posteriormente na sessão.
+- **Sem mapas mentais**, conforme decisão da v14.2.
+- Sidebar rolável, Firebase, ranking, desempenho, progresso e recursos anteriores foram preservados.
 
 ## Pacote autossuficiente
 
-A v14.3 havia sido empacotada sem os arquivos de dados externos. A v15 volta a incluir tudo o que o `index.html` precisa:
+Publique a pasta inteira. Os arquivos essenciais incluem:
 
 ```text
 index.html
@@ -26,36 +28,30 @@ data/
   highyield-static.js
   v15-study-map.js
   v15-patch.js
+  v16-question-map.js
+  v16-patch.js
 database.rules.json
 .nojekyll
 ATUALIZAR_GITHUB.cmd
 ```
 
-Não publique somente o `index.html`.
-
 ## Atualização pelo GitHub Desktop
 
-O atualizador está configurado para o repositório local:
+O atualizador está configurado para:
 
 ```text
 C:\Users\endoa\Documents\GitHub\OAB-FOCUS
 ```
 
 1. Extraia o ZIP inteiro.
-2. Abra a pasta `OAB_Focus_SUPER_v15_GITHUB`.
+2. Abra `OAB_Focus_SUPER_v16_GITHUB`.
 3. Execute `ATUALIZAR_GITHUB.cmd`.
-4. Abra o GitHub Desktop e revise `Changes`.
-5. Use o Summary:
-
-```text
-OAB Focus v15 - caminho diario e vinculo de questoes
-```
-
+4. Confira `Changes` no GitHub Desktop.
+5. Summary sugerido: `OAB Focus v16 - leitor profissional e revisão inteligente`.
 6. `Commit to main`.
 7. `Push origin`.
+8. No site publicado, use `Ctrl + F5` na primeira abertura para eliminar cache da versão anterior.
 
-O atualizador também remove eventuais pastas antigas `maps/`, `maps-hd/` e `data/map-manifest.js` que ainda tenham ficado no repositório.
+## Regra de segurança pedagógica
 
-## Regra editorial
-
-A v15 não cria “resuminhos” para preencher lacunas. Quando o acervo possui teoria, ela é a leitura principal. Quando existe apenas legislação/súmulas para um tema, a interface informa isso expressamente e preserva o conteúdo original disponível.
+Uma questão só é apresentada como vinculada a uma unidade quando a classificação atinge o nível de confiança exigido. Em um subassunto, o botão de questões usa somente vínculos específicos daquele subassunto; se o banco não tiver correspondência suficientemente segura, o OAB Focus informa isso em vez de misturar outro tema.
