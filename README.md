@@ -1,48 +1,43 @@
-# OAB Focus SUPER v27
+# OAB Focus SUPER v28
 
-A v27 mantém o leitor amplo da v26 e adiciona uma **Trilha Guiada Progressiva** para organizar o estudo da 1ª fase da OAB sem reduzir o material jurídico.
+A v28 mantém a arquitetura ampla da v26 e a Trilha Guiada Progressiva da v27, corrigindo o leitor em viewports intermediárias e saneando falsos subassuntos gerados por tabelas extraídas de PDF.
 
-## O que muda na v27
+## Principais mudanças
 
-- Estrutura de progressão: **Disciplina → Capítulo → Unidade/Subtema**.
-- Estados claros: Disponível, Em estudo, Questões pendentes, Concluído e Bloqueado.
-- Liberação da próxima unidade por **leitura concluída + até 3 questões especificamente validadas**, quando existirem.
-- Erros não bloqueiam o avanço; alimentam o histórico/revisão.
-- Unidade sem questão FGV/OAB específica não recebe questão de outro tema como requisito.
-- Capítulos extensos ficam recolhidos por padrão; somente o capítulo ativo é expandido.
-- Busca na trilha abre automaticamente os capítulos correspondentes.
-- `Índice` do leitor passa a funcionar como `Trilha` interna.
-- Consulta livre, banco livre, revisão inteligente e simulado continuam modos separados.
-- Leitor amplo da v26 e sistema de grifagem permanecem preservados.
-
-## Preservação
-
-- Material jurídico integral preservado.
-- **2.336 questões** preservadas.
+- Toolbar do leitor reconstruída: navegação principal separada de ajustes de leitura.
+- Menu `Leitura` para A−, A+, tema e Modo Foco.
+- Breadcrumb único, semântico e navegável.
+- Títulos longos e muito longos recebem escala tipográfica própria.
+- Card do leitor mais largo, mantendo o texto corrido em largura confortável.
+- Linhas tabulares de PDF deixam de virar unidades da Trilha.
+- Rotas antigas com falsos subassuntos são saneadas para o capítulo.
+- Grifador não invade a última parte do material e respeita mobile.
+- Foco por teclado reforçado.
+- Conclusão da unidade e domínio adaptativo aparecem como conceitos distintos.
+- Erros continuam sem bloquear avanço; alimentam a Revisão Inteligente.
+- Material jurídico integral e banco de questões preservados.
 - Mapas mentais continuam removidos.
-- Patches v15–v26 continuam carregados antes da v27.
 
 ## QA
 
-- `node --check data/v27-patch.js`: aprovado.
-- `37` testes automatizados v26+v27: aprovados.
-- Chromium real: sem erros JavaScript no fluxo auditado.
-- Mobile 360/390/430/768 px: sem overflow horizontal no leitor.
+- `node --check data/v28-patch.js`: aprovado.
+- **53 testes automatizados** v26+v27+v28: aprovados.
+- v28 testada em 1041×595 e reflow em 320/360/390/430/768 px.
 
-Detalhes: `QA_ENGENHARIA_v27.md` e `PESQUISA_APLICADA_v27.md`.
+Detalhes: `PESQUISA_APLICADA_v28.md` e `QA_ENGENHARIA_v28.md`.
 
 ## Atualização do GitHub
 
-Destino configurado no atualizador:
+Destino configurado:
 
 ```text
 C:\Users\endoa\Documents\GitHub\OAB-FOCUS
 ```
 
 1. Extraia o ZIP inteiro.
-2. Abra a pasta `OAB_Focus_SUPER_v27_GITHUB`.
-3. Execute `ATUALIZAR_GITHUB.cmd`.
+2. Abra `OAB_Focus_SUPER_v28_GITHUB`.
+3. Execute `ATUALIZAR_GITHUB.cmd` ou use o `robocopy` habitual.
 4. Confira `Changes` no GitHub Desktop.
-5. Use o resumo `OAB Focus v27 - trilha progressiva por dominio`.
+5. Summary: `OAB Focus v28 - leitor resiliente e trilha limpa`.
 6. `Commit to main` → `Push origin`.
-7. No site publicado, use `Ctrl + F5`.
+7. Atualize o site com `Ctrl + F5`.
