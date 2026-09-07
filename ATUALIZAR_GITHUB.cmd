@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v21 - ATUALIZACAO DO REPOSITORIO
+echo   OAB FOCUS v23 - ATUALIZACAO DO REPOSITORIO
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -16,13 +16,13 @@ echo.
 
 if not exist "%SRC%index.html" (
   echo ERRO: index.html nao foi encontrado ao lado deste arquivo.
-  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v21.
+  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v23.
   pause
   exit /b 2
 )
 
 if not exist "%SRC%data\integral-material.js" (
-  echo ERRO: a pasta data da v21 nao foi encontrada.
+  echo ERRO: a pasta data da v23 nao foi encontrada.
   pause
   exit /b 3
 )
@@ -39,6 +39,18 @@ if not exist "%SRC%data\v21-patch.js" (
   exit /b 4
 )
 
+if not exist "%SRC%data\v22-patch.js" (
+  echo ERRO: o patch principal da v22 nao foi encontrado.
+  pause
+  exit /b 4
+)
+
+if not exist "%SRC%data\v23-patch.js" (
+  echo ERRO: o patch principal da v23 nao foi encontrado.
+  pause
+  exit /b 4
+)
+
 if not exist "%DST%\.git" (
   echo ERRO: a pasta de destino nao parece ser o repositorio OAB-FOCUS.
   echo O destino esperado e:
@@ -47,7 +59,7 @@ if not exist "%DST%\.git" (
   exit /b 5
 )
 
-echo Copiando a v21...
+echo Copiando a v23...
 echo.
 robocopy "%SRC%" "%DST%" /E /R:1 /W:1 /XD ".git" /XF "ATUALIZAR_GITHUB.cmd" "_qa_inline.html"
 set "RC=%ERRORLEVEL%"
@@ -79,17 +91,19 @@ if not exist "%DST%\data\v17-patch.js" goto :verify_error
 if not exist "%DST%\data\v18-patch.js" goto :verify_error
 if not exist "%DST%\data\v20-patch.js" goto :verify_error
 if not exist "%DST%\data\v21-patch.js" goto :verify_error
+if not exist "%DST%\data\v22-patch.js" goto :verify_error
+if not exist "%DST%\data\v23-patch.js" goto :verify_error
 if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v21 copiada e arquivos essenciais validados.
+echo OK: v23 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v21 - arquitetura contextual e saneamento rigoroso
+echo 2. Summary: OAB Focus v23 - grifo restrito ao leitor
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================
