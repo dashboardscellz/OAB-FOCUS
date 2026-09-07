@@ -58,3 +58,23 @@ Depois:
 ## Observação de conteúdo
 
 A reorganização em capítulos/subassuntos não transforma o material em resumo. Os trechos exibidos são recortes das unidades integrais já incorporadas. O capítulo e a disciplina completos continuam acessíveis quando desejado.
+
+## Correção v14.1 — associação de material explicado
+
+- corrige capítulos duplicados criados por títulos semanticamente iguais em fontes diferentes;
+- exemplo corrigido: `DAS PARTES E DOS PROCURADORES` agora é associado a `Partes e Procuradores`, preservando o bloco teórico e anexando a legislação correspondente;
+- `Litisconsórcio` e `Intervenção de Terceiros` passam a ser associados ao capítulo teórico combinado `Intervenção de Terceiros e Litisconsórcio`;
+- links antigos de capítulos continuam funcionando por aliases internos;
+- subassuntos numerados são priorizados sobre chamadas visuais em caixa alta, reduzindo itens falsos como títulos de tabela/alerta;
+- ao abrir um subassunto de nível superior, seus subtópicos internos permanecem dentro do recorte; o conteúdo não é mais interrompido no primeiro subtítulo filho.
+
+
+## v14.2 — remoção dos mapas mentais
+
+Por decisão do projeto, os mapas mentais foram removidos integralmente da plataforma.
+
+- removidas as pastas `maps/` e `maps-hd/`;
+- removido `data/map-manifest.js`;
+- removidos 32 blocos textuais derivados de mapas do acervo integral;
+- removidos contadores, abas, galerias e mensagens de mapas na área de estudo;
+- mantidos sem redução o material explicado, legislação/súmulas, questões, progresso, grifos, Prepare-se e Mais cobrados.
