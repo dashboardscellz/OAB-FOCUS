@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v26 - ATUALIZACAO DO REPOSITORIO
+echo   OAB FOCUS v27 - ATUALIZACAO DO REPOSITORIO
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -16,13 +16,13 @@ echo.
 
 if not exist "%SRC%index.html" (
   echo ERRO: index.html nao foi encontrado ao lado deste arquivo.
-  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v26.
+  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v27.
   pause
   exit /b 2
 )
 
 if not exist "%SRC%data\integral-material.js" (
-  echo ERRO: a pasta data da v26 nao foi encontrada.
+  echo ERRO: a pasta data da v27 nao foi encontrada.
   pause
   exit /b 3
 )
@@ -69,6 +69,12 @@ if not exist "%SRC%data\v26-patch.js" (
   exit /b 4
 )
 
+if not exist "%SRC%data\v27-patch.js" (
+  echo ERRO: o patch principal da v27 nao foi encontrado.
+  pause
+  exit /b 4
+)
+
 if not exist "%DST%\.git" (
   echo ERRO: a pasta de destino nao parece ser o repositorio OAB-FOCUS.
   echo O destino esperado e:
@@ -77,7 +83,7 @@ if not exist "%DST%\.git" (
   exit /b 5
 )
 
-echo Copiando a v26...
+echo Copiando a v27...
 echo.
 robocopy "%SRC%" "%DST%" /E /R:1 /W:1 /XD ".git" /XF "ATUALIZAR_GITHUB.cmd" "_qa_inline.html"
 set "RC=%ERRORLEVEL%"
@@ -114,17 +120,18 @@ if not exist "%DST%\data\v23-patch.js" goto :verify_error
 if not exist "%DST%\data\v24-patch.js" goto :verify_error
 if not exist "%DST%\data\v25-patch.js" goto :verify_error
 if not exist "%DST%\data\v26-patch.js" goto :verify_error
+if not exist "%DST%\data\v27-patch.js" goto :verify_error
 if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v26 copiada e arquivos essenciais validados.
+echo OK: v27 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v26 - telas internas do leitor
+echo 2. Summary: OAB Focus v27 - trilha progressiva por dominio
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================
