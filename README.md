@@ -1,42 +1,27 @@
-# OAB Focus SUPER v29
+# OAB Focus SUPER v30
 
-A v29 preserva a arquitetura pedagógica das versões anteriores e faz uma auditoria responsiva global da interface. O objetivo é eliminar desalinhamentos, compressão excessiva, texto escapando de blocos e quebras de layout em larguras intermediárias — não apenas no Modo Foco.
+A v30 preserva integralmente a arquitetura, o material jurídico e as correções responsivas da v29 e incorpora a **47ª OAB (47º Exame de Ordem Unificado), Prova Tipo 1 – Branca** ao banco de questões.
 
-## Principais mudanças
+## Novidades da v30
 
-- Modo Foco realmente centralizado no viewport, sem reservar espaço invisível da sidebar.
-- Questões reorganizadas antes de ficarem comprimidas em desktop/tablet estreito.
-- Prepare-se com grids progressivos e formulários que respeitam a largura disponível.
-- Alto rendimento responsivo em telas intermediárias.
-- Ranking e Administração deixam layouts tabulares rígidos mais cedo.
-- Login corrigido na faixa próxima de 920 px.
-- Proteções para títulos, e-mails, identificadores e outros textos excepcionalmente longos.
-- Tabelas largas do material jurídico usam overflow interno em vez de deslocar a página.
-- Blocos de código, citações, imagens, vídeos e canvas respeitam a área útil.
-- Grifador e botão de saída do foco respeitam viewport e safe-area.
-- Material jurídico integral, trilha pedagógica e modos de estudo preservados.
+- 80 questões oficiais da 47ª OAB adicionadas ao banco, sem substituir as questões anteriores.
+- Enunciados e alternativas preservados a partir do caderno da prova Tipo 1 – Branca.
+- Gabarito preliminar oficial da FGV, publicado em 06/09/2026.
+- Comentário explicativo individual em todas as 80 questões, com regra jurídica e fundamento normativo.
+- Aviso visual nas questões da 47ª OAB indicando que o gabarito ainda é preliminar.
+- Classificação por disciplina e assunto; vínculos contextuais com o material apenas quando há correspondência segura.
+- Recorrência histórica ampliada para 13 provas completas: 30º–37º e 43º–47º EOU.
+- Banco total após a atualização: 2.416 questões.
 - Mapas mentais continuam removidos.
 
-## QA
+## Atenção sobre o gabarito
 
-- `node --check data/v29-patch.js`.
-- `pytest -q tests/*.py`.
-- Auditoria visual em Chromium para Foco 1366 px, Administração/Alto rendimento/Prepare-se 1024 px, Login 920 px, Questões 900 px e Ranking 360 px.
+O gabarito usado nesta versão é o **preliminar** publicado pela FGV em 06/09/2026 para a prova Tipo 1 – Branca. O cronograma oficial prevê a divulgação do gabarito definitivo da 1ª fase em 23/09/2026. Se houver alteração após recursos, a 47ª OAB deverá ser atualizada novamente.
 
-Detalhes: `QA_ENGENHARIA_v29.md`.
+## Arquivos principais da atualização
 
-## Atualização do GitHub
+- `data/v30-questions.js` — 80 questões da 47ª OAB com gabarito e comentários.
+- `data/v30-patch.js` — integração ao banco, vínculos contextuais seguros e aviso de gabarito preliminar.
+- `QA_ENGENHARIA_v30.md` — relatório de integridade e validação.
 
-Destino configurado:
-
-```text
-C:\Users\endoa\Documents\GitHub\OAB-FOCUS
-```
-
-1. Extraia o ZIP inteiro.
-2. Abra `OAB_Focus_SUPER_v29_GITHUB`.
-3. Execute `ATUALIZAR_GITHUB.cmd` ou use o `robocopy` habitual.
-4. Confira `Changes` no GitHub Desktop.
-5. Summary: `OAB Focus v29 - auditoria responsiva global`.
-6. `Commit to main` → `Push origin`.
-7. Atualize o site com `Ctrl + F5`.
+Para publicar, extraia o ZIP e execute `ATUALIZAR_GITHUB.cmd` ou copie a pasta para o repositório local e faça commit/push pelo GitHub Desktop.
