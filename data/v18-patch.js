@@ -65,10 +65,16 @@
     return {d,unit,chapter,subtopic,key,full,payload:payload||{}};
   }
   function strictQIds(disc,chapterId,subtopic=''){
-    const sk=subtopic?slug(clean(subtopic)):'';const ids=[];
+    const taxonomy=window.OAB_V35_TAXONOMY;
+    const sources=subtopic?(taxonomy?.sourceSubtopicsFor?.(disc,chapterId,subtopic)||[subtopic]):[];
+    const sourceKeys=new Set(sources.map(x=>slug(clean(x))).filter(Boolean));
+    const ids=[];
     for(const [id,m] of Object.entries(QMAP)){
       if(!m?.strict||m.discipline!==disc||m.chapterId!==chapterId)continue;
-      if(sk&&(!m.subtopicStrict||slug(clean(m.subtopicTitle||''))!==sk))continue;
+      if(subtopic){
+        if(!m.subtopicStrict)continue;
+        if(!sourceKeys.has(slug(clean(m.subtopicTitle||''))))continue;
+      }
       if(QBYID.has(id))ids.push(id);
     }
     return ids;
@@ -82,15 +88,15 @@
     progress.learningPath.completed=progress.learningPath.completed||{};return progress.learningPath;
   }
   function baseLearningKey(ctx){return `${ctx.d.name}|${ctx.chapter?.id||ctx.unit.id}|${ctx.subtopic?slug(clean(ctx.subtopic)):'__chapter__'}`;}
-  function markLearning(key,meta={}){const L=learningState();L.completed[key]={at:Date.now(),...meta};L.version=18;markDirty();try{saveProgress(true)?.catch?.(()=>{});}catch{};}
-  function isLearningDone(key){return !!learningState().completed[key];}
+  function markLearning(key,meta={}){const L=learningState(),taxonomyVersion=window.OAB_V35_TAXONOMY?.VERSION||null;L.completed[key]={at:Date.now(),...meta,taxonomyVersion};L.version=18;markDirty();try{saveProgress(true)?.catch?.(()=>{});}catch{};}
+  function isLearningDone(key){const T=window.OAB_V35_TAXONOMY;if(T?.isLearningKeyDone?.(key,progress))return true;return !!learningState().completed[key];}
 
   function wordCount(root){return (root?.textContent||'').trim().split(/\s+/).filter(Boolean).length;}
   function readingPct(){const article=document.getElementById('readerArticle');if(!article)return 0;const top=article.getBoundingClientRect().top+scrollY,total=Math.max(1,article.scrollHeight-innerHeight*.45),read=scrollY+innerHeight*.23-top;return Math.round(clamp(read/total*100,0,100));}
   function updateReadUI(){if(route!=='reader')return;const pct=readingPct();document.querySelector('.v18-progressline i')?.style.setProperty('width',`${pct}%`);const p=document.getElementById('v16ReadPct');if(p)p.textContent=`${pct}%`;const b=document.getElementById('v16SideProgress');if(b)b.style.width=`${pct}%`;document.querySelectorAll('[data-v18-pct]').forEach(x=>x.textContent=`${pct}%`);}
 
   function previousNext(ctx){
-    if(ctx.subtopic&&ctx.chapter){const arr=ctx.chapter.subtopics||[],i=arr.indexOf(ctx.subtopic);return {prev:i>0?{chapter:ctx.chapter,subtopic:arr[i-1],label:clean(arr[i-1])}:null,next:i>=0&&i<arr.length-1?{chapter:ctx.chapter,subtopic:arr[i+1],label:clean(arr[i+1])}:null};}
+    if(ctx.subtopic&&ctx.chapter){const arr=ctx.chapter.subtopics||[],i=arr.indexOf(ctx.subtopic),T=window.OAB_V35_TAXONOMY,label=x=>T?.labelFor?.(ctx.d.name,ctx.chapter.id,x)||clean(x);return {prev:i>0?{chapter:ctx.chapter,subtopic:arr[i-1],label:label(arr[i-1])}:null,next:i>=0&&i<arr.length-1?{chapter:ctx.chapter,subtopic:arr[i+1],label:label(arr[i+1])}:null};}
     const ch=disciplineChapters(ctx.d.name).filter(x=>x.hasTheory),i=ch.findIndex(x=>x.id===ctx.chapter?.id);return {prev:i>0?{chapter:ch[i-1],subtopic:'',label:clean(ch[i-1].title)}:null,next:i>=0&&i<ch.length-1?{chapter:ch[i+1],subtopic:'',label:clean(ch[i+1].title)}:null};
   }
   function cleanupOrphans(){
@@ -165,7 +171,7 @@
     document.querySelectorAll('.v18-progressline').forEach(x=>x.remove());const line=document.createElement('div');line.className='v18-progressline';line.innerHTML='<i></i>';document.body.appendChild(line);
     if(!H.palette||!document.body.contains(H.palette)||!H.dock||!document.body.contains(H.dock))makeHighlighter();H.dock.style.display='flex';
     const article=document.getElementById('readerArticle');if(!article)return;article.querySelectorAll('.v18-doc-header,.v18-reader-footer').forEach(x=>x.remove());
-    const title=ctx.subtopic?clean(ctx.subtopic):clean(ctx.chapter?.title||ctx.unit.title),qids=ctx.chapter?strictQIds(ctx.d.name,ctx.chapter.id,ctx.subtopic):[],words=wordCount(document.querySelector('.primary-material')),mins=Math.max(1,Math.round(words/185)),learnKey=payload?.learningFragmentKey||baseLearningKey(ctx),done=isLearningDone(learnKey),part=Number(payload?.learningPart)||0,parts=Number(payload?.learningParts)||0;
+    const title=ctx.subtopic?(window.OAB_V35_TAXONOMY?.labelFor?.(ctx.d.name,ctx.chapter?.id,ctx.subtopic)||clean(ctx.subtopic)):clean(ctx.chapter?.title||ctx.unit.title),qids=ctx.chapter?strictQIds(ctx.d.name,ctx.chapter.id,ctx.subtopic):[],words=wordCount(document.querySelector('.primary-material')),mins=Math.max(1,Math.round(words/185)),learnKey=payload?.learningFragmentKey||baseLearningKey(ctx),done=isLearningDone(learnKey),part=Number(payload?.learningPart)||0,parts=Number(payload?.learningParts)||0;
     const header=document.createElement('header');header.className='v18-doc-header';header.innerHTML=`<div class="trail"><span>${esc18(ctx.d.name)}</span>${ctx.chapter?`<i>›</i><span>${esc18(clean(ctx.chapter.title))}</span>`:''}${ctx.subtopic?`<i>›</i><span>${esc18(title)}</span>`:''}</div><div class="kicker">Leitura principal</div><h1>${esc18(title)}</h1><p>${ctx.subtopic?'Conteúdo integral desta unidade. A interface organiza a leitura sem reduzir ou substituir o material jurídico.':'Conteúdo integral do capítulo, organizado para leitura contínua e estudo ativo.'}</p><div class="v18-doc-meta"><span>≈ ${mins} min de leitura</span><span>${qids.length} questões específicas validadas</span><span><b data-v18-pct>0%</b> lido nesta sessão</span>${part&&parts?`<span class="plan">Jornada · parte ${part}/${parts}</span>`:''}<span class="${done?'done':''}" id="v18HeaderDone">${done?'✓ unidade concluída':'unidade em andamento'}</span></div>`;article.insertBefore(header,article.firstChild);
     {const first=document.querySelector('.primary-material .integral-section');const h2=first?.querySelector('.integral-section-head h2');if(h2&&norm(clean(h2.textContent||''))===norm(title))first.querySelector('.integral-section-head')?.classList.add('v18-redundant-head');}
     const pn=previousNext(ctx),footer=document.createElement('footer');footer.className='v18-reader-footer';footer.innerHTML=`<div class="finish"><div><b>${done?'Esta unidade já está marcada como estudada.':'Quando terminar, registre a conclusão desta unidade.'}</b><small>${qids.length?'Depois, pratique somente com as questões que o banco vinculou a este mesmo conteúdo.':'Não há questão específica validada aqui; o sistema não preencherá a lacuna com assunto diferente.'}</small></div><div class="finish-actions"><button class="btn ${done?'ghost':'primary'} small" id="v18CompleteUnit">${done?'✓ Concluída':'Marcar como estudada'}</button><button class="btn ghost small" id="v18UnitQuestions" ${qids.length?'':'disabled'}>Questões (${qids.length})</button></div></div><div class="neighbors">${pn.prev?`<button class="v18-neighbor" id="v18PrevUnit"><small>← anterior</small><b>${esc18(pn.prev.label)}</b></button>`:'<span></span>'}${pn.next?`<button class="v18-neighbor next" id="v18NextUnit"><small>próximo →</small><b>${esc18(pn.next.label)}</b></button>`:'<span></span>'}</div>`;article.appendChild(footer);

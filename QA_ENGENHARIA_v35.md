@@ -112,3 +112,16 @@ Validação: 162 testes automatizados, distribuídos em 67 (v26–v29), 47 (v30�
 - Assets v35 versionados com `?v=35.4`.
 
 Validação v35.4: **169 testes passaram** quando as 12 suítes foram executadas separadamente; 55 deles pertencem às suítes específicas v35 (account browser, isolamento, layout browser e shell).
+
+
+## v35.5 — taxonomia pedagógica global (2026-09-08)
+
+- Nova camada `data/v35-taxonomy.js` carregada após o shell v35.
+- Regra global: subtítulo textual não equivale automaticamente a unidade de estudo.
+- Microtópicos dependentes são agrupados; institutos autônomos permanecem separados.
+- Questões e progresso usam `sourceSubtopics` para preservar vínculo com os microtópicos legados.
+- Poder Constituinte: conceito + originário + derivado/modalidades + limites em uma unidade coerente.
+- Materiais aprofundados de Improbidade Administrativa, Licitações/Contratos e Ética/OAB usam limites semânticos próprios, ignorando sumário, notas, citações e fragmentos de PDF.
+- Nenhuma unidade pedagógica pode receber rótulo genérico `parte X/Y` nos materiais teóricos/complementares auditados.
+- Assets v35 versionados com `?v=35.5`.
+- Validação v35.5: **187 testes automatizados** aprovados nas 13 suítes v26–v35, incluindo 18 testes específicos da taxonomia global.

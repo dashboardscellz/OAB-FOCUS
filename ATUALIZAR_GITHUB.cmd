@@ -141,6 +141,12 @@ if not exist "%SRC%data\v35-shell.css" (
   exit /b 4
 )
 
+if not exist "%SRC%data\v35-taxonomy.js" (
+  echo ERRO: a taxonomia pedagogica global da v35.5 nao foi encontrada.
+  pause
+  exit /b 4
+)
+
 if not exist "%DST%\.git" (
   echo ERRO: a pasta de destino nao parece ser o repositorio OAB-FOCUS.
   echo O destino esperado e:
@@ -198,17 +204,18 @@ if not exist "%DST%\data\v34-patch.js" goto :verify_error
 if not exist "%DST%\data\v35-auth.js" goto :verify_error
 if not exist "%DST%\data\v35-shell.js" goto :verify_error
 if not exist "%DST%\data\v35-shell.css" goto :verify_error
+if not exist "%DST%\data\v35-taxonomy.js" goto :verify_error
 if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v35 copiada e arquivos essenciais validados.
+echo OK: v35.5 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v35.4 - acabamento visual e voltar nas questoes
+echo 2. Summary: OAB Focus v35.5 - taxonomia pedagogica global
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

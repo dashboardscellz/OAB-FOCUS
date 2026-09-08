@@ -54,3 +54,7 @@ Leitor focado: foram removidos do modo de leitura os blocos redundantes mostrado
 
 ### v35.4
 Acabamento visual do login e navegação de saída das questões: retrato institucional ampliado e reequilibrado no desktop, gutters seguros no formulário, diagonais suavizadas e botão contextual `← Voltar` na experiência de questões. Assets v35 usam `?v=35.4`.
+
+
+### v35.5
+Taxonomia pedagógica global: subtítulos deixam de virar unidades automaticamente. O sistema agrupa microtópicos juridicamente dependentes em unidades completas, preserva institutos autônomos separados, agrega questões dos microtópicos de origem e mantém compatibilidade com progresso legado. Poder Constituinte passa a reunir conceito, originário, derivado/modalidades e limites em uma única unidade. Materiais aprofundados de Improbidade, Licitações e Ética recebem recortes semânticos próprios para impedir sumários, citações e fragmentos de PDF de virarem assuntos. Assets v35 usam `?v=35.5`.

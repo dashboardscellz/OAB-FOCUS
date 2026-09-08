@@ -66,13 +66,15 @@
   function strictQuestionIds(discipline, chapterId, subtopic=''){
     const map=window.OAB_V16_QUESTION_MAP||{};
     const available=questionIdSet();
-    const sk=subtopic?slug27(clean27(subtopic)):'';
+    const taxonomy=window.OAB_V35_TAXONOMY;
+    const sources=subtopic?(taxonomy?.sourceSubtopicsFor?.(discipline,chapterId,subtopic)||[subtopic]):[];
+    const sourceKeys=new Set(sources.map(x=>slug27(clean27(x))).filter(Boolean));
     const ids=[];
     for(const [id,m] of Object.entries(map)){
       if(!m?.strict || m.discipline!==discipline || m.chapterId!==chapterId) continue;
-      if(sk){
+      if(subtopic){
         if(!m.subtopicStrict) continue;
-        if(slug27(clean27(m.subtopicTitle||''))!==sk) continue;
+        if(!sourceKeys.has(slug27(clean27(m.subtopicTitle||'')))) continue;
       }
       if(available.size && !available.has(String(id))) continue;
       ids.push(String(id));
@@ -102,7 +104,8 @@
   }
 
   function learningDone(unit){
-    const base=learningBaseKey(unit);
+    const base=learningBaseKey(unit),taxonomy=window.OAB_V35_TAXONOMY;
+    if(taxonomy?.isLearningKeyDone?.(base,progress)) return true;
     if(fragmentCompletion(base)) return true;
     // Compatibilidade apenas para unidade de capítulo sem subtópicos.
     if(!unit.subtopicTitle && progress?.topics?.[unit.chapterId]?.completedAt) return true;
@@ -138,7 +141,7 @@
         const qids=strictQuestionIds(discipline,chapter.id,subtopicTitle);
         const unit={
           discipline, chapter, chapterId:chapter.id, chapterTitle:clean27(chapter.title), chapterIndex,
-          subtopicTitle, label:subtopicTitle?clean27(subtopicTitle):clean27(chapter.title), unitIndex,
+          subtopicTitle, label:subtopicTitle?(window.OAB_V35_TAXONOMY?.labelFor?.(discipline,chapter.id,subtopicTitle)||clean27(subtopicTitle)):clean27(chapter.title), unitIndex,
           key:`${discipline}|${chapter.id}|${subtopicTitle?slug27(clean27(subtopicTitle)):'__chapter__'}`,
           questionIds:qids, requiredQuestions:requiredQuestionCount(qids), answeredQuestions:answeredCount(qids)
         };
@@ -329,7 +332,7 @@
 
   function markLearningDirect(unit){
     progress.learningPath=progress.learningPath||{completed:{},version:18}; progress.learningPath.completed=progress.learningPath.completed||{};
-    progress.learningPath.completed[learningBaseKey(unit)]={at:Date.now(),discipline:unit.discipline,chapterId:unit.chapterId,chapterTitle:unit.chapterTitle,subtopic:unit.subtopicTitle||'',source:'v27-reader'};
+    progress.learningPath.completed[learningBaseKey(unit)]={at:Date.now(),discipline:unit.discipline,chapterId:unit.chapterId,chapterTitle:unit.chapterTitle,subtopic:unit.subtopicTitle||'',source:'v27-reader',taxonomyVersion:window.OAB_V35_TAXONOMY?.VERSION||null};
     progress.topics=progress.topics||{}; progress.topics[unit.chapterId]=progress.topics[unit.chapterId]||{}; progress.topics[unit.chapterId].lastAt=Date.now();
     if(!unit.subtopicTitle) progress.topics[unit.chapterId].completedAt=Date.now();
     try{markDirty();saveProgress?.(true)?.catch?.(()=>{});}catch{}
