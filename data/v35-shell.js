@@ -1,7 +1,7 @@
 /* OAB Focus v35 — professional top-navigation shell */
 (function(){
   'use strict';
-  const contextualRoutes=new Set(['study','reader','admin']);
+  const contextualRoutes=new Set(['admin']);
   const routeLabels={home:'Início',study:'Estudar',prepare:'Prepare-se',questions:'Questões',review:'Revisar',performance:'Desempenho',highyield:'Mais cobrados',ranking:'Ranking',profile:'Perfil',settings:'Configurações',admin:'Administração',reader:'Estudar'};
   function shellHtml(){return `<header class="v35-global-header" aria-label="Cabeçalho principal">
     <div class="v35-header-util"><button class="v35-brand" data-route="home">OAB Focus <small>1ª fase</small></button><button class="v35-search" id="v35SearchBtn">Buscar assunto ou questão</button><div class="v35-header-spacer"></div><div class="v35-study-session" id="v35StudySession">Sessão 00:00</div><button class="v35-profile-trigger" id="v35ProfileBtn">Perfil</button></div>
@@ -11,7 +11,7 @@
   function mountV35Shell(){
     const app=document.getElementById('app');if(!app||app.querySelector('.v35-global-header'))return;
     app.insertAdjacentHTML('afterbegin',shellHtml());
-    const main=app.querySelector('.main-area');if(main&&!app.querySelector('.v35-context-rail'))main.insertAdjacentHTML('beforebegin','<aside class="v35-context-rail" aria-label="Navegação contextual"></aside>');
+    const main=app.querySelector('.main-area');if(main&&!app.querySelector('.v35-context-rail'))main.insertAdjacentHTML('afterbegin','<aside class="v35-context-rail" aria-label="Navegação contextual"></aside>');
     document.getElementById('v35SearchBtn')?.addEventListener('click',()=>openGlobalSearch());document.getElementById('v35MobileSearch')?.addEventListener('click',()=>openGlobalSearch());
     document.getElementById('v35ProfileBtn')?.addEventListener('click',()=>setRoute('profile'));document.getElementById('v35MobileProfile')?.addEventListener('click',()=>setRoute('profile'));
     app.querySelector('[data-v35-more]')?.addEventListener('click',e=>{e.stopPropagation();e.currentTarget.closest('.v35-more-wrap')?.classList.toggle('open');});
@@ -24,10 +24,8 @@
   function setV35ContextRail(routeName){
     const app=document.getElementById('app'),rail=app?.querySelector('.v35-context-rail');if(!app||!rail)return;
     const allowed=contextualRoutes.has(routeName);app.classList.toggle('v35-has-context',allowed&&innerWidth>1080);if(!allowed){rail.innerHTML='';return;}
-    if(routeName==='admin'){rail.innerHTML='<h3>Administração</h3><button class="active">Controle de usuários</button><button data-v35-route="ranking">Ranking da plataforma</button><button data-v35-route="settings">Configurações</button>';}
-    else if(routeName==='reader'){rail.innerHTML='<h3>Estudo</h3><button data-v35-view="read" class="active">Leitura</button><button data-v35-view="index">Trilha guiada</button><button data-v35-view="study">Seu estudo</button><button data-v35-view="highlights">Grifos</button><button data-v35-view="notes">Anotações</button>';}
-    else{rail.innerHTML='<h3>Mesa de estudos</h3><button class="active">Disciplinas e trilha</button><button data-v35-route="prepare">Prepare-se</button><button data-v35-route="review">Revisão inteligente</button><button data-v35-route="highyield">Mais cobrados</button>';}
-    rail.querySelectorAll('[data-v35-route]').forEach(b=>b.onclick=()=>setRoute(b.dataset.v35Route));rail.querySelectorAll('[data-v35-view]').forEach(b=>b.onclick=()=>window.OAB_V26?.setView?.(b.dataset.v35View));
+    rail.innerHTML='<h3>Administração</h3><button class="active">Controle de usuários</button><button data-v35-route="ranking">Ranking da plataforma</button><button data-v35-route="settings">Configurações</button>';
+    rail.querySelectorAll('[data-v35-route]').forEach(b=>b.onclick=()=>setRoute(b.dataset.v35Route));
   }
   function syncV35Navigation(routeName){
     const app=document.getElementById('app');if(!app)return;const r=routeName||'home';app.querySelectorAll('.v35-primary-nav [data-route],.v35-mobile-brand[data-route]').forEach(b=>{const active=b.dataset.route===r||(r==='reader'&&b.dataset.route==='study');b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});

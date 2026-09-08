@@ -1052,7 +1052,7 @@ function startQuestionTimer(id){stopQuestionTimer();currentQuestionId=id;qTimerS
 function renderQuestions(){
   buildQueue();
   const disciplines=[...new Set(QUESTIONS.map(q=>q.discipline))].sort();const exams=[...new Set(QUESTIONS.map(q=>q.exam).filter(Boolean))].sort((a,b)=>(parseInt(a)||999)-(parseInt(b)||999));
-  content.innerHTML=`<div class="page-head"><div><span class="eyebrow">QUESTÕES REAIS</span><h2>Treine por questões.</h2><p>Filtre por disciplina, assunto, prova ou situação e acompanhe seu desempenho a cada resposta.</p></div><button class="btn primary" id="simuladoBtn">Simulado 80</button></div>
+  content.innerHTML=`<div class="page-head"><div><span class="eyebrow">QUESTÕES REAIS</span><h2>Treine por questões.</h2><p>Filtre por disciplina, assunto, prova ou situação e acompanhe seu desempenho a cada resposta.</p></div><button class="btn primary" id="simuladoBtn">Simulado completo</button></div>
   <div class="filter-panel"><div class="filter-grid">
     <select id="fDisc"><option value="">Todas as disciplinas</option>${disciplines.map(x=>`<option ${qFilters.discipline===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
     <select id="fTopic"><option value="">Todos os assuntos</option>${topicOptions(qFilters.discipline)}</select>

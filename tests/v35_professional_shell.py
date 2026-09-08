@@ -23,10 +23,12 @@ def test_desktop_two_level_navigation_and_routes():
         assert f'data-route="{route}"' in s
     assert 'data-v35-more' in s
 
-def test_global_sidebar_hidden_contextual_rail_only():
+def test_global_sidebar_hidden_and_context_rail_does_not_duplicate_study_or_reader():
     assert '.sidebar{display:none' in css().replace(' ','')
-    s=js(); assert "new Set(['study','reader','admin'])" in s
+    s=js()
+    assert "new Set(['admin'])" in s
     assert 'v35-context-rail' in s
+
 
 def test_dashboard_reader_and_controls_are_refined():
     s=css()
@@ -51,3 +53,27 @@ def test_mobile_more_sheet_routes():
 def test_shell_syncs_existing_route_changes():
     s=js(); assert 'syncV35Navigation' in s and 'mountV35Shell' in s
     assert 'setRoute' in s
+
+
+def test_more_button_uses_same_visual_contract_as_primary_nav_buttons():
+    s=css().replace(' ','')
+    assert '.v35-primary-nav>button,.v35-more-wrap>button{' in s
+    assert '.v35-primary-nav>button:hover,.v35-more-wrap>button:hover{' in s
+
+def test_context_rail_never_shrinks_the_main_content_with_magic_left_padding():
+    s=css().replace(' ','')
+    assert '#app.v35-has-context.content{padding-left:248px' not in s
+    assert 'position:fixed' not in s[s.find('#app.v35-has-context.v35-context-rail'):s.find('#app.v35-has-context.v35-context-rail')+500]
+
+def test_questions_uses_semantic_simulation_label_instead_of_hardcoded_question_count():
+    h=INDEX.read_text(encoding='utf-8')
+    assert '>Simulado 80<' not in h
+    assert '>Simulado completo<' in h
+
+def test_reader_operational_headings_are_forced_to_v35_sans_typography():
+    s=css().replace(' ','')
+    for selector in ['#app.study-zone-headh2','#app.subtopic-reader-heroh2','#app.integral-section-headh2']:
+        start=s.find(selector+'{')
+        assert start>=0, selector
+        block=s[start:s.find('}',start)+1]
+        assert 'font-family:Inter' in block

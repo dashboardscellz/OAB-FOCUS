@@ -51,4 +51,16 @@ Nos viewports até 768 px, a barra superior compacta e a navegação inferior pe
 A implementação também contém fallback SHA-256 em JavaScript para ambientes locais sem `crypto.subtle`, mantendo o mesmo formato de identidade técnica.
 
 ## Suíte de regressão
-A release v35 possui **141 testes automatizados** distribuídos entre arquitetura do leitor/trilha, auditoria de layout, importação da 47ª OAB, auditoria pesada v34, isolamento de contas e shell responsivo v35. As suítes Playwright são executadas separadamente para evitar interferência entre instâncias do Chromium no ambiente de QA.
+A release v35 auditada possui **148 testes automatizados** distribuídos entre arquitetura do leitor/trilha, auditoria de layout, importação da 47ª OAB, auditoria pesada v34, isolamento de contas e shell responsivo v35. As suítes Playwright são executadas separadamente para evitar interferência entre instâncias do Chromium no ambiente de QA.
+
+
+## Auditoria visual corretiva — 08/09/2026
+A auditoria das capturas pós-v35 identificou regressões sistêmicas no shell e adicionou cobertura específica para elas:
+- rail duplicada não é mais ativada em `study`/`reader`;
+- nenhum `padding-left:248px` é usado para compensar navegação fixa;
+- o botão `Mais` usa o mesmo chrome dos itens primários;
+- cabeçalhos operacionais do leitor são normalizados para Inter;
+- a ação da tela de questões é rotulada `Simulado completo`;
+- o contexto administrativo é sticky/in-flow e permanece centralizado dentro do shell.
+
+O relatório detalhado está em `AUDITORIA_VISUAL_v35_2026-09-08.md`.

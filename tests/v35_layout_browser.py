@@ -42,3 +42,49 @@ def test_v35_shell_has_zero_horizontal_overflow(browser,w,h):
         else:
             assert page.locator('.v35-primary-nav').is_visible()
     finally: page.close()
+
+def test_desktop_more_button_has_same_chrome_as_primary_routes(browser):
+    page=page_for(browser,1440,900)
+    try:
+        styles=page.evaluate('''() => {
+          const normal=document.querySelector('.v35-primary-nav > button[data-route="study"]');
+          const more=document.querySelector('[data-v35-more]');
+          const pick=el=>{const s=getComputedStyle(el);return {border:s.borderTopStyle,background:s.backgroundColor,color:s.color,fontSize:s.fontSize,fontWeight:s.fontWeight,paddingTop:s.paddingTop,paddingBottom:s.paddingBottom}};
+          return {normal:pick(normal),more:pick(more)};
+        }''')
+        assert styles['more']==styles['normal']
+    finally:
+        page.close()
+
+def test_study_and_reader_do_not_activate_duplicate_fixed_context_rail(browser):
+    page=page_for(browser,1440,900)
+    try:
+        for route_name in ['study','reader']:
+            state=page.evaluate('''routeName => {
+              window.OAB_V35_SHELL.setV35ContextRail(routeName);
+              const app=document.getElementById('app');
+              const rail=document.querySelector('.v35-context-rail');
+              const content=document.querySelector('.content');
+              return {hasContext:app.classList.contains('v35-has-context'),railDisplay:getComputedStyle(rail).display,contentPaddingLeft:getComputedStyle(content).paddingLeft};
+            }''', route_name)
+            assert state['hasContext'] is False
+            assert state['railDisplay']=='none'
+    finally:
+        page.close()
+
+def test_admin_context_rail_stays_inside_centered_shell_without_overlap(browser):
+    page=page_for(browser,1440,900)
+    try:
+        state=page.evaluate('''() => {
+          window.OAB_V35_SHELL.setV35ContextRail('admin');
+          const main=document.querySelector('.main-area').getBoundingClientRect();
+          const rail=document.querySelector('.v35-context-rail').getBoundingClientRect();
+          const content=document.querySelector('.content').getBoundingClientRect();
+          return {mainX:main.x,mainRight:main.right,railRight:rail.right,contentX:content.x,scroll:document.documentElement.scrollWidth,inner:innerWidth};
+        }''')
+        assert state['mainX'] >= 90
+        assert state['mainRight'] <= 1350
+        assert state['railRight'] <= state['contentX']
+        assert state['scroll'] <= state['inner'] + 2
+    finally:
+        page.close()
