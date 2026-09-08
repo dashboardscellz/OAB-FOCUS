@@ -45,7 +45,8 @@ def test_all_study_units_receive_three_strict_questions_and_authorial_are_labell
     text=PATCH.read_text(encoding='utf-8')
     assert 'MIN_UNIT_QUESTIONS=3' in text
     assert 'ensureCoverageForChapters' in text
-    assert 'Questão autoral de fixação — OAB Focus' in text
+    assert 'OAB_V35_QUESTION_QUALITY' in text
+    assert 'buildResearch' in text and 'isCompleteLegalStatement' in text
     assert 'excludeFromHistoricalStats:true' in text.replace(' ', '')
     assert 'subtopicStrict:' in text and '!!subtopic' in text
     assert 'sourceType:"authorial"' in text.replace(' ', '') or "sourceType:'authorial'" in text.replace(' ', '')

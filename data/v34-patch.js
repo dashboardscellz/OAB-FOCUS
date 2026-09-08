@@ -6,6 +6,7 @@
   const ACTIVE_IDLE_MS=90000;
   const LETTERS='ABCDE';
   const RESEARCH=window.OAB47_RESEARCH||{};
+  const QUALITY=window.OAB_V35_QUESTION_QUALITY||null;
   const generatedIds=new Set();
   const coverageDone=new Set();
   const chapterCache=new Map();
@@ -49,6 +50,7 @@
       <section class="v34-explain-block"><h4>Por que a correta está certa</h4><p>${esc34(r.whyCorrect)}</p></section>
       <section class="v34-explain-block legal"><h4>Fundamento jurídico</h4><p>${esc34(r.basis)}</p><small>${esc34(r.sourceNote||'')}</small></section>
       <section class="v34-explain-block trap"><h4>Armadilha da questão</h4><p>${esc34(r.trap||'')}</p></section>
+      ${r.reviewRule?`<section class="v34-explain-block review"><h4>Regra para não errar novamente</h4><p>${esc34(r.reviewRule)}</p></section>`:''}
       <details class="v34-all-alternatives"><summary>Análise das alternativas</summary><div>${alternatives}</div></details>
     </div>`;
   };
@@ -127,43 +129,47 @@
 
   /* ===================== QUESTÕES ESPECÍFICAS EM TODA UNIDADE ===================== */
   function meaningfulRule(text='',unitLabel=''){
-    const lines=String(text).split(/\r?\n/).map(x=>x.replace(/^[-•▪◦]\s*/, '').replace(/\s+/g,' ').trim()).filter(x=>x.length>=55&&x.length<=360&&!isTrailNoise(x));
-    const weighted=lines.map(x=>({x,score:(/\b(não|deve|pode|será|são|é|compete|cabe|exige|depende|prazo|direito|obrigação|vedado|permitido)\b/i.test(x)?4:0)+(norm34(x).includes(norm34(clean34(unitLabel)))?3:0)-(/^(exemplo|obs|observação)/i.test(x)?2:0)})).sort((a,b)=>b.score-a.score);
-    let rule=(weighted[0]?.x||lines[0]||`A unidade ${clean34(unitLabel)} deve ser resolvida conforme os conceitos, requisitos, efeitos e exceções apresentados no material explicado.`).trim();
-    rule=rule.replace(/^\d+(?:\.\d+){0,5}[\.)]?\s+/, '').replace(/\s+/g,' ').trim();
-    return rule.length>420?rule.slice(0,417)+'…':rule;
-  }
-  function invertRule(rule){
-    let x=rule;
-    if(/\bnão\b/i.test(x))return x.replace(/\bnão\s+/i,'');
-    if(/\bpode\b/i.test(x))return x.replace(/\bpode\b/i,'deve necessariamente');
-    if(/\bdeve\b/i.test(x))return x.replace(/\bdeve\b/i,'pode livremente');
-    if(/\bé\b/i.test(x))return x.replace(/\bé\b/i,'não é');
-    if(/\bsão\b/i.test(x))return x.replace(/\bsão\b/i,'não são');
-    return `Não se aplica a regra segundo a qual ${rule.charAt(0).toLowerCase()+rule.slice(1)}`;
+    const found=QUALITY?.extractRule?.(text,unitLabel);
+    if(found?.rule)return found;
+    const lines=String(text).split(/\r?\n/).map(x=>x.replace(/^[-•▪◦]\s*/, '').replace(/\s+/g,' ').trim()).filter(Boolean);
+    for(let i=0;i<lines.length;i++){
+      const joined=[lines[i],lines[i+1]||'',lines[i+2]||''].join(' ').replace(/\s+/g,' ').trim();
+      if(QUALITY?.isCompleteLegalStatement?.(joined))return {rule:joined,basis:QUALITY?.extractLegalBasis?.(text)||''};
+    }
+    return {rule:'',basis:QUALITY?.extractLegalBasis?.(text)||''};
   }
   function distractorsFor(rule,label){
+    const built=QUALITY?.buildDistractors?.(rule,label);
+    if(Array.isArray(built)&&built.length>=3)return built.slice(0,3);
     const clean=clean34(label);
-    const a=invertRule(rule);
-    const b=`Em ${clean}, a conclusão é sempre a mesma, independentemente dos requisitos, limites ou exceções descritos no material.`;
-    const c=`Em ${clean}, a regra estudada somente produz efeitos mediante requisito adicional não indicado nesta unidade.`;
-    return [a,b,c].map(x=>x===rule?`A regra de ${clean} admite conclusão oposta à apresentada no material.`:x);
+    return [
+      `Em ${clean}, a regra aplica-se de modo absoluto, sem requisitos, limites, exceções ou distinções relevantes.`,
+      `Em ${clean}, a consequência jurídica depende de requisito adicional que não consta do material estudado.`,
+      `Em ${clean}, a solução independe das condições e exceções expressamente apresentadas na unidade.`
+    ];
   }
   function unitText(chapter,subtopic){
     if(!subtopic)return (chapter.theory||[]).map(x=>x.text||'').join('\n');
     return (chapter.theory||[]).map(x=>directIntroForSubtopic(x.text||'',subtopic)).filter(Boolean).join('\n');
   }
   function authorialQuestion(discipline,chapter,subtopic,seq){
-    const label=clean34(subtopic||chapter.title),text=unitText(chapter,subtopic),rule=meaningfulRule(text,label),distr=distractorsFor(rule,label),correctIndex=hash34(`${discipline}|${chapter.id}|${label}|${seq}`)%4;
+    const label=clean34(subtopic||chapter.title),text=unitText(chapter,subtopic),extracted=meaningfulRule(text,label),rule=extracted?.rule||'';
+    if(!rule||!QUALITY?.isCompleteLegalStatement?.(rule))return null;
+    const distr=distractorsFor(rule,label),correctIndex=hash34(`${discipline}|${chapter.id}|${label}|${seq}`)%4;
     const variants=[
       `Considerando exclusivamente o conteúdo estudado na unidade “${label}”, assinale a alternativa que reproduz corretamente a regra jurídica apresentada no material.`,
       `Em uma questão prática sobre “${label}”, qual premissa deve orientar a solução de acordo com a unidade que você acabou de estudar?`,
       `Para diferenciar “${label}” de conclusões excessivas ou requisitos inexistentes, assinale a afirmação compatível com o material da unidade.`
     ];
     const options=distr.slice();options.splice(correctIndex,0,rule);options.length=4;
+    if(options.some(x=>!QUALITY?.isCompleteLegalStatement?.(x)))return null;
     const id=`v34-auto-${slug34(discipline)}-${slug34(chapter.id)}-${slug34(label)}-${seq}`;
+    const lawContext=(chapter.law||[]).map(x=>x.text||'').join('\n');
+    const researchContext=[text,lawContext].filter(Boolean).join('\n');
+    const research=QUALITY?.buildResearch?.(rule,options,correctIndex,label,researchContext)||null;
+    const comment=research?`${research.whyCorrect} Fundamento jurídico: ${research.basis}`:`A alternativa ${LETTERS[correctIndex]} reproduz a regra jurídica completa estudada na unidade “${label}”.`;
     return {id,number:0,displayNumber:0,discipline,exam:'Autoral — OAB Focus',statement:variants[(seq-1)%variants.length],options,answer:correctIndex,
-      comment:`Questão autoral de fixação — OAB Focus. Regra diretamente extraída desta unidade: ${rule}`,
+      comment,research:research||undefined,researchVersion:research?'v35.7-authorial':undefined,
       topic:label,microtopic:label,source:'OAB Focus — criada exclusivamente a partir do material da unidade',sourceType:'authorial',authorial:true,excludeFromHistoricalStats:true,chapterId:chapter.id};
   }
   function strictIdsFor(discipline,chapterId,subtopic){
@@ -180,6 +186,7 @@
         let ids=strictIdsFor(discipline,chapter.id,subtopic);
         for(let seq=1;ids.length<MIN_UNIT_QUESTIONS&&seq<=MIN_UNIT_QUESTIONS;seq++){
           const q=authorialQuestion(discipline,chapter,subtopic,seq);
+          if(!q)break;
           if(!pool.some(x=>x.id===q.id)){pool.push(q);generatedIds.add(q.id);}
           window.OAB_V16_QUESTION_MAP[q.id]={discipline,chapterId:chapter.id,chapterTitle:chapter.title,strict:true,subtopicStrict:!!subtopic,subtopicTitle:subtopic||'',source:'v34-authorial-unit'};
           ids=strictIdsFor(discipline,chapter.id,subtopic);

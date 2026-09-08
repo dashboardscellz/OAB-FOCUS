@@ -216,18 +216,19 @@
   function openVerifiedQuestions(unit){
     if(!unit) return false;
     const fresh=buildDisciplinePath(unit.discipline).units.find(u=>u.key===unit.key)||unit;
-    const ids=[...(fresh.questionIds||[])];
+    const byId=new Map(questionPool().map(q=>[String(q.id),q]));
+    const ids=[...(fresh.questionIds||[])].map(String).filter(id=>byId.get(id)?.discipline===fresh.discipline);
     if(!ids.length){
       try{toast('Não há questão FGV/OAB especificamente validada para esta unidade. A conclusão depende apenas do estudo do conteúdo.','bad');}catch{}
       return false;
     }
     const origin=readerOrigin();
-    window.qFilters={
-      discipline:'',topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:ids,
+    qFilters={
+      discipline:fresh.discipline,topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:ids,
       studyContext:{
         discipline:fresh.discipline,label:`${fresh.chapterTitle} · ${fresh.label}`,mode:'v27-progression-verified',
         count:ids.length,verified:true,chapterId:fresh.chapterId,subtopic:fresh.subtopicTitle||'',
-        progression:true,required:fresh.requiredQuestions,unitKey:fresh.key,
+        progression:true,required:requiredQuestionCount(ids),unitKey:fresh.key,
         ...(origin?{readerOrigin:origin}:{})
       }
     };

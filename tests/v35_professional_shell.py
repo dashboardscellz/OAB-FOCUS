@@ -9,7 +9,7 @@ def test_assets_loaded_after_v34():
     assert 'href="data/v35-shell.css?v=35.5"' in h
     assert 'src="data/v35-shell.js?v=35.5"' in h
     assert 'src="data/v35-auth.js?v=35.5"' in h
-    assert h.index('src="data/v35-shell.js?v=35.5"') > h.index('src="data/v34-patch.js"')
+    assert h.index('src="data/v35-shell.js?v=35.5"') > h.index('data/v34-patch.js')
 
 def test_design_system_professional_width_and_sans_ui():
     s=css().replace(' ','')

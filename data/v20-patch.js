@@ -7,6 +7,7 @@
   const V20 = '20.0';
   const QMAP = window.OAB_V16_QUESTION_MAP || {};
   const SUPP_TAG = 'Questão autoral de reforço';
+  const QUALITY = window.OAB_V35_QUESTION_QUALITY || null;
 
   const esc20 = (s='') => typeof esc === 'function' ? esc(String(s ?? '')) : String(s ?? '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -225,17 +226,13 @@
     const topic = clean(ctx.subtopic || ctx.chapter?.title || ctx.unit?.title || ctx.discipline);
     const id = `v20-auto-${toSlug(ctx.discipline)}-${toSlug(topic)}-${idx}`;
     if(qExists(id)) return id;
-    const sentences = String(theoryText || '').split(/(?<=[.!?])\s+/).map(s=>s.replace(/\s+/g,' ').trim()).filter(s=>s.length>=55 && s.length<=220);
-    const base = sentences[idx-1] || sentences[0] || `${topic} é um tema jurídico que deve ser compreendido conforme o material desta unidade.`;
-    const correct = base.replace(/[;:]+$/,'').replace(/\s+/g,' ').trim();
-    const genericWrong = [
-      `depende sempre de previsão exclusivamente infralegal, independentemente do texto constitucional ou legal aplicável.`,
-      `somente produz efeitos depois de decisão judicial definitiva, em qualquer hipótese.`,
-      `não admite distinções internas, exceções relevantes nem classificação em espécies.`,
-      `tem aplicação automática apenas quando houver autorização administrativa expressa.`
-    ];
-    const rotate = (n) => [correct, genericWrong[n%4], genericWrong[(n+1)%4], genericWrong[(n+2)%4]];
-    const options = rotate(idx).map(x=>x.charAt(0).toUpperCase()+x.slice(1));
+    const extracted=QUALITY?.extractRule?.(theoryText,topic),correct=extracted?.rule||'';
+    if(!correct||!QUALITY?.isCompleteLegalStatement?.(correct))return '';
+    const wrong=QUALITY?.buildDistractors?.(correct,topic)||[];
+    if(wrong.length<3)return '';
+    const options=[correct,...wrong.slice(0,3)];
+    if(options.some(x=>!QUALITY?.isCompleteLegalStatement?.(x)))return '';
+    const research=QUALITY?.buildResearch?.(correct,options,0,topic,theoryText)||null;
     const q = {
       id,
       number: idx,
@@ -245,7 +242,10 @@
       statement: `${SUPP_TAG} — estilo FGV/OAB. Sobre ${topic}, assinale a alternativa correta.`,
       options,
       answer: 0,
-      comment: `Questão autoral de reforço. Resposta correta: alternativa A. Fundamento-base da unidade: ${correct}`,
+      comment: research?`${research.whyCorrect} Fundamento jurídico: ${research.basis}`:`A alternativa A reproduz a regra jurídica completa estudada em ${topic}.`,
+      research: research||undefined,
+      researchVersion: research?'v35.7-authorial':undefined,
+      sourceType:'authorial',authorial:true,
       topic
     };
     QUESTION_POOL.push(q);

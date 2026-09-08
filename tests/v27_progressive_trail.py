@@ -87,7 +87,7 @@ def bootstrap(browser, width=1366, height=900):
 
 def test_v27_is_loaded_after_v26():
     html=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert '<script src="data/v27-patch.js"></script>' in html
+    assert 'data/v27-patch.js' in html
     assert html.rfind('data/v27-patch.js') > html.rfind('data/v26-patch.js')
 
 
@@ -253,3 +253,26 @@ def test_search_opens_matching_chapter_and_does_not_hide_result(browser):
         assert visible_chapters.first.get_attribute('open') is not None
         assert 'Dimensões dos Direitos Fundamentais' in visible_chapters.first.inner_text()
     finally: page.close()
+
+def test_contextual_questions_replace_real_global_lexical_filters(browser):
+    page=bootstrap(browser)
+    try:
+        # Real index.html declares qFilters with top-level `let`, so it is NOT window.qFilters.
+        # Seed a stale Ethics context to reproduce the production bug.
+        page.add_script_tag(content="let qFilters={discipline:'Ética',topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:['eth-old'],studyContext:{discipline:'Ética',label:'Funções Privativas de Advogado'}};")
+        page.evaluate("OAB_V27.openVerifiedQuestions(OAB_V27.buildDisciplinePath('Constitucional').units[0])")
+        ctx=page.evaluate("qFilters")
+        assert ctx['discipline']=='Constitucional'
+        assert ctx['studyContext']['discipline']=='Constitucional'
+        assert set(ctx['questionIds'])=={'q1','q2','q3','q4'}
+    finally:
+        page.close()
+
+
+def test_v27_does_not_write_context_to_window_qfilters():
+    js=V27.read_text(encoding='utf-8')
+    assert 'window.qFilters=' not in js
+
+def test_v27_release_cache_busts_context_fix():
+    html=(ROOT/'index.html').read_text(encoding='utf-8')
+    assert '<script src="data/v27-patch.js?v=35.6"></script>' in html
