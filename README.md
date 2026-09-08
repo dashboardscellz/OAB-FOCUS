@@ -46,3 +46,7 @@ Extraia o ZIP e execute `ATUALIZAR_GITHUB.cmd`, ou copie a pasta para `C:\Users\
 
 ### v35.2
 Redesenho do leitor: coluna central de estudo, métricas integradas, material plano e barra de grifo centralizada.
+
+
+### v35.3
+Leitor focado: foram removidos do modo de leitura os blocos redundantes mostrados na auditoria visual — `Questões relacionadas`, a prévia de questões dentro do artigo e os rodapés legados de encerramento/"Fim desta unidade". A prática continua disponível nas áreas próprias de Questões/Prepare-se e a progressão guiada v27 permanece preservada quando aplicável. Também foi removido o atalho morto de "Questões" da toolbar do leitor quando o bloco correspondente não existe. Assets v35 usam `?v=35.3`.

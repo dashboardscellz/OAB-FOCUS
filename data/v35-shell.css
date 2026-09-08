@@ -183,3 +183,10 @@ html[data-theme="dark"] .v35-search,html[data-theme="dark"] .v35-profile-trigger
 html[data-theme="dark"] .v35-primary-nav>button:hover,html[data-theme="dark"] .v35-more-wrap>button:hover,html[data-theme="dark"] .v35-more-menu button:hover,html[data-theme="dark"] .v35-sheet-links button:hover{background:var(--surface-2)}
 html[data-theme="dark"] #app .bottom-nav{background:rgba(21,29,41,.98);border-color:var(--line)}
 html[data-theme="dark"] #app .hero-level-panel{background:var(--surface)!important;border-color:var(--line)!important}
+
+/* v35.3 — leitor focado: remove blocos redundantes de prática/encerramento do modo de leitura. */
+body.v26-reader-active #zoneQuestions,
+body.v26-reader-active .v20-practice-shell,
+body.v26-reader-active .v16-reader-end,
+body.v26-reader-active .v18-reader-footer,
+body.v26-reader-active [data-reader-jump="questions"]{display:none!important;}

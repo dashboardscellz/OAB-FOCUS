@@ -51,7 +51,7 @@ Nos viewports até 768 px, a barra superior compacta e a navegação inferior pe
 A implementação também contém fallback SHA-256 em JavaScript para ambientes locais sem `crypto.subtle`, mantendo o mesmo formato de identidade técnica.
 
 ## Suíte de regressão
-A release v35 auditada possui **148 testes automatizados** distribuídos entre arquitetura do leitor/trilha, auditoria de layout, importação da 47ª OAB, auditoria pesada v34, isolamento de contas e shell responsivo v35. As suítes Playwright são executadas separadamente para evitar interferência entre instâncias do Chromium no ambiente de QA.
+A release v35.3 auditada possui **162 testes automatizados** distribuídos entre arquitetura do leitor/trilha, auditoria de layout, importação da 47ª OAB, auditoria pesada v34, isolamento de contas e shell responsivo v35. As suítes Playwright são executadas separadamente para evitar interferência entre instâncias do Chromium no ambiente de QA.
 
 
 ## Auditoria visual corretiva — 08/09/2026
@@ -87,3 +87,17 @@ Testes novos cobrem estado ativo acumulado, herança visual do hero, hierarquia 
 - Toolbar do leitor refinada e alinhada à largura do artigo.
 - Mobile mantém coluna única, timers em 2x2 e highlighter acima da navegação inferior.
 - Assets v35 versionados com `?v=35.2` para evitar cache antigo no GitHub Pages.
+
+
+## v35.3 — limpeza do leitor (2026-09-08)
+
+A pedido do usuário, a leitura passou a priorizar somente o material e controles essenciais. Foram removidos do DOM do leitor:
+- `#zoneQuestions` (seção "Questões relacionadas");
+- `.v20-practice-shell` (cards de prévia de questões);
+- `.v16-reader-end` (bloco "FIM DESTA UNIDADE" e navegação legada);
+- `.v18-reader-footer` (rodapé legado de conclusão/prática);
+- `[data-reader-jump="questions"]` (atalho que ficaria sem destino).
+
+A remoção é aplicada pelo adaptador v35 e também protegida por CSS para impedir flash/reinserção tardia por patches legados. A progressão guiada da v27 não foi removida. Assets versionados com `?v=35.3`.
+
+Validação: 162 testes automatizados, distribuídos em 67 (v26–v29), 47 (v30–v34) e 48 (v35).

@@ -6,10 +6,10 @@ def js(): return JS.read_text(encoding='utf-8')
 
 def test_assets_loaded_after_v34():
     h=INDEX.read_text(encoding='utf-8')
-    assert 'href="data/v35-shell.css?v=35.2"' in h
-    assert 'src="data/v35-shell.js?v=35.2"' in h
-    assert 'src="data/v35-auth.js?v=35.2"' in h
-    assert h.index('src="data/v35-shell.js?v=35.2"') > h.index('src="data/v34-patch.js"')
+    assert 'href="data/v35-shell.css?v=35.3"' in h
+    assert 'src="data/v35-shell.js?v=35.3"' in h
+    assert 'src="data/v35-auth.js?v=35.3"' in h
+    assert h.index('src="data/v35-shell.js?v=35.3"') > h.index('src="data/v34-patch.js"')
 
 def test_design_system_professional_width_and_sans_ui():
     s=css().replace(' ','')
@@ -98,7 +98,7 @@ def test_v35_home_hero_explicitly_resets_legacy_shadow_and_radius():
 
 def test_v35_versioned_assets_avoid_stale_github_pages_shell_cache():
     h=INDEX.read_text(encoding='utf-8')
-    for asset in ['data/v35-shell.css?v=35.2','data/v35-auth.js?v=35.2','data/v35-shell.js?v=35.2']:
+    for asset in ['data/v35-shell.css?v=35.3','data/v35-auth.js?v=35.3','data/v35-shell.js?v=35.3']:
         assert asset in h
 
 def test_v35_reader_redesign_declares_single_centered_reading_architecture():
@@ -140,3 +140,15 @@ def test_v35_reader_primary_material_is_flat_not_nested_card_on_card():
     assert 'border:0!important' in block
     assert 'box-shadow:none!important' in block
     assert 'background:transparent!important' in block
+
+def test_v35_reader_removes_redundant_practice_and_legacy_finish_blocks():
+    source=js()
+    for selector in ["#zoneQuestions",".v20-practice-shell",".v16-reader-end",".v18-reader-footer","[data-reader-jump=\"questions\"]"]:
+        assert selector in source
+    assert 'cleanupV35ReaderRedundancy' in source
+
+
+def test_v35_reader_css_defensively_hides_redundant_practice_and_legacy_finish_blocks():
+    source=css().replace(' ','')
+    for selector in ['body.v26-reader-active#zoneQuestions','body.v26-reader-active.v20-practice-shell','body.v26-reader-active.v16-reader-end','body.v26-reader-active.v18-reader-footer','body.v26-reader-active[data-reader-jump=\"questions\"]']:
+        assert selector in source

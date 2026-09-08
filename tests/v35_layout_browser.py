@@ -143,3 +143,27 @@ def test_reader_redesign_uses_wide_centered_article_and_integrated_timer(browser
         assert abs(state['dockCenter'] - state['viewport']/2) <= 4
     finally:
         page.close()
+
+def test_reader_cleanup_removes_redundant_practice_preview_and_legacy_finish_ui(browser):
+    page=reader_page(browser)
+    try:
+        page.evaluate("""() => {
+          const article=document.querySelector('#readerArticle');
+          const q=document.createElement('section'); q.id='zoneQuestions'; q.innerHTML='<div class="v20-practice-shell">preview</div>'; article.appendChild(q);
+          const oldEnd=document.createElement('section'); oldEnd.className='v16-reader-end'; oldEnd.textContent='FIM DESTA UNIDADE'; article.appendChild(oldEnd);
+          const oldFooter=document.createElement('footer'); oldFooter.className='v18-reader-footer'; oldFooter.textContent='Marcar como estudada'; article.appendChild(oldFooter);
+          const tools=document.createElement('div'); tools.className='study-source-tabs'; tools.innerHTML='<button data-reader-jump="questions">Questões</button>'; article.parentNode.insertBefore(tools,article);
+        }""")
+        page.add_script_tag(content="var route='reader',profile={role:'user'},currentStudy=null; function setRoute(){} function openGlobalSearch(){} function openModal(){} function closeModal(){} function formatTime(){return '00:00';} window.OAB_V35_AUTH={logoutV35(){}};")
+        page.add_script_tag(path=str(SHELL))
+        page.evaluate("window.OAB_V35_SHELL.enhanceV35Reader()")
+        state=page.evaluate("""() => ({
+          zone:!!document.querySelector('#zoneQuestions'),
+          preview:!!document.querySelector('.v20-practice-shell'),
+          oldEnd:!!document.querySelector('.v16-reader-end'),
+          oldFooter:!!document.querySelector('.v18-reader-footer'),
+          questionTab:!!document.querySelector('[data-reader-jump="questions"]')
+        })""")
+        assert state=={'zone':False,'preview':False,'oldEnd':False,'oldFooter':False,'questionTab':False}
+    finally:
+        page.close()
