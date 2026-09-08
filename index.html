@@ -242,6 +242,7 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%;h
 @media(max-width:860px){.subtopic-grid.v14{grid-template-columns:1fr}.subtopic-nav{grid-template-columns:1fr 1fr}.subtopic-progress{grid-column:1/-1;grid-row:1}.study-zone.maps.inline-subtopic .mindmap-gallery{grid-template-columns:1fr}.map-modal-v14{width:100vw;height:92dvh;border-radius:var(--r-md) 18px 0 0!important}.map-stage-inner{padding:8px}.map-tools button{height:38px;min-width:40px}.map-tools .zoom-label{display:none}}
 @media(max-width:520px){.subtopic-reader-hero{padding:16px}.subtopic-reader-hero h2{font-size:var(--t-lead)}.subtopic-nav .btn{padding:8px 8px;font-size:var(--t-caption)}.v14-busy-card{padding:24px 20px}}
 </style>
+  <link rel="stylesheet" href="data/v35-shell.css" />
 </head>
 <body>
   <div id="boot" class="boot-screen">
@@ -356,7 +357,7 @@ html,body{max-width:100%;overflow-x:hidden}img,svg,video,canvas{max-width:100%;h
       <button data-route="study"><span>▤</span><small>Estudar</small></button>
       <button data-route="prepare"><span>◎</span><small>Prepare-se</small></button>
       <button data-route="questions"><span>?</span><small>Questões</small></button>
-      <button data-route="profile"><span>○</span><small>Perfil</small></button>
+      <button type="button" data-v35-mobile-more><span>•••</span><small>Mais</small></button>
     </nav>
   </div>
 
@@ -457,6 +458,7 @@ async function dbRequest(path,{method='GET',body}={}){
 let user = null;
 let profile = null;
 let progress = null;
+let progressOwnerUid = null;
 let route = 'home';
 let routePayload = null;
 let currentStudy = null;
@@ -730,7 +732,7 @@ $('#avatarBtn').addEventListener('click',()=>setRoute('profile'));
 $('#globalSearchBtn').addEventListener('click',openGlobalSearch);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(mobileSideOpen)closeMobileMenu();else if($('#modalRoot')?.innerHTML)closeModal();return;}if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();openGlobalSearch();}});
 
-restoreSession();
+window.__OAB_RESTORE_DEFERRED_TO_V35=true;
 
 function bindRoleUI(){
 
@@ -1820,5 +1822,9 @@ setTimeout(()=>{try{ensureQuestionIndexes();if('requestIdleCallback'in window)re
   <script src="data/v30-patch.js"></script>
   <script src="data/v32-patch.js"></script>
   <script src="data/v33-patch.js"></script>
+  <script src="data/v34-research.js"></script>
+  <script src="data/v34-patch.js"></script>
+  <script src="data/v35-auth.js"></script>
+  <script src="data/v35-shell.js"></script>
 </body>
 </html>

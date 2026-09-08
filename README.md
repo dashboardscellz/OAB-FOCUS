@@ -1,27 +1,44 @@
-# OAB Focus SUPER v30
+# OAB Focus SUPER v35
 
-A v30 preserva integralmente a arquitetura, o material jurídico e as correções responsivas da v29 e incorpora a **47ª OAB (47º Exame de Ordem Unificado), Prova Tipo 1 – Branca** ao banco de questões.
+## Novidades estruturais da v35
 
-## Novidades da v30
+- **Shell profissional:** a navegação global migrou da sidebar fixa para cabeçalho superior em dois níveis no desktop, com navegação horizontal e largura de conteúdo de até 1240 px.
+- **Sidebar contextual:** só aparece em fluxos em que agrega contexto, como trilha/leitor e administração.
+- **Mobile próprio:** topbar compacta + 5 destinos inferiores (Início, Estudar, Prepare-se, Questões e Mais), com safe-area e auditoria em 360/390/430/768 px.
+- **Tipografia e densidade:** interface e leitura usam Inter, cards perderam sombras e arredondamentos excessivos, hierarquia e espaçamento foram normalizados.
+- **Isolamento de contas:** novos usernames recebem identidade técnica SHA-256 sem colisão por pontuação; contas legadas continuam aceitas somente quando o username digitado corresponde ao `profile.username`.
+- **Cadastro seguro:** criar cadastro não troca a sessão ativa; progresso só pode ser salvo quando `user.uid === progressOwnerUid`.
+- **Troca de usuário limpa:** timers, questão atual, fila, resposta selecionada, leitor, streams e estado temporário são limpos entre contas.
 
-- 80 questões oficiais da 47ª OAB adicionadas ao banco, sem substituir as questões anteriores.
-- Enunciados e alternativas preservados a partir do caderno da prova Tipo 1 – Branca.
-- Gabarito preliminar oficial da FGV, publicado em 06/09/2026.
-- Comentário explicativo individual em todas as 80 questões, com regra jurídica e fundamento normativo.
-- Aviso visual nas questões da 47ª OAB indicando que o gabarito ainda é preliminar.
-- Classificação por disciplina e assunto; vínculos contextuais com o material apenas quando há correspondência segura.
-- Recorrência histórica ampliada para 13 provas completas: 30º–37º e 43º–47º EOU.
-- Banco total após a atualização: 2.416 questões.
-- Mapas mentais continuam removidos.
 
-## Atenção sobre o gabarito
+A v34 é uma revisão estrutural da experiência de estudo do OAB Focus. Ela preserva o material jurídico integral, o banco histórico, a 47ª OAB, o progresso existente, o login/Firebase e a arquitetura ampla do leitor, mas corrige a trilha, o feedback das questões, a grifagem e a medição de tempo de estudo.
 
-O gabarito usado nesta versão é o **preliminar** publicado pela FGV em 06/09/2026 para a prova Tipo 1 – Branca. O cronograma oficial prevê a divulgação do gabarito definitivo da 1ª fase em 23/09/2026. Se houver alteração após recursos, a 47ª OAB deverá ser atualizada novamente.
+## Principais correções da v34
 
-## Arquivos principais da atualização
+- **Trilha pedagógica auditada:** títulos-pai redundantes deixam de repetir integralmente os subtópicos; introduções próprias são preservadas e o recorte de cada unidade termina no próximo heading.
+- **Limpeza de falsos tópicos:** sumários, paginação, tabelas, quadros, status editoriais e outros headings contaminados são filtrados da trilha.
+- **Cobertura de questões por unidade:** cada unidade estudável recebe no mínimo 3 questões estritamente relacionadas ao microtema. Questões FGV/OAB reais têm prioridade; faltas são completadas por questões autorais claramente identificadas e excluídas das estatísticas históricas da FGV.
+- **Feedback visual de ações:** favoritos, alternativas selecionadas e ações de continuação passam a exibir estado selecionado/carregando de forma perceptível e acessível.
+- **47ª OAB aprofundada:** as 80 questões possuem pesquisa jurídica estruturada com resposta correta, fundamento, armadilha e análise das alternativas. Em resposta errada, o site informa exatamente a alternativa marcada, por que ela está errada e qual é a correta.
+- **Caderno de erros enriquecido:** registra alternativa marcada, resposta correta, conceito confundido, fundamento jurídico, explicação do erro e data, para alimentar revisão adaptativa.
+- **Grifagem ampliada:** funciona no material explicado, legislação e súmulas, com 6 cores (amarelo, verde, azul, rosa, lilás e laranja) e persistência por escopo.
+- **Tempo de estudo visível:** reaproveita a contagem de tempo ativo e mostra sessão, unidade, hoje e acumulado; aba oculta/inatividade não contam como estudo ativo.
+- **Progressão pedagógica:** leitura + prática contextual liberam a sequência; percentual de acerto não bloqueia a trilha, e os erros retornam para revisão.
+- **Mapas mentais continuam removidos.**
 
-- `data/v30-questions.js` — 80 questões da 47ª OAB com gabarito e comentários.
-- `data/v30-patch.js` — integração ao banco, vínculos contextuais seguros e aviso de gabarito preliminar.
-- `QA_ENGENHARIA_v30.md` — relatório de integridade e validação.
+## 47º Exame de Ordem — gabarito atual
 
-Para publicar, extraia o ZIP e execute `ATUALIZAR_GITHUB.cmd` ou copie a pasta para o repositório local e faça commit/push pelo GitHub Desktop.
+A v34 usa o **gabarito preliminar da FGV atualizado em 07/09/2026** para a Prova Tipo 1 – Branca. Nessa atualização, a questão 17 passou a ter resposta **D**. O sistema identifica o status como `preliminar-revisado-2026-09-07` para permitir nova atualização quando houver gabarito definitivo.
+
+## Arquivos centrais da atualização
+
+- `data/v34-research.js` — pesquisa jurídica estruturada das 80 questões da 47ª OAB.
+- `data/v34-patch.js` — trilha, cobertura contextual, feedback, caderno de erros, temporizador e estados visuais.
+- `data/v18-patch.js` — grifagem estendida para teoria, legislação e súmulas, com 6 cores.
+- `data/v30-questions.js` — gabarito atual da 47ª OAB e comentários-base atualizados.
+- `tests/v34_heavy_audit.py` — regressões específicas da auditoria pesada.
+- `QA_ENGENHARIA_v34.md` — relatório da validação desta versão.
+
+## Publicação
+
+Extraia o ZIP e execute `ATUALIZAR_GITHUB.cmd`, ou copie a pasta para `C:\Users\endoa\Documents\GitHub\OAB-FOCUS`, confira as alterações no GitHub Desktop e faça commit/push.

@@ -24,7 +24,7 @@
       const meta=panel.querySelector('.question-meta');
       if(meta) meta.insertAdjacentElement('afterend',note); else panel.prepend(note);
     }
-    note.innerHTML='<b>47ª OAB · gabarito preliminar</b><span>FGV Tipo 1 (Branca) · publicado em 06/09/2026. O definitivo está previsto para 23/09/2026.</span>';
+    note.innerHTML='<b>47ª OAB · gabarito preliminar</b><span>FGV Tipo 1 (Branca) · gabarito preliminar revisado em 07/09/2026. A questão 17 passou a ter resposta D.</span>';
   }
   try{
     if(typeof renderQuestionHost==='function'){ const old=renderQuestionHost; renderQuestionHost=function(...args){ const r=old.apply(this,args); decorate47(); return r; }; }
@@ -35,6 +35,6 @@
     @media(max-width:620px){.v30-prelim-note{align-items:flex-start;flex-direction:column}}
   `; document.head.appendChild(st);
   // v30 usa 13 provas completas: 30–37 e 43–47. A UI moderna lê V13_COMPLETE_EXAMS.length.
-  window.OAB_V30_META={exam:EXAM,questions:NEW.length,officialStatus:'preliminar-2026-09-06',completeExamCount:13,safeMappings:Object.keys(SAFE_MAP).length};
+  window.OAB_V30_META={exam:EXAM,questions:NEW.length,officialStatus:'preliminar-revisado-2026-09-07',completeExamCount:13,safeMappings:Object.keys(SAFE_MAP).length};
   window.OAB_V30_ACTIVE=true;
 })();

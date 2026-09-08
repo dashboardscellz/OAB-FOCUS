@@ -438,7 +438,7 @@
 
   function renderHighlightsView(){
     const ctx=api.readerSession.context||{}, data=highlightItemsForCurrent();
-    const colors=[['yellow','Amarelos'],['green','Verdes'],['blue','Azuis']];
+    const colors=[['yellow','Amarelos'],['green','Verdes'],['blue','Azuis'],['pink','Rosas'],['purple','Lilases'],['orange','Laranjas']];
     const body=`<div class="v26-highlight-groups">${colors.map(([color,label])=>{const list=data.items.filter(h=>(h.color||'yellow')===color);return `<section class="v26-highlight-group"><h3>${label} · ${list.length}</h3><div class="v26-highlight-list">${list.length?list.map(h=>`<article class="v26-highlight-item" data-highlight-id="${esc26(h.id)}"><blockquote>“${esc26(h.quote||'Trecho grifado')}”</blockquote><div class="v26-highlight-actions"><button data-v26-highlight-go="${esc26(h.id)}">Ir para este trecho</button><button data-v26-highlight-remove="${esc26(h.id)}">Remover</button></div></article>`).join(''):'<span class="muted">Nenhum grifo desta cor.</span>'}</div></section>`;}).join('')}</div>`;
     const node=internalFrame('highlights','GRIFOS DA UNIDADE',ctx.title||'Unidade atual','Revise os trechos que você destacou sem ocupar espaço permanente ao lado da leitura.',body);
     node.querySelectorAll('[data-v26-highlight-go]').forEach(btn=>btn.addEventListener('click',()=>{const h=data.items.find(x=>String(x.id)===btn.dataset.v26HighlightGo);if(h)goToHighlight(h);}));

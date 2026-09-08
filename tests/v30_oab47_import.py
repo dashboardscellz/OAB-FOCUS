@@ -6,7 +6,7 @@ INDEX=(ROOT/'index.html').read_text(encoding='utf-8')
 QFILE=ROOT/'data'/'v30-questions.js'
 PATCH=ROOT/'data'/'v30-patch.js'
 
-OFFICIAL='ABDCCDBBDCCADCCAAACBACACBBABDCBCCDCDCADADADBADCCADBBCDBDBBDAACBDDCBBBDADBADABDCA'
+OFFICIAL='ABDCCDBBDCCADCCADACBACACBBABDCBCCDCDCADADADBADCCADBBCDBDBBDAACBDDCBBBDADBADABDCA'
 
 def _load_questions():
     text=QFILE.read_text(encoding='utf-8')
@@ -32,7 +32,7 @@ def test_exactly_80_new_official_questions():
     assert [q['id'] for q in qs]==[f'oab47-{i:02d}' for i in range(1,81)]
     assert [q['number'] for q in qs]==list(range(1,81))
     assert all(q['exam']=='47º EOU' for q in qs)
-    assert all(q.get('officialStatus')=='preliminar-2026-09-06' for q in qs)
+    assert all(q.get('officialStatus')=='preliminar-revisado-2026-09-07' for q in qs)
 
 def test_official_preliminary_answer_key_matches_fgv_type_1():
     qs=_load_questions()
@@ -54,12 +54,11 @@ def test_all_questions_have_four_options_topics_and_real_comments():
 
 
 
-def test_question_17_preserves_official_preliminary_key_and_flags_controversy():
+def test_question_17_uses_fgv_revised_preliminary_key():
     q=_load_questions()[16]
-    assert 'ABCD'[q['answer']]=='A'
-    assert 'objeto de recurso' in q['comment'].lower() or 'controvert' in q['comment'].lower()
+    assert 'ABCD'[q['answer']]=='D'
     assert 'Tratado de Marraqueche' in q['comment']
-    assert 'alternativa D' in q['comment']
+    assert 'alterou o gabarito preliminar em 07/09/2026' in q['comment']
 
 def test_v30_patch_adds_exam_and_safe_context_map():
     text=PATCH.read_text(encoding='utf-8')
