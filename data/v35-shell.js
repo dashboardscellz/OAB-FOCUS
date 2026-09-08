@@ -28,7 +28,7 @@
     rail.querySelectorAll('[data-v35-route]').forEach(b=>b.onclick=()=>setRoute(b.dataset.v35Route));
   }
   function syncV35Navigation(routeName){
-    const app=document.getElementById('app');if(!app)return;const r=routeName||'home';app.querySelectorAll('.v35-primary-nav [data-route],.v35-mobile-brand[data-route]').forEach(b=>{const active=b.dataset.route===r||(r==='reader'&&b.dataset.route==='study');b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+    const app=document.getElementById('app');if(!app)return;const r=routeName||'home';app.querySelectorAll('.v35-primary-nav [data-route],.v35-mobile-brand[data-route]').forEach(b=>{b.classList.remove('v34-active-state');const active=b.dataset.route===r||(r==='reader'&&b.dataset.route==='study');b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
     app.querySelector('[data-v35-admin]')?.classList.toggle('hidden',profile?.role!=='admin');setV35ContextRail(r);syncTimer();
   }
   function openV35MoreSheet(){

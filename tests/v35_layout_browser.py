@@ -88,3 +88,38 @@ def test_admin_context_rail_stays_inside_centered_shell_without_overlap(browser)
         assert state['scroll'] <= state['inner'] + 2
     finally:
         page.close()
+
+def test_navigation_does_not_accumulate_legacy_green_active_states(browser):
+    page=page_for(browser,1440,900)
+    try:
+        state=page.evaluate("""() => {
+          const nav=[...document.querySelectorAll('.v35-primary-nav > button[data-route]')];
+          nav.find(b=>b.dataset.route==='home').classList.add('v34-active-state');
+          nav.find(b=>b.dataset.route==='study').classList.add('v34-active-state');
+          window.OAB_V35_SHELL.syncV35Navigation('prepare');
+          return nav.map(b=>({route:b.dataset.route,active:b.classList.contains('active'),legacy:b.classList.contains('v34-active-state')}));
+        }""")
+        assert [x['route'] for x in state if x['active']]==['prepare']
+        assert not any(x['legacy'] for x in state)
+    finally:
+        page.close()
+
+def test_home_hero_is_compact_flat_and_uses_clear_action_hierarchy(browser):
+    page=page_for(browser,1366,768)
+    try:
+        page.locator('.dashboard-hero .btn').nth(0).evaluate("e=>e.className='btn secondary'")
+        page.locator('.dashboard-hero .btn').nth(1).evaluate("e=>e.className='btn ghost light'")
+        state=page.evaluate("""() => {
+          const hero=document.querySelector('.dashboard-hero');
+          const primary=document.querySelector('.dashboard-hero .btn.secondary');
+          const secondary=document.querySelector('.dashboard-hero .btn.ghost.light');
+          const h=getComputedStyle(hero),p=getComputedStyle(primary),s=getComputedStyle(secondary);
+          return {height:hero.getBoundingClientRect().height,shadow:h.boxShadow,radius:h.borderRadius,primaryBg:p.backgroundColor,primaryColor:p.color,secondaryBg:s.backgroundColor,secondaryBorder:s.borderTopColor};
+        }""")
+        assert state['height'] <= 190
+        assert state['shadow']=='none'
+        assert state['radius'] in ('0px','0')
+        assert state['primaryBg'] not in ('rgba(0, 0, 0, 0)','rgb(255, 255, 255)')
+        assert state['secondaryBg'] in ('rgb(255, 255, 255)','rgba(0, 0, 0, 0)')
+    finally:
+        page.close()

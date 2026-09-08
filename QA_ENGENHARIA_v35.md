@@ -64,3 +64,14 @@ A auditoria das capturas pós-v35 identificou regressões sistêmicas no shell e
 - o contexto administrativo é sticky/in-flow e permanece centralizado dentro do shell.
 
 O relatório detalhado está em `AUDITORIA_VISUAL_v35_2026-09-08.md`.
+
+## v35.1 — segunda auditoria visual (2026-09-08)
+
+Correções de regressão visual observadas em produção:
+- limpeza de `v34-active-state` acumulado na navegação v35;
+- neutralização defensiva do estado verde legado no cabeçalho;
+- reset de sombra/raio herdados no dashboard hero;
+- compactação do painel de nível e ações do hero;
+- cache bust dos assets `v35-shell.css`, `v35-auth.js` e `v35-shell.js` com `?v=35.1`.
+
+Testes novos cobrem estado ativo acumulado, herança visual do hero, hierarquia dos CTAs e versionamento dos assets.

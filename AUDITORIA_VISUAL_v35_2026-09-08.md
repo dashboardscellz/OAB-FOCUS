@@ -63,3 +63,32 @@ Foram adicionados testes para impedir o retorno de:
 - “Mais” fica visualmente igual aos demais itens da barra superior.
 - Leitor mantém tipografia operacional coerente.
 - Questões exibe “Simulado completo”.
+
+## Rodada 2 — evidências enviadas após a primeira correção
+
+### 1. Abas visitadas permaneciam verdes
+**Sintoma:** depois de navegar por Início → Estudar → Prepare-se, mais de uma aba aparecia destacada simultaneamente.
+
+**Causa raiz:** `data/v34-patch.js` acrescenta a classe global `v34-active-state` aos elementos ativos/`aria-current`, porém a classe não é removida das rotas visitadas quando a rota muda. A v35 passou a usar `aria-current="page"` no novo cabeçalho e, por isso, ficou exposta a esse estado legado acumulativo.
+
+**Correção v35.1:** `syncV35Navigation()` limpa `v34-active-state` da navegação v35 antes de aplicar o novo estado; o CSS v35 também neutraliza defensivamente o visual verde legado dentro da navegação principal.
+
+### 2. Home continuava com volume visual da v19
+**Sintoma:** grande área vazia no bloco inicial, sombra extensa e painel de nível alto demais, apesar do redesign claro da v35.
+
+**Causa raiz:** a v35 removia o fundo escuro do `.dashboard-hero`, mas não anulava explicitamente `box-shadow` e `border-radius` herdados de versões anteriores. O `.hero-level-panel` também continuava consumindo altura por estilos antigos de tipografia/margens.
+
+**Correção v35.1:** reset explícito de sombra e raio, painel de nível compactado, CTA principal/secundário com hierarquia própria para fundo claro e altura do hero limitada por conteúdo real.
+
+### 3. Risco de o GitHub Pages continuar servindo shell anterior
+**Sintoma compatível:** alterações em `v35-shell.css`/`v35-shell.js` podiam não aparecer imediatamente mesmo com `index.html` atualizado.
+
+**Correção v35.1:** os três assets da camada v35 passaram a carregar com query de versão (`?v=35.1`), forçando nova URL de recurso para CSS, autenticação e shell e evitando reutilização do cache anterior.
+
+### Validação adicional
+- navegação não acumula estados verdes legados;
+- apenas a rota atual permanece ativa;
+- botão `Mais` mantém o mesmo contrato visual dos demais itens;
+- hero desktop medido abaixo de 190 px no cenário de regressão;
+- zero overflow horizontal permanece coberto nos viewports definidos;
+- login v32/v33 permaneceu sem alterações estruturais e com suas suítes responsivas preservadas.
