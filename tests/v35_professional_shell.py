@@ -6,10 +6,10 @@ def js(): return JS.read_text(encoding='utf-8')
 
 def test_assets_loaded_after_v34():
     h=INDEX.read_text(encoding='utf-8')
-    assert 'href="data/v35-shell.css?v=35.3"' in h
-    assert 'src="data/v35-shell.js?v=35.3"' in h
-    assert 'src="data/v35-auth.js?v=35.3"' in h
-    assert h.index('src="data/v35-shell.js?v=35.3"') > h.index('src="data/v34-patch.js"')
+    assert 'href="data/v35-shell.css?v=35.4"' in h
+    assert 'src="data/v35-shell.js?v=35.4"' in h
+    assert 'src="data/v35-auth.js?v=35.4"' in h
+    assert h.index('src="data/v35-shell.js?v=35.4"') > h.index('src="data/v34-patch.js"')
 
 def test_design_system_professional_width_and_sans_ui():
     s=css().replace(' ','')
@@ -98,7 +98,7 @@ def test_v35_home_hero_explicitly_resets_legacy_shadow_and_radius():
 
 def test_v35_versioned_assets_avoid_stale_github_pages_shell_cache():
     h=INDEX.read_text(encoding='utf-8')
-    for asset in ['data/v35-shell.css?v=35.3','data/v35-auth.js?v=35.3','data/v35-shell.js?v=35.3']:
+    for asset in ['data/v35-shell.css?v=35.4','data/v35-auth.js?v=35.4','data/v35-shell.js?v=35.4']:
         assert asset in h
 
 def test_v35_reader_redesign_declares_single_centered_reading_architecture():
@@ -152,3 +152,45 @@ def test_v35_reader_css_defensively_hides_redundant_practice_and_legacy_finish_b
     source=css().replace(' ','')
     for selector in ['body.v26-reader-active#zoneQuestions','body.v26-reader-active.v20-practice-shell','body.v26-reader-active.v16-reader-end','body.v26-reader-active.v18-reader-footer','body.v26-reader-active[data-reader-jump=\"questions\"]']:
         assert selector in source
+
+def test_v35_4_login_polish_installs_after_legacy_login_patches():
+    source=js()
+    assert 'installV35LoginPolish' in source
+    assert 'v35LoginPolish' in source
+    assert '#loginView .showcase-photo-wrap' in source
+    assert '#loginView .login-form-v11' in source
+
+
+def test_v35_4_short_desktop_founder_photo_has_real_editorial_presence():
+    source=js().replace(' ','')
+    # final runtime override must beat the old v33 220/250px portrait limits
+    assert 'min-height:330px!important' in source or 'min-height:320px!important' in source
+    assert 'height:clamp(330px,60vh,410px)!important' in source or 'height:clamp(320px,58vh,360px)!important' in source
+    assert 'grid-template-columns:minmax(250px,320px)minmax(300px,1fr)!important' in source or 'grid-template-columns:minmax(260px,330px)minmax(300px,1fr)!important' in source
+
+
+def test_v35_4_login_form_has_safe_viewport_gutters_and_no_horizontal_clipping():
+    source=js().replace(' ','')
+    assert '#loginView.login-v11{max-width:100vw!important;overflow:hidden!important' in source
+    assert '#loginView.login-form-v11{min-width:0!important;max-width:100%!important' in source
+    assert '#loginView.login-card-v11{width:min(100%,512px)!important;max-width:512px!important' in source
+
+
+def test_v35_4_questions_get_contextual_sticky_exit_control():
+    source=js()
+    assert 'enhanceV35Questions' in source
+    assert 'v35-question-exit' in source
+    assert 'questionOrigin' in source
+    assert 'Voltar' in source
+    css_source=css().replace(' ','')
+    assert '.v35-question-exit{' in css_source
+    start=css_source.find('.v35-question-exit{')
+    block=css_source[start:css_source.find('}',start)+1]
+    assert 'position:sticky' in block
+    assert 'z-index:' in block
+
+
+def test_v35_4_cache_version_is_bumped():
+    h=INDEX.read_text(encoding='utf-8')
+    for asset in ['data/v35-shell.css?v=35.4','data/v35-auth.js?v=35.4','data/v35-shell.js?v=35.4']:
+        assert asset in h

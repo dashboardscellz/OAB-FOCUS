@@ -101,3 +101,14 @@ A pedido do usuário, a leitura passou a priorizar somente o material e controle
 A remoção é aplicada pelo adaptador v35 e também protegida por CSS para impedir flash/reinserção tardia por patches legados. A progressão guiada da v27 não foi removida. Assets versionados com `?v=35.3`.
 
 Validação: 162 testes automatizados, distribuídos em 67 (v26–v29), 47 (v30–v34) e 48 (v35).
+
+
+## v35.4 — acabamento visual e navegação contextual (2026-09-08)
+
+- Login recebe override final após v32/v33 para aumentar a presença do retrato em desktop baixo sem criar overflow.
+- Formulário de login passa a ter largura/gutters defensivos contra corte lateral.
+- A tela de Questões recebe controle sticky `← Voltar`, com captura da rota de origem.
+- Foram adicionados testes de fonte e Playwright para presença do retrato, ausência de overflow e retorno contextual.
+- Assets v35 versionados com `?v=35.4`.
+
+Validação v35.4: **169 testes passaram** quando as 12 suítes foram executadas separadamente; 55 deles pertencem às suítes específicas v35 (account browser, isolamento, layout browser e shell).

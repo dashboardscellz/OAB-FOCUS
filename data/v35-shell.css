@@ -190,3 +190,10 @@ body.v26-reader-active .v20-practice-shell,
 body.v26-reader-active .v16-reader-end,
 body.v26-reader-active .v18-reader-footer,
 body.v26-reader-active [data-reader-jump="questions"]{display:none!important;}
+
+
+/* v35.4 — saída contextual da experiência de questões. */
+.v35-question-exit{position:sticky;top:calc(var(--v35-nav-h) + 10px);z-index:45;display:inline-flex;align-items:center;gap:8px;min-height:38px;margin:0 0 12px;padding:0 13px;border:1px solid var(--v35-border);border-radius:9px;background:rgba(255,255,255,.96);color:var(--ink-2);font:750 .78rem/1 Inter,system-ui,sans-serif;box-shadow:0 5px 18px rgba(15,23,42,.07);backdrop-filter:blur(12px);cursor:pointer;}
+.v35-question-exit:hover{background:#f7f9fb;color:var(--brand);border-color:#cbd5e1;}
+.v35-question-exit:focus-visible{outline:3px solid rgba(37,99,235,.2);outline-offset:2px;}
+@media(max-width:768px){.v35-question-exit{top:66px;margin-bottom:10px;min-height:42px;padding:0 12px;}}

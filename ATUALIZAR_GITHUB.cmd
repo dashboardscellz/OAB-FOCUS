@@ -208,7 +208,7 @@ echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v35.3 - leitor limpo e sem blocos redundantes
+echo 2. Summary: OAB Focus v35.4 - acabamento visual e voltar nas questoes
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

@@ -3,11 +3,46 @@
   'use strict';
   const contextualRoutes=new Set(['admin']);
   const routeLabels={home:'Início',study:'Estudar',prepare:'Prepare-se',questions:'Questões',review:'Revisar',performance:'Desempenho',highyield:'Mais cobrados',ranking:'Ranking',profile:'Perfil',settings:'Configurações',admin:'Administração',reader:'Estudar'};
+  let questionOrigin={route:'home',payload:null};
   function shellHtml(){return `<header class="v35-global-header" aria-label="Cabeçalho principal">
     <div class="v35-header-util"><button class="v35-brand" data-route="home">OAB Focus <small>1ª fase</small></button><button class="v35-search" id="v35SearchBtn">Buscar assunto ou questão</button><div class="v35-header-spacer"></div><div class="v35-study-session" id="v35StudySession">Sessão 00:00</div><button class="v35-profile-trigger" id="v35ProfileBtn">Perfil</button></div>
     <nav class="v35-primary-nav" aria-label="Navegação principal"><button data-route="home">Início</button><button data-route="study">Estudar</button><button data-route="prepare">Prepare-se</button><button data-route="questions">Questões</button><button data-route="review">Revisar</button><button data-route="performance">Desempenho</button><button data-route="highyield">Mais cobrados</button><span class="v35-more-wrap"><button data-v35-more>Mais ▾</button><span class="v35-more-menu" role="menu"><button data-v35-route="ranking">Ranking</button><button data-v35-route="profile">Perfil</button><button data-v35-route="settings">Configurações</button><button data-v35-admin class="hidden" data-v35-route="admin">Administração</button><button class="danger" data-v35-logout>Sair</button></span></span></nav>
     <div class="v35-mobile-topbar"><button class="v35-mobile-brand" data-route="home">OAB Focus</button><div class="v35-mobile-actions"><button id="v35MobileSearch" aria-label="Buscar">⌕</button><button id="v35MobileProfile" aria-label="Perfil">○</button></div></div>
   </header>`;}
+  function installV35LoginPolish(){
+    if(document.getElementById('v35LoginPolish'))return;
+    const style=document.createElement('style');style.id='v35LoginPolish';style.textContent=`
+      /* v35.4 — acabamento institucional do login, aplicado depois dos patches v32/v33. */
+      #loginView.login-v11{max-width:100vw!important;overflow:hidden!important;min-width:0!important;}
+      #loginView .login-showcase{min-width:0!important;}
+      #loginView .login-showcase:before,#loginView .login-showcase:after{opacity:.58!important;}
+      #loginView .login-form-v11{min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important;padding:clamp(18px,2.2vw,30px)!important;overflow:hidden!important;}
+      #loginView .login-card-v11{width:min(100%,512px)!important;max-width:512px!important;min-width:0!important;box-sizing:border-box!important;margin:0 auto!important;}
+      #loginView .login-card-v11 input,#loginView .login-card-v11 button,#loginView .login-card-v11 .password-row{max-width:100%!important;min-width:0!important;box-sizing:border-box!important;}
+      @media (min-width:1101px){
+        #loginView .showcase-main{grid-template-columns:minmax(280px,340px) minmax(300px,1fr)!important;gap:clamp(28px,3.4vw,54px)!important;align-items:center!important;}
+        #loginView .showcase-photo-wrap{height:clamp(390px,62vh,650px)!important;min-height:390px!important;width:100%!important;align-self:end!important;overflow:visible!important;filter:drop-shadow(0 24px 30px rgba(0,0,0,.26))!important;}
+        #loginView .showcase-photo-wrap img{height:100%!important;width:auto!important;max-width:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:none!important;}
+        #loginView .showcase-story{max-width:520px!important;}
+        #loginView .showcase-story p{max-width:44ch!important;}
+      }
+      @media (min-width:1101px) and (max-height:720px){
+        #loginView .showcase-main{grid-template-columns:minmax(260px,330px) minmax(300px,1fr)!important;gap:clamp(26px,3vw,44px)!important;}
+        #loginView .showcase-photo-wrap{height:clamp(330px,60vh,410px)!important;min-height:330px!important;}
+        #loginView .showcase-story h1{font-size:clamp(2.45rem,3.8vw,3.2rem)!important;margin:7px 0 13px!important;}
+        #loginView .showcase-story p{font-size:clamp(.84rem,1.08vw,.96rem)!important;line-height:1.46!important;}
+      }
+      @media (min-width:1101px) and (max-height:630px){
+        #loginView .showcase-photo-wrap{height:clamp(320px,58vh,360px)!important;min-height:320px!important;}
+        #loginView .showcase-main{grid-template-columns:minmax(250px,320px) minmax(300px,1fr)!important;}
+        #loginView .showcase-story h1{font-size:clamp(2.35rem,3.6vw,3rem)!important;}
+      }
+      @media (max-width:1100px){
+        #loginView.login-v11{overflow-x:hidden!important;overflow-y:auto!important;}
+        #loginView .login-form-v11{padding-inline:max(14px,env(safe-area-inset-left))!important;}
+      }
+    `;document.head.appendChild(style);
+  }
   function mountV35Shell(){
     const app=document.getElementById('app');if(!app||app.querySelector('.v35-global-header'))return;
     app.insertAdjacentHTML('afterbegin',shellHtml());
@@ -58,11 +93,22 @@
     document.querySelectorAll('[data-v35-sheet-route]').forEach(b=>b.onclick=()=>{closeModal();setRoute(b.dataset.v35SheetRoute);});document.querySelector('[data-v35-sheet-logout]')?.addEventListener('click',()=>{closeModal();window.OAB_V35_AUTH?.logoutV35?.();});
   }
   function enhanceV35Home(){const hero=document.querySelector('#content .dashboard-hero');if(hero)hero.classList.add('v35-home-hero');}
-  function enhanceRoute(){syncV35Navigation(typeof route==='string'?route:'home');if(route==='home')enhanceV35Home();if(route==='reader')scheduleV35Reader();}
-  const baseSetRoute=typeof setRoute==='function'?setRoute:null;if(baseSetRoute){window.setRoute=setRoute=function(...args){const out=baseSetRoute(...args);requestAnimationFrame(enhanceRoute);return out;};}
+  function goBackFromQuestions(){
+    const origin=questionOrigin&&questionOrigin.route&&questionOrigin.route!=='questions'?questionOrigin:{route:'home',payload:null};
+    setRoute(origin.route,origin.payload||null);
+  }
+  function enhanceV35Questions(){
+    if(typeof route==='string'&&route!=='questions')return;
+    const host=document.getElementById('content');if(!host||host.querySelector('.v35-question-exit'))return;
+    const exit=document.createElement('button');exit.type='button';exit.className='v35-question-exit';exit.innerHTML='<span aria-hidden="true">←</span><span>Voltar</span>';
+    exit.setAttribute('aria-label','Voltar para a tela anterior');exit.addEventListener('click',goBackFromQuestions);host.insertBefore(exit,host.firstChild);
+  }
+  function enhanceRoute(){syncV35Navigation(typeof route==='string'?route:'home');if(route==='home')enhanceV35Home();if(route==='reader')scheduleV35Reader();if(route==='questions')enhanceV35Questions();}
+  const baseSetRoute=typeof setRoute==='function'?setRoute:null;if(baseSetRoute){window.setRoute=setRoute=function(...args){const target=args[0],current=typeof route==='string'?route:'home';if(target==='questions'&&current!=='questions')questionOrigin={route:current||'home',payload:typeof routePayload!=='undefined'?routePayload:null};const out=baseSetRoute(...args);requestAnimationFrame(enhanceRoute);return out;};}
   const baseRenderRoute=typeof renderRoute==='function'?renderRoute:null;if(baseRenderRoute){window.renderRoute=renderRoute=function(...args){const out=baseRenderRoute(...args);requestAnimationFrame(enhanceRoute);return out;};}
+  const baseRenderQuestions=typeof renderQuestions==='function'?renderQuestions:null;if(baseRenderQuestions){window.renderQuestions=renderQuestions=function(...args){const out=baseRenderQuestions(...args);requestAnimationFrame(enhanceV35Questions);return out;};}
   document.addEventListener('click',e=>{const more=e.target.closest?.('[data-v35-mobile-more]');if(more){e.preventDefault();e.stopImmediatePropagation();openV35MoreSheet();}},true);
   window.addEventListener('resize',()=>setV35ContextRail(typeof route==='string'?route:'home'));setInterval(syncTimer,1000);
-  mountV35Shell();
-  window.OAB_V35_SHELL={mountV35Shell,syncV35Navigation,setV35ContextRail,openV35MoreSheet,enhanceV35Home,enhanceV35Reader,cleanupV35ReaderRedundancy,contextualRoutes,routeLabels};
+  installV35LoginPolish();mountV35Shell();
+  window.OAB_V35_SHELL={mountV35Shell,syncV35Navigation,setV35ContextRail,openV35MoreSheet,enhanceV35Home,enhanceV35Reader,cleanupV35ReaderRedundancy,enhanceV35Questions,goBackFromQuestions,installV35LoginPolish,contextualRoutes,routeLabels};
 })();

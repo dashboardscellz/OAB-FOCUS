@@ -167,3 +167,52 @@ def test_reader_cleanup_removes_redundant_practice_preview_and_legacy_finish_ui(
         assert state=={'zone':False,'preview':False,'oldEnd':False,'oldFooter':False,'questionTab':False}
     finally:
         page.close()
+
+def login_page(browser,w=1344,h=584):
+    text=INDEX.read_text(encoding='utf-8')
+    styles='\n'.join(re.findall(r'<style[^>]*>(.*?)</style>',text,re.S|re.I))
+    start=text.index('<section id="loginView"')
+    end=text.index('</section>',start)+len('</section>')
+    login=text[start:end]
+    page=browser.new_page(viewport={'width':w,'height':h})
+    page.set_content(f'<html><head><style>{styles}</style></head><body>{login}</body></html>')
+    for patch in ['v29-patch.js','v32-patch.js','v33-patch.js','v35-shell.js']:
+        page.add_script_tag(path=str(ROOT/'data'/patch))
+    page.eval_on_selector('#loginView','e=>e.classList.remove("hidden")')
+    page.wait_for_timeout(80)
+    return page
+
+
+def test_v35_4_short_desktop_login_has_large_founder_presence_and_safe_card(browser):
+    page=login_page(browser,1344,584)
+    try:
+        state=page.evaluate("""() => {
+          const photo=document.querySelector('.showcase-photo-wrap').getBoundingClientRect();
+          const image=document.querySelector('.showcase-photo-wrap img').getBoundingClientRect();
+          const card=document.querySelector('.login-card-v11').getBoundingClientRect();
+          return {photoH:photo.height,imageH:image.height,imageW:image.width,cardLeft:card.left,cardRight:card.right,scroll:document.documentElement.scrollWidth,inner:innerWidth};
+        }""")
+        assert state['photoH'] >= 330
+        assert state['imageH'] >= 330
+        assert state['imageW'] >= 160
+        assert state['cardLeft'] >= 10
+        assert state['cardRight'] <= state['inner'] - 10
+        assert state['scroll'] <= state['inner'] + 2
+    finally:
+        page.close()
+
+
+def test_v35_4_questions_exit_returns_to_captured_origin(browser):
+    page=page_for(browser,1366,768)
+    try:
+        page.evaluate("""() => {
+          document.getElementById('content').innerHTML='<div class="page-head"><h2>Questões</h2></div><div class="filter-panel">Filtros</div>';
+          setRoute('reader');
+          setRoute('questions');
+          window.OAB_V35_SHELL.enhanceV35Questions();
+        }""")
+        assert page.locator('.v35-question-exit').is_visible()
+        page.locator('.v35-question-exit').click()
+        assert page.evaluate('route') == 'reader'
+    finally:
+        page.close()
