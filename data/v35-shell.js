@@ -31,17 +31,31 @@
     const app=document.getElementById('app');if(!app)return;const r=routeName||'home';app.querySelectorAll('.v35-primary-nav [data-route],.v35-mobile-brand[data-route]').forEach(b=>{b.classList.remove('v34-active-state');const active=b.dataset.route===r||(r==='reader'&&b.dataset.route==='study');b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
     app.querySelector('[data-v35-admin]')?.classList.toggle('hidden',profile?.role!=='admin');setV35ContextRail(r);syncTimer();
   }
+  function enhanceV35Reader(){
+    if(typeof route==='string'&&route!=='reader')return;
+    const article=document.querySelector('.v26-reading-stage #readerArticle,#readerArticle');
+    const header=article?.querySelector('.v18-doc-header');
+    const timer=document.getElementById('v34StudyTimer');
+    const meta=header ? header.querySelector('.v18-doc-meta') : null;
+    if(article)article.classList.add('v35-reader-article');
+    if(timer&&header&&meta&&(timer.parentNode!==header||timer.nextElementSibling!==meta))header.insertBefore(timer,meta);
+  }
+  function scheduleV35Reader(){
+    enhanceV35Reader();
+    setTimeout(enhanceV35Reader,90);
+    setTimeout(enhanceV35Reader,280);
+  }
   function openV35MoreSheet(){
     const admin=profile?.role==='admin'?'<button data-v35-sheet-route="admin">Administração</button>':'';
     openModal(`<div class="modal-head"><div><span class="eyebrow">OAB FOCUS</span><h3>Mais opções</h3></div><button class="icon-btn" data-close>×</button></div><div class="v35-sheet-links"><button data-v35-sheet-route="review">Revisar</button><button data-v35-sheet-route="performance">Desempenho</button><button data-v35-sheet-route="highyield">Mais cobrados</button><button data-v35-sheet-route="ranking">Ranking</button><button data-v35-sheet-route="profile">Perfil</button><button data-v35-sheet-route="settings">Configurações</button>${admin}<button class="danger" data-v35-sheet-logout>Sair</button></div>`);
     document.querySelectorAll('[data-v35-sheet-route]').forEach(b=>b.onclick=()=>{closeModal();setRoute(b.dataset.v35SheetRoute);});document.querySelector('[data-v35-sheet-logout]')?.addEventListener('click',()=>{closeModal();window.OAB_V35_AUTH?.logoutV35?.();});
   }
   function enhanceV35Home(){const hero=document.querySelector('#content .dashboard-hero');if(hero)hero.classList.add('v35-home-hero');}
-  function enhanceRoute(){syncV35Navigation(typeof route==='string'?route:'home');if(route==='home')enhanceV35Home();}
+  function enhanceRoute(){syncV35Navigation(typeof route==='string'?route:'home');if(route==='home')enhanceV35Home();if(route==='reader')scheduleV35Reader();}
   const baseSetRoute=typeof setRoute==='function'?setRoute:null;if(baseSetRoute){window.setRoute=setRoute=function(...args){const out=baseSetRoute(...args);requestAnimationFrame(enhanceRoute);return out;};}
   const baseRenderRoute=typeof renderRoute==='function'?renderRoute:null;if(baseRenderRoute){window.renderRoute=renderRoute=function(...args){const out=baseRenderRoute(...args);requestAnimationFrame(enhanceRoute);return out;};}
   document.addEventListener('click',e=>{const more=e.target.closest?.('[data-v35-mobile-more]');if(more){e.preventDefault();e.stopImmediatePropagation();openV35MoreSheet();}},true);
   window.addEventListener('resize',()=>setV35ContextRail(typeof route==='string'?route:'home'));setInterval(syncTimer,1000);
   mountV35Shell();
-  window.OAB_V35_SHELL={mountV35Shell,syncV35Navigation,setV35ContextRail,openV35MoreSheet,enhanceV35Home,contextualRoutes,routeLabels};
+  window.OAB_V35_SHELL={mountV35Shell,syncV35Navigation,setV35ContextRail,openV35MoreSheet,enhanceV35Home,enhanceV35Reader,contextualRoutes,routeLabels};
 })();

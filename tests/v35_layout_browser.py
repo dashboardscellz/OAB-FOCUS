@@ -123,3 +123,23 @@ def test_home_hero_is_compact_flat_and_uses_clear_action_hierarchy(browser):
         assert state['secondaryBg'] in ('rgb(255, 255, 255)','rgba(0, 0, 0, 0)')
     finally:
         page.close()
+
+READER_HTML="""<div id='app' class='app-shell'><main class='main-area'><div id='content' class='content'><section class='v26-reader-shell'><div class='v26-reading-stage'><article id='readerArticle' class='reader-article v12'><header class='v18-doc-header'><div class='trail'>Constitucional › Teoria da Constituição › Poder Constituinte</div><div class='kicker'>Leitura principal</div><h1>Poder Constituinte</h1><p>Conteúdo integral desta unidade. A interface organiza a leitura sem reduzir ou substituir o material jurídico.</p><section id='v34StudyTimer' class='v34-study-timer'><div class='v34-time-card'><span><small>Sessão</small><b>00:11</b></span><span><small>Nesta unidade</small><b>00:11</b></span><span><small>Hoje</small><b>00:11</b></span><span><small>Total acumulado</small><b>00:11</b></span></div></section><div class='v18-doc-meta'><span>≈ 1 min de leitura</span><span>18 questões</span><span>6% lido</span></div></header><section class='study-zone' id='zoneTheory'><div class='study-zone-head'><div><span class='zone-kicker'>BASE DO ESTUDO</span><h2>Material explicado</h2><p>Trecho integral da unidade selecionada.</p></div></div><div class='primary-material'><section class='integral-section'><div class='integral-section-head'><span class='integral-kind'>TEORIA COMPLETA</span><h2>Teoria da Constituição › Poder Constituinte</h2></div><div class='integral-body'><h3>1. Poder Constituinte</h3><p>O poder constituinte é a capacidade de elaborar, modificar ou revogar uma Constituição.</p></div></section></div></section></article></div></section></div></main></div><div class='v18-highlight-dock'><span class='label'><b>GRIFAR</b><small>teoria, lei e súmulas</small></span><button></button><button></button><button></button><button class='tool'>Grifos</button></div>"""
+
+def reader_page(browser,w=1366,h=768):
+    page=browser.new_page(viewport={'width':w,'height':h})
+    legacy="""body{margin:0}.content{width:min(calc(100% - 40px),1240px);margin:0 auto}.v26-reader-shell{width:100%;max-width:1240px;margin:0 auto}.v26-reading-stage{display:flex;justify-content:center}.v26-reading-stage #readerArticle{width:min(100%,980px);max-width:980px;padding:44px 62px 62px;box-sizing:border-box}.v18-doc-header{margin-bottom:38px}.v34-time-card{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.v34-time-card span{border:1px solid #ddd;padding:10px}.primary-material{border:1px solid #bcd;background:white;border-radius:18px;box-shadow:0 10px 30px #ddd}.integral-body{padding:22px 24px}.v18-highlight-dock{position:fixed;right:18px;bottom:18px;display:flex;gap:8px;padding:10px;background:white;border:1px solid #ddd}"""
+    page.set_content(f"<html><head><style>{legacy}\n{CSS.read_text(encoding='utf-8')}</style></head><body class='v26-reader-active v18-reader-active'>{READER_HTML}</body></html>")
+    return page
+
+def test_reader_redesign_uses_wide_centered_article_and_integrated_timer(browser):
+    page=reader_page(browser)
+    try:
+        state=page.evaluate("""() => { const article=document.querySelector('#readerArticle').getBoundingClientRect(); const timer=document.querySelector('#v34StudyTimer').getBoundingClientRect(); const dock=document.querySelector('.v18-highlight-dock').getBoundingClientRect(); return {articleX:article.x,articleW:article.width,timerX:timer.x,timerW:timer.width,dockCenter:dock.x+dock.width/2,viewport:innerWidth}; }""")
+        assert state['articleW'] >= 900
+        assert abs((state['articleX'] + state['articleW']/2) - state['viewport']/2) <= 4
+        assert state['timerX'] >= state['articleX'] - 2
+        assert state['timerX'] + state['timerW'] <= state['articleX'] + state['articleW'] + 2
+        assert abs(state['dockCenter'] - state['viewport']/2) <= 4
+    finally:
+        page.close()

@@ -75,3 +75,15 @@ Correções de regressão visual observadas em produção:
 - cache bust dos assets `v35-shell.css`, `v35-auth.js` e `v35-shell.js` com `?v=35.1`.
 
 Testes novos cobrem estado ativo acumulado, herança visual do hero, hierarquia dos CTAs e versionamento dos assets.
+
+
+## v35.2 — redesenho do leitor (2026-09-08)
+
+- Leitor reorganizado em uma única superfície central de estudo.
+- Estrutura visual de até 1000 px, com medida textual principal de 760 px.
+- Temporizadores de sessão/unidade/hoje/total integrados ao cabeçalho da leitura.
+- Material explicado deixa de usar aparência de card dentro de card.
+- Barra de grifo centralizada e com espaço inferior reservado para não cobrir o texto.
+- Toolbar do leitor refinada e alinhada à largura do artigo.
+- Mobile mantém coluna única, timers em 2x2 e highlighter acima da navegação inferior.
+- Assets v35 versionados com `?v=35.2` para evitar cache antigo no GitHub Pages.

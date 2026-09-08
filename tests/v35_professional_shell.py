@@ -6,10 +6,10 @@ def js(): return JS.read_text(encoding='utf-8')
 
 def test_assets_loaded_after_v34():
     h=INDEX.read_text(encoding='utf-8')
-    assert 'href="data/v35-shell.css?v=35.1"' in h
-    assert 'src="data/v35-shell.js?v=35.1"' in h
-    assert 'src="data/v35-auth.js?v=35.1"' in h
-    assert h.index('src="data/v35-shell.js?v=35.1"') > h.index('src="data/v34-patch.js"')
+    assert 'href="data/v35-shell.css?v=35.2"' in h
+    assert 'src="data/v35-shell.js?v=35.2"' in h
+    assert 'src="data/v35-auth.js?v=35.2"' in h
+    assert h.index('src="data/v35-shell.js?v=35.2"') > h.index('src="data/v34-patch.js"')
 
 def test_design_system_professional_width_and_sans_ui():
     s=css().replace(' ','')
@@ -98,5 +98,45 @@ def test_v35_home_hero_explicitly_resets_legacy_shadow_and_radius():
 
 def test_v35_versioned_assets_avoid_stale_github_pages_shell_cache():
     h=INDEX.read_text(encoding='utf-8')
-    for asset in ['data/v35-shell.css?v=35.1','data/v35-auth.js?v=35.1','data/v35-shell.js?v=35.1']:
+    for asset in ['data/v35-shell.css?v=35.2','data/v35-auth.js?v=35.2','data/v35-shell.js?v=35.2']:
         assert asset in h
+
+def test_v35_reader_redesign_declares_single_centered_reading_architecture():
+    source=css().replace(' ','')
+    assert '--v35-reader-frame:1000px' in source
+    assert '--v35-reading-measure:760px' in source
+    for selector in ['body.v26-reader-active#app.content','body.v26-reader-active.v26-reader-shell','body.v26-reader-active.v26-reading-stage#readerArticle']:
+        assert selector in source
+
+
+def test_v35_reader_timer_is_rehomed_into_document_header_before_metadata():
+    source=js()
+    assert 'enhanceV35Reader' in source
+    assert "document.getElementById('v34StudyTimer')" in source
+    assert "header.querySelector('.v18-doc-meta')" in source
+    assert 'insertBefore(timer,meta)' in source.replace(' ','')
+
+
+def test_v35_reader_highlighter_is_centered_and_content_reserves_space_for_it():
+    source=css().replace(' ','')
+    assert 'body.v26-reader-active.v18-highlight-dock{' in source
+    start=source.find('body.v26-reader-active.v18-highlight-dock{')
+    block=source[start:source.find('}',start)+1]
+    assert 'left:50%!important' in block
+    assert 'transform:translateX(-50%)!important' in block
+    assert 'right:auto!important' in block
+    assert 'bottom:18px!important' in block
+    article=source[source.find('body.v26-reader-active.v26-reading-stage#readerArticle{'):]
+    article=article[:article.find('}')+1]
+    assert 'padding-bottom:' in article
+
+
+def test_v35_reader_primary_material_is_flat_not_nested_card_on_card():
+    source=css().replace(' ','')
+    selector='body.v26-reader-active.v18-reader.primary-material{'
+    start=source.find(selector)
+    assert start>=0
+    block=source[start:source.find('}',start)+1]
+    assert 'border:0!important' in block
+    assert 'box-shadow:none!important' in block
+    assert 'background:transparent!important' in block

@@ -42,3 +42,7 @@ A v34 usa o **gabarito preliminar da FGV atualizado em 07/09/2026** para a Prova
 ## Publicação
 
 Extraia o ZIP e execute `ATUALIZAR_GITHUB.cmd`, ou copie a pasta para `C:\Users\endoa\Documents\GitHub\OAB-FOCUS`, confira as alterações no GitHub Desktop e faça commit/push.
+
+
+### v35.2
+Redesenho do leitor: coluna central de estudo, métricas integradas, material plano e barra de grifo centralizada.
