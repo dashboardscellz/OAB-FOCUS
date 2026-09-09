@@ -139,7 +139,7 @@
     }
     return {rule:'',basis:QUALITY?.extractLegalBasis?.(text)||''};
   }
-  // v35.15 authorial contract includes research: structured feedback and preserves excludeFromHistoricalStats:true and sourceType:'authorial'; delegates buildResearch and distractor construction to OAB_V35_AUTHORIAL_FGV while preserving isCompleteLegalStatement validation.
+  // v35.18 authorial contract includes research: structured feedback and preserves excludeFromHistoricalStats:true and sourceType:'authorial'; delegates buildResearch and distractor construction to OAB_V35_AUTHORIAL_FGV while preserving isCompleteLegalStatement validation.
   function distractorsFor(rule,label){
     return window.OAB_V35_AUTHORIAL_FGV?.buildDistractors?.(rule,label)||[];
   }

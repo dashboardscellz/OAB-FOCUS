@@ -145,3 +145,13 @@ A aba principal **Questões** agora mantém seu próprio estado de filtros e nã
 - Corrige chips invisíveis no “De onde parou”, excesso de vazio e reserva de rolagem acima da bottom navigation.
 - Garante uma única aba ativa na navegação inferior e reforça `min-width:0/max-width:100%` em containers críticos.
 - Inclui `OAB_MOBILE_APP.auditMobileGeometry()` e o `PROMPT_MESTRE_REVISAO_PESADA_MOBILE_v35_17.md`.
+
+
+### v35.18 — Coerência final do motor autoral
+
+- remove `OBS:` e marcações do tipo `CAIU NA OAB` das questões autorais;
+- impede cenários genéricos de uma disciplina de serem combinados com regra jurídica de outro instituto;
+- adiciona cenários específicos para hipóteses detectáveis e fallback seguro centrado no tópico;
+- rejeita alternativas duplicadas ou quase duplicadas e evita mutações numéricas em números de prova/artigo;
+- corrige substituições de palavras curtas acentuadas que podiam corromper termos como `réu`;
+- atualiza cache dos módulos de geração para `35.18`.

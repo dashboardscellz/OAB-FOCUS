@@ -5,7 +5,7 @@
   if(root) root.OAB_V35_QUESTION_QUALITY=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const VERSION='35.8';
+  const VERSION='35.18';
   const LETTERS='ABCDE';
   const GENERIC_PATTERNS=[
     /Questão autoral de fixação/i,
@@ -19,6 +19,18 @@
   const VERB_HINT=/\b(?:é|são|foi|será|serão|deve|devem|deverá|deverão|pode|podem|poderá|poderão|compete|cabe|exige|depend|veda|proíbe|permite|admite|assegura|garante|constitu|consiste|prevê|determina|responde|incumbe|aplica|afasta|impede|ocorre|possui|inclui|considera|autoriza|obriga|prescreve|decai|requer|pressupõe)\w*\b/i;
 
   const clean=(s='')=>String(s).replace(/\s+/g,' ').trim();
+  function sanitizeRule(s=''){
+    let x=clean(s)
+      .replace(/^\s*(?:OBS(?:ERVA[CÇ][AÃ]O)?|NOTA)\s*:\s*/i,'')
+      .replace(/\*+\s*(?:CAIU\s+NA\s+OAB|NA\s+OAB)\s*[-–—:]?\s*\d{1,3}(?:[ºªo])?\s*\*+/gi,' ')
+      .replace(/\(?\s*(?:CAIU\s+NA\s+OAB|NA\s+OAB)\s*[-–—:]?\s*\d{1,3}(?:[ºªo])?\s*\)?/gi,' ')
+      .replace(/\s+([,.;:!?])/g,'$1')
+      .replace(/\.{2,}/g,'.')
+      .replace(/\s+/g,' ')
+      .trim();
+    x=x.replace(/^[-–—:;,.\s]+/,'').replace(/\s*\*+\s*$/,'').trim();
+    return x;
+  }
   const norm=(s='')=>clean(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const asciiWords=(s='')=>norm(s).replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/).filter(Boolean);
   const lastWord=(s='')=>{const a=asciiWords(s);return a[a.length-1]||'';};
@@ -43,7 +55,7 @@
     return true;
   }
   function logicalParagraphs(text=''){
-    const raw=String(text).replace(/\r/g,'').split('\n').map(x=>x.replace(/^[-•▪◦]\s*/,'').trim());
+    const raw=String(text).replace(/\r/g,'').split('\n').map(x=>sanitizeRule(x.replace(/^[-•▪◦]\s*/,''))).map(x=>x.trim());
     const out=[]; let buf='';
     const flush=()=>{const x=clean(buf);if(x)out.push(x);buf='';};
     for(const line of raw){
@@ -85,16 +97,19 @@
     return found.join('; ');
   }
   function extractRule(text='',label=''){
-    const candidates=logicalParagraphs(text).filter(isCompleteLegalStatement);
+    const candidates=logicalParagraphs(text).map(sanitizeRule).filter(isCompleteLegalStatement);
     candidates.sort((a,b)=>scoreRule(b,label)-scoreRule(a,label));
     let rule=candidates[0]||'';
     if(!rule){
-      const lines=String(text).replace(/\r/g,'').split('\n').map(clean).filter(x=>x&&!looksHeading(x));
+      const lines=String(text).replace(/\r/g,'').split('\n').map(x=>sanitizeRule(x)).filter(x=>x&&!looksHeading(x));
       for(let i=0;i<lines.length;i++){
-        const joined=clean([lines[i],lines[i+1]||'',lines[i+2]||''].join(' '));
+        const joined=sanitizeRule([lines[i],lines[i+1]||'',lines[i+2]||''].join(' '));
         if(isCompleteLegalStatement(joined)){rule=joined;break;}
       }
     }
+    rule=sanitizeRule(rule);
+    const lab=clean(label);
+    if(lab && norm(rule).startsWith(norm(lab)+' ')) rule=sanitizeRule(rule.slice(lab.length));
     return {rule,basis:extractLegalBasis(text),candidates:candidates.length};
   }
   function negateRule(rule=''){
@@ -175,5 +190,5 @@
   }
   function hasStructuredResearch(q={}){const r=q?.research;if(!r||!clean(r.whyCorrect)||!clean(r.basis))return false;const alts=r.alternatives||{};return Object.keys(alts).filter(k=>LETTERS.includes(k)&&clean(alts[k])).length>=Math.min(4,(q.options||[]).length||4);}
   function commentTrust(q={}){if(q?.qualityReviewVersion&&hasStructuredResearch(q))return 'reviewed';if(hasStructuredResearch(q)&&/^v35\.7-authorial/i.test(String(q?.researchVersion||'')))return 'generated-reviewed';if(hasStructuredResearch(q)&&(/^v34-2026/i.test(String(q?.researchVersion||''))||/revisado/i.test(String(q?.officialStatus||''))))return 'reviewed';if(q?.authorial&&hasStructuredResearch(q))return 'generated-reviewed';return 'legacy';}
-  return {VERSION,isCompleteLegalStatement,isObviouslyTruncated,logicalParagraphs,extractLegalBasis,extractRule,buildDistractors,buildResearch,auditQuestion,auditBank,hasStructuredResearch,commentTrust};
+  return {VERSION,sanitizeRule,isCompleteLegalStatement,isObviouslyTruncated,logicalParagraphs,extractLegalBasis,extractRule,buildDistractors,buildResearch,auditQuestion,auditBank,hasStructuredResearch,commentTrust};
 });

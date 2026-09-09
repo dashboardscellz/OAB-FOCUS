@@ -1,4 +1,4 @@
-/* OAB Focus v35.15 — Motor autoral FGV/OAB com diversidade semântica e memória antirrepetição.
+/* OAB Focus v35.18 — Motor autoral FGV/OAB com diversidade semântica e memória antirrepetição.
    O corpus real orienta estrutura e ritmo; nenhum enunciado oficial é reproduzido. */
 (function(root,factory){
   const api=factory(root);
@@ -6,11 +6,21 @@
   if(root) root.OAB_V35_AUTHORIAL_FGV=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(root){
   'use strict';
-  const VERSION='35.15';
+  const VERSION='35.18';
   const LETTERS='ABCD';
   // Gate inclui a frase morta “considerando o material” e equivalentes.
   const DEAD_PROMPTS=[/considerando (?:exclusivamente )?o material/i,/conte[uú]do estudado/i,/unidade que voc[eê] acabou de estudar/i,/regra apresentada no material/i,/compat[ií]vel com o material/i,/texto apresentado/i,/de acordo com a unidade/i];
   const clean=(s='')=>String(s??'').replace(/\s+/g,' ').trim();
+  function sanitizeRule(s=''){
+    const external=root?.OAB_V35_QUESTION_QUALITY?.sanitizeRule;
+    if(typeof external==='function')return external(s);
+    let x=clean(s)
+      .replace(/^\s*(?:OBS(?:ERVA[CÇ][AÃ]O)?|NOTA)\s*:\s*/i,'')
+      .replace(/\*+\s*(?:CAIU\s+NA\s+OAB|NA\s+OAB)\s*[-–—:]?\s*\d{1,3}(?:[ºªo])?\s*\*+/gi,' ')
+      .replace(/\(?\s*(?:CAIU\s+NA\s+OAB|NA\s+OAB)\s*[-–—:]?\s*\d{1,3}(?:[ºªo])?\s*\)?/gi,' ')
+      .replace(/\s+([,.;:!?])/g,'$1').replace(/\.{2,}/g,'.').replace(/\s+/g,' ').trim();
+    return x.replace(/^[-–—:;,.\s]+/,'').replace(/\s*\*+\s*$/,'').trim();
+  }
   const norm=(s='')=>clean(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const punct=s=>/[.!?]$/.test(clean(s))?clean(s):clean(s)+'.';
   const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
@@ -209,6 +219,60 @@
     'Assinale a opção que oferece a solução compatível com a disciplina legal do tema.'
   ];
 
+  const safeScenarioCatalog=[
+    '{p} procurou orientação jurídica em {city} sobre {topic}, após surgirem interpretações divergentes acerca dos requisitos e efeitos do instituto.',
+    'No curso de um caso envolvendo {topic}, a equipe jurídica de {company} precisa definir qual interpretação respeita os pressupostos legais aplicáveis.',
+    'Em parecer solicitado por {company}, quatro soluções foram apresentadas para uma controvérsia centrada em {topic}.',
+    'Durante a análise de uma situação concreta em {city}, surgiu dúvida quanto ao alcance jurídico de {topic}.',
+    '{p} e {p2} receberam orientações divergentes sobre {topic} e buscam identificar a consequência juridicamente adequada.',
+    'Um advogado foi consultado em {city} para esclarecer os efeitos jurídicos de {topic} diante de interpretações conflitantes.',
+    'A assessoria de {company} examina um problema relacionado a {topic} e precisa distinguir a regra aplicável de conclusões que alteram seus pressupostos.',
+    'Em procedimento iniciado em {city}, a controvérsia principal recai sobre os requisitos e efeitos de {topic}.',
+    'Ao revisar a solução proposta para um caso sobre {topic}, {p} identificou divergência quanto à consequência prevista pelo ordenamento.',
+    'Uma consulta profissional apresentada a {p} exige definir corretamente o regime jurídico de {topic}, sem acrescentar requisitos não previstos.',
+    'Em reunião jurídica de {company}, foram apresentadas quatro interpretações para uma hipótese de {topic}.',
+    'A solução de um caso concreto depende de identificar, entre proposições concorrentes, qual traduz corretamente a disciplina de {topic}.',
+    'Durante a preparação de uma medida jurídica, {p} precisa verificar o alcance e os limites de {topic}.',
+    'Em {city}, uma controvérsia envolvendo {topic} levou as partes a defender consequências jurídicas distintas para a mesma hipótese.',
+    'Ao examinar um processo, {p} percebeu que o ponto decisivo está na correta aplicação de {topic}.',
+    'A equipe jurídica de {company} foi chamada a revisar uma orientação anterior sobre {topic}, pois havia dúvida sobre seus requisitos e efeitos.',
+    'Em consulta formulada no ano de {year}, a questão central consiste em definir a solução compatível com o regime de {topic}.',
+    'Antes de adotar uma providência, {p} busca esclarecer qual consequência decorre juridicamente de {topic}.',
+    'Quatro teses foram apresentadas em um caso de {topic}; apenas uma preserva os pressupostos e efeitos previstos na disciplina aplicável.',
+    'Na análise de {topic}, surgiu divergência entre uma interpretação que preserva a regra jurídica e outras que alteram requisito, alcance ou consequência.',
+    'Em atuação profissional realizada em {city}, {p} precisa orientar o cliente sobre a solução correta para uma questão de {topic}.',
+    'A controvérsia submetida à equipe de {company} envolve diretamente {topic} e exige identificar a proposição juridicamente correta.',
+    'Durante estudo de um caso prático, a discussão se concentrou no efeito jurídico produzido por {topic}.',
+    'Uma decisão a ser tomada em {city} depende da interpretação correta dos pressupostos de {topic}.'
+  ];
+
+  function specificScenario(discipline,topic,rule,seq,id=''){
+    const n=norm(rule),key=`${discipline}|${topic}|${id}|${seq}|specific`,v=vars(discipline,topic,seq,key);
+    if(/sentenca.*transitad.*julgad/.test(n)&&/lei posterior/.test(n)&&( /favore.*reu/.test(n)||/mais (?:favoravel|benefic)/.test(n))&&(/execucao penal/.test(n)||/reducao da pena/.test(n))){
+      const variants=[
+        `${v.p} cumpre pena imposta por sentença já transitada em julgado. Depois da condenação definitiva, entrou em vigor lei penal posterior mais favorável ao réu, e a defesa avalia a repercussão dessa mudança na execução.`,
+        `Após o trânsito em julgado da condenação de ${v.p}, uma lei posterior passou a estabelecer tratamento penal mais favorável. A defesa pretende saber qual providência é cabível quanto à pena em execução.`,
+        `${v.p} foi condenado definitivamente e iniciou o cumprimento da pena. Durante a execução penal, sobreveio lei posterior que o favorece, surgindo controvérsia sobre a possibilidade de ajustar a sanção imposta.`,
+        `Em processo já encerrado por decisão transitada em julgado, ${v.p} cumpre a pena fixada. Uma nova lei penal, posterior e mais favorável, entrou em vigor enquanto a execução estava em curso.`,
+        `A condenação de ${v.p} tornou-se definitiva. Meses depois, lei penal superveniente passou a favorecer sua situação, e a defesa levou a questão ao âmbito da execução penal.`,
+        `Durante o cumprimento de pena por ${v.p}, já após o trânsito em julgado, foi publicada lei posterior mais benéfica. O ponto controvertido é o efeito dessa lei sobre a pena imposta.`
+      ];
+      return {base:variants[(hash(key)+seq)%variants.length],family:'penalTime',variant:(hash(key)+seq)%variants.length};
+    }
+    if(/conflito de leis|elementos? de conexao|lei aplicavel.*obrigac|lindb/.test(`${norm(topic)} ${n}`)){
+      const variants=[
+        `${v.p}, domiciliado no Brasil, celebrou no exterior contrato com sociedade estrangeira para obrigação com efeitos em território brasileiro. Surgiu divergência sobre a lei aplicável ao vínculo.`,
+        `${v.company} firmou contrato internacional com empresa sediada fora do Brasil. O negócio apresenta elementos ligados a mais de um país, e as partes discutem qual legislação deve reger a obrigação.`,
+        `${v.p} e ${v.p2}, residentes em países distintos, celebraram obrigação com execução prevista no Brasil. A controvérsia exige identificar o elemento de conexão juridicamente relevante.`,
+        `Um contrato foi celebrado no exterior e deve produzir efeitos patrimoniais no Brasil. As partes divergem sobre a determinação da lei aplicável à obrigação.`,
+        `${v.company}, sediada no Brasil, assumiu obrigação perante sociedade estrangeira, com atos praticados em países diferentes. A solução depende das regras de conflito de leis no espaço.`,
+        `Em operação internacional envolvendo bens e obrigações vinculados ao Brasil e ao exterior, surgiu controvérsia sobre qual ordenamento deve disciplinar a relação jurídica.`
+      ];
+      return {base:variants[(hash(key)+seq)%variants.length],family:'internationalConflict',variant:(hash(key)+seq)%variants.length};
+    }
+    return null;
+  }
+
   function familyFor(discipline='',topic='',rule=''){
     const d=norm(discipline),t=norm(topic),r=norm(rule),all=`${d} ${t} ${r}`;
     if(/etica|estatuto da oab|advoc/.test(all))return 'ethics';
@@ -265,16 +329,20 @@
   }
 
   function scenario(discipline,topic,rule,seq,id=''){
-    const family=familyFor(discipline,topic,rule),catalog=scenarioCatalog[family]||scenarioCatalog.genericDoctrine,key=`${discipline}|${topic}|${rule}|${id}|${seq}`;
-    for(let attempt=0;attempt<36;attempt++){
-      const v=vars(discipline,topic,seq+attempt,key),baseIndex=(hash(key)+seq+attempt)%catalog.length,base=fill(catalog[baseIndex],v);
-      const lead=leadFor(family,v,Math.floor((seq+attempt)/catalog.length)+(hash(key+'|lead')%5));
+    rule=sanitizeRule(rule);topic=clean(topic)||clean(discipline);
+    const family=familyFor(discipline,topic,rule),key=`${discipline}|${topic}|${rule}|${id}|${seq}`;
+    const special=specificScenario(discipline,topic,rule,seq,id);
+    for(let attempt=0;attempt<48;attempt++){
+      const v=vars(discipline,topic,seq+attempt,key);
+      const baseIndex=(hash(key)+seq+attempt)%safeScenarioCatalog.length;
+      const base=special&&attempt<6?special.base:fill(safeScenarioCatalog[baseIndex],v);
+      const lead=special&&attempt<6?'':leadFor(family,v,Math.floor((seq+attempt)/safeScenarioCatalog.length)+(hash(key+'|lead')%5));
       const command=commands[(hash(key+'|cmd')+seq+attempt*3)%commands.length];
       const statement=`${punct(joinLead(lead,base))} ${command}`;
-      if(!isTooSimilar(statement,discipline)){remember(statement,discipline);return {statement,family,variant:baseIndex};}
+      if(!isTooSimilar(statement,discipline)){remember(statement,discipline);return {statement,family:special?.family||family,variant:special?.variant??baseIndex};}
     }
-    // fallback direto e específico: melhor pergunta doutrinária do que um caso artificial reciclado.
-    const statement=`A respeito de ${clean(topic)||clean(discipline)}, examine a aplicação da seguinte regra jurídica ao instituto: ${punct(rule)} Assinale a afirmativa correta.`;
+    const v=vars(discipline,topic,seq,key+'|fallback');
+    const statement=`${v.p} precisa definir a solução juridicamente adequada em uma controvérsia sobre ${topic}. Assinale a alternativa correta à luz do regime aplicável.`;
     remember(statement,discipline);return {statement,family:'genericDoctrine',variant:-1};
   }
 
@@ -286,32 +354,90 @@
     return {realQuestions:real.length,medianStatementWords:median,caseLikeRatio:real.length?caseLike/real.length:0};
   }
 
-  function replaceFirst(rule,re,repl){if(!re.test(rule))return '';const x=punct(rule.replace(re,repl));return norm(x)!==norm(rule)?x:'';}
-  function numericMutation(rule){const m=rule.match(/\b(\d{1,3})\b/);if(!m)return '';const n=Number(m[1]);if(!Number.isFinite(n)||n===0)return '';return punct(rule.replace(m[0],String(n<10?n+1:n<=30?n+5:n+10)));}
+  function replaceLegalPhrase(rule,phrase,repl){
+    const escaped=phrase.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const re=new RegExp(`(^|[\s,;:.!?()\[\]{}\"'“”])${escaped}(?=$|[\s,;:.!?()\[\]{}\"'“”])`,'i');
+    if(!re.test(rule))return '';
+    const x=punct(rule.replace(re,(_,prefix)=>prefix+repl));
+    return norm(x)!==norm(rule)?x:'';
+  }
+  function numericMutation(rule){
+    const m=rule.match(/\b(\d{1,3})\s*(dias?|meses?|anos?|%|por cento)\b/i);if(!m)return '';
+    const n=Number(m[1]);if(!Number.isFinite(n)||n===0)return '';
+    const changed=String(n<10?n+1:n<=30?n+5:n+10);
+    return punct(rule.replace(m[0],`${changed} ${m[2]}`));
+  }
   function conditionMutation(rule){
-    const pairs=[[/\bdesde que\b/i,'mesmo sem'],[/\bsalvo\b/i,'inclusive'],[/\bsomente\b/i,'também'],[/\bapenas\b/i,'inclusive'],[/\bindependentemente de\b/i,'desde que haja']];
-    for(const [re,r] of pairs){if(re.test(rule))return punct(rule.replace(re,r));}return '';
+    const pairs=[['desde que','mesmo sem'],['salvo','inclusive'],['somente','também'],['apenas','inclusive'],['independentemente de','desde que haja'],['posterior','anterior'],['mais favorável','mais gravosa'],['mais benéfica','mais gravosa']];
+    for(const [a,b] of pairs){const x=replaceLegalPhrase(rule,a,b);if(x)return x;}return '';
+  }
+  function optionContainment(a,b){
+    const A=tokenSet(a),B=tokenSet(b);if(!A.size||!B.size)return 0;let inter=0;for(const x of A)if(B.has(x))inter++;
+    return inter/Math.max(1,Math.min(A.size,B.size));
+  }
+  function semanticDistractors(rule,topic,discipline=''){
+    const label=clean(topic)||clean(discipline)||'o instituto',nr=norm(rule);
+    if(/sentenca.*transitad.*julgad/.test(nr)&&/lei posterior/.test(nr)&&( /favore.*reu/.test(nr)||/mais (?:favoravel|benefic)/.test(nr))&&(/execucao penal/.test(nr)||/reducao da pena/.test(nr)))return [
+      'O trânsito em julgado impede que lei penal posterior mais favorável produza efeito sobre a pena que já está em execução.',
+      'Lei penal superveniente somente pode repercutir na condenação definitiva quando agravar a situação do réu, não quando lhe for mais benéfica.',
+      'Depois do trânsito em julgado, a pena permanece imutável na execução, ainda que surja lei posterior que favoreça o condenado.'
+    ];
+    if(/\bcabe\b/.test(nr))return [
+      `A providência discutida em ${label} é incabível mesmo quando presentes os pressupostos descritos na hipótese.`,
+      `No âmbito de ${label}, a medida indicada deve ser tratada como obrigatória em toda situação, independentemente dos pressupostos legais.`,
+      `A ocorrência dos pressupostos de ${label} não produz a consequência processual indicada pela regra aplicável.`
+    ];
+    if(/\bcompete\b/.test(nr))return [
+      `A atribuição examinada em ${label} não pertence ao órgão definido pela regra aplicável.`,
+      `Em ${label}, a competência pode ser deslocada livremente por acordo entre os interessados.`,
+      `A matéria de ${label} deve ser tratada como competência indistinta entre os órgãos envolvidos, sem observar a atribuição legal específica.`
+    ];
+    if(/\bn[aã]o pode\b|\bvedad[oa]\b|\bproibid[oa]\b/.test(nr))return [
+      `A conduta discutida em ${label} é permitida sem restrições mesmo na hipótese alcançada pela vedação legal.`,
+      `No regime de ${label}, a prática vedada converte-se em dever jurídico quando presentes os mesmos pressupostos da regra.`,
+      `A proibição aplicável a ${label} deixa de produzir efeito justamente quando configurada a situação descrita na norma.`
+    ];
+    if(/\bdeve\b|\bdever[aá]\b/.test(nr))return [
+      `A conduta prevista em ${label} constitui mera faculdade, ainda que estejam presentes os pressupostos que fazem surgir o dever.`,
+      `Em ${label}, o comportamento imposto pela regra é juridicamente vedado na própria hipótese em que a norma determina sua realização.`,
+      `O dever relacionado a ${label} somente poderia surgir após requisito adicional não previsto na disciplina aplicável.`
+    ];
+    if(/\bpode\b|\bpoder[aá]\b/.test(nr))return [
+      `A atuação admitida em ${label} é proibida mesmo quando presentes os pressupostos legais que autorizam sua prática.`,
+      `Em ${label}, a faculdade prevista pela regra transforma-se em obrigação automática em qualquer hipótese.`,
+      `A possibilidade reconhecida em ${label} desaparece justamente quando se verificam os pressupostos necessários à sua incidência.`
+    ];
+    return [
+      `A disciplina de ${label} conduz à conclusão oposta mesmo quando permanecem inalterados os pressupostos da regra aplicável.`,
+      `Em ${label}, o efeito jurídico previsto pode ser afastado sem mudança dos fatos ou dos requisitos relevantes.`,
+      `A solução de ${label} depende de requisito adicional que não integra a hipótese jurídica considerada.`
+    ];
   }
   function buildDistractors(rule,topic,discipline=''){
+    rule=punct(sanitizeRule(rule));
     const candidates=[],nr=norm(rule),label=clean(topic)||clean(discipline)||'o instituto';
     if(/atividades? privativas? da advocacia/.test(nr))return [
       'Somente a postulação perante o Poder Judiciário constitui atividade privativa da advocacia, de modo que a consultoria jurídica pode ser prestada livremente por não advogados.',
       'A consultoria jurídica por não advogado é admitida quando não houver assinatura de parecer nem representação judicial do cliente.',
       'A orientação jurídica pode ser prestada por empresa não inscrita na OAB quando destinada apenas a pessoas jurídicas.'
     ];
-    const pairs=[[/\bnão pode\b/i,'pode'],[/\bpode\b/i,'deve'],[/\bnão deve\b/i,'deve'],[/\bdeve\b/i,'pode'],[/\bnão é\b/i,'é'],[/\bé\b/i,'não é'],[/\bnão são\b/i,'são'],[/\bsão\b/i,'não são'],[/\bcompete\b/i,'não compete'],[/\bcabe\b/i,'não cabe'],[/\bé vedad[oa]\b/i,'é permitido'],[/\bé permitid[oa]\b/i,'é vedado'],[/\bexclui\b/i,'mantém'],[/\blimita\b/i,'amplia']];
-    for(const [re,repl] of pairs){const x=replaceFirst(rule,re,repl);if(x)candidates.push(x);}
+    candidates.push(...semanticDistractors(rule,topic,discipline));
+    const phrasePairs=[['não pode','pode'],['pode','deve'],['não deve','deve'],['deve','pode'],['não é','é'],['é','não é'],['não são','são'],['são','não são'],['compete','não compete'],['cabe','não cabe'],['é vedado','é permitido'],['é vedada','é permitida'],['é permitido','é vedado'],['é permitida','é vedada'],['exclui','mantém'],['limita','amplia']];
+    for(const [a,b] of phrasePairs){const x=replaceLegalPhrase(rule,a,b);if(x)candidates.push(x);}
     const cm=conditionMutation(rule);if(cm)candidates.push(cm);const nm=numericMutation(rule);if(nm)candidates.push(nm);
-    // Distratores-reserva variam o tipo de erro jurídico sem repetir muletas universais.
     const reserves=[
-      `A regra aplicável a ${label} somente incide quando todos os efeitos do instituto já estiverem consumados, não alcançando situações em curso.`,
-      `Em ${label}, a competência ou legitimidade prevista para o caso pode ser livremente transferida por acordo entre os interessados.`,
-      `A disciplina de ${label} permite afastar requisito legal por convenção das partes sempre que não houver prejuízo econômico imediato.`,
-      `No âmbito de ${label}, eventual irregularidade de requisito essencial produz apenas efeito interno e não interfere na validade jurídica do ato.`,
-      `A incidência da regra em ${label} exige interpretação extensiva mesmo quando o texto legal estabelece hipótese específica.`
+      `A incidência de ${label} fica afastada mesmo quando presentes os pressupostos que normalmente acionam a regra jurídica correspondente.`,
+      `Em ${label}, a consequência jurídica pode ser substituída por solução oposta sem alteração dos fatos juridicamente relevantes.`,
+      `A aplicação de ${label} exige condição adicional estranha aos pressupostos descritos na hipótese.`
     ];
-    for(const r of reserves)candidates.push(r);
-    const out=[];for(const c of candidates){const x=punct(c);if(norm(x)!==norm(rule)&&!out.some(y=>norm(y)===norm(x)))out.push(x);}return out.slice(0,3);
+    candidates.push(...reserves);
+    const out=[];
+    for(const c of candidates){
+      const x=punct(sanitizeRule(c));
+      if(!x||norm(x)===norm(rule)||optionContainment(x,rule)>=0.90||out.some(y=>norm(y)===norm(x)||optionContainment(x,y)>=0.90))continue;
+      out.push(x);if(out.length===3)break;
+    }
+    return out;
   }
 
   function explainWrong(rule,opt,basis){
@@ -327,6 +453,8 @@
 
   function qualityGate(q){
     const reasons=[];if(!q||DEAD_PROMPTS.some(re=>re.test(q.statement||'')))reasons.push('dead_prompt');
+    const joined=[q?.statement,...(q?.options||[]),q?.comment].filter(Boolean).join(' ');
+    if(/(?:CAIU\s+NA\s+OAB|NA\s+OAB)\s*\d+/i.test(joined)||/^\s*OBS\s*:/im.test(joined))reasons.push('exam_annotation');
     if((clean(q.statement).match(/\S+/g)||[]).length<18)reasons.push('statement_too_short');
     if(!Array.isArray(q.options)||q.options.length!==4)reasons.push('option_count');
     if(q.options?.some(o=>!clean(o)||DEAD_PROMPTS.some(re=>re.test(o))))reasons.push('bad_option');
@@ -336,13 +464,13 @@
   }
 
   function buildQuestion({id,discipline,topic,chapterId='',seq=1,rule,context='',exam='Autoral — OAB Focus'}){
-    rule=punct(rule);topic=clean(topic)||clean(discipline);
+    rule=punct(sanitizeRule(rule));topic=clean(topic)||clean(discipline);
     const sc=scenario(discipline,topic,rule,seq,id),wrong=buildDistractors(rule,topic,discipline);if(wrong.length<3)return null;
     const answer=hash(`${id}|${seq}`)%4,options=wrong.slice();options.splice(answer,0,rule);options.length=4;
     const research=buildResearch(rule,options,answer,topic,context);
-    const q={id,number:seq,displayNumber:seq,discipline,exam,statement:sc.statement,options,answer,comment:`${research.whyCorrect} Fundamento jurídico: ${research.basis}`,research,researchVersion:'v35.15-fgv-diversity',topic,microtopic:topic,source:'OAB Focus — questão autoral em padrão FGV/OAB com diversidade semântica',sourceType:'authorial',authorial:true,excludeFromHistoricalStats:true,chapterId,styleArchetype:sc.family,styleVariant:sc.variant};
+    const q={id,number:seq,displayNumber:seq,discipline,exam,statement:sc.statement,options,answer,comment:`${research.whyCorrect} Fundamento jurídico: ${research.basis}`,research,researchVersion:'v35.18-fgv-coherence',topic,microtopic:topic,source:'OAB Focus — questão autoral em padrão FGV/OAB com diversidade semântica',sourceType:'authorial',authorial:true,excludeFromHistoricalStats:true,chapterId,styleArchetype:sc.family,styleVariant:sc.variant};
     const gate=qualityGate(q);return gate.ok?q:null;
   }
 
-  return {VERSION,corpusProfile,familyFor,scenarioCatalog,recentOpenings,similarity,resetHistory,buildDistractors,buildResearch,buildQuestion,qualityGate,DEAD_PROMPTS};
+  return {VERSION,sanitizeRule,corpusProfile,familyFor,scenarioCatalog,safeScenarioCatalog,recentOpenings,similarity,resetHistory,specificScenario,buildDistractors,buildResearch,buildQuestion,qualityGate,DEAD_PROMPTS};
 });
