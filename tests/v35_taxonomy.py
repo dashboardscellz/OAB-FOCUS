@@ -26,8 +26,8 @@ def taxonomy_eval(expr: str):
 
 def test_taxonomy_layer_is_loaded_last_with_cache_version():
     html = INDEX.read_text(encoding="utf-8")
-    assert 'src="data/v35-taxonomy.js?v=36.2"' in html
-    assert html.index('src="data/v35-taxonomy.js?v=36.2"') > html.index('src="data/v35-shell.js')
+    assert 'src="data/v35-taxonomy.js?v=35.9"' in html
+    assert html.index('src="data/v35-taxonomy.js?v=35.9"') > html.index('src="data/v35-shell.js')
 
 
 def test_taxonomy_module_exists_and_exports_contract():

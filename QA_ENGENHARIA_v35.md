@@ -145,3 +145,11 @@ Validação v35.4: **169 testes passaram** quando as 12 suítes foram executadas
 - `PROMPT_MESTRE_COBERTURA_PEDAGOGICA_v35_9.md` torna cobertura disciplina→tópico→trilha→questão um critério de bloqueio de publicação.
 - `tests/v35_content_coverage.py` testa cobertura de todas as 20 disciplinas, correspondência dos 30 tópicos, profundidade mínima e elegibilidade estrutural para questões autorais.
 - Regressão v35.9: **218 testes aprovados** em três grupos (81 + 48 + 89).
+
+
+## v35.10 — higienização textual (2026-09-09)
+- Corrige a causa estrutural de quebras físicas de PDF tratadas como estrutura editorial.
+- 5.170.680 caracteres de material integral passaram pelo novo renderizador em auditoria de execução, cobrindo 229 seções sem exceções.
+- A camada produziu, na auditoria global, 2.410 bullets refluídos, 11.797 blocos legais refluídos, 15.273 parágrafos e 112 quadros comparativos semanticamente detectados.
+- O arquivo textual original `data/integral-material.js` não foi reescrito pela correção.
+- Suíte final: 224 testes aprovados em dois grupos (124 + 100), incluindo 6 testes novos específicos de legibilidade.

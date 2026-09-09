@@ -1,25 +1,4 @@
-# OAB Focus SUPER v36.2
-
-
-## v36.2 — acabamento editorial global, tabelas e filtros
-
-A v36.2 trata o problema de quadros extraídos de PDF de forma sistêmica, sem alterar Firebase, trilha ou banco de questões. O leitor agora tenta agrupar regiões tabulares reconhecíveis em uma única estrutura semântica e responsiva; quando a reconstrução não é segura, preserva o arranjo original em bloco monoespaçado, sem exibir avisos técnicos de manutenção ao aluno. Também corrige o estado visual duplicado dos filtros, remove textos de bastidor da interface pública, recupera espaço útil do leitor e mantém rolagem interna em tabelas estreitas sem provocar overflow da página.
-
-A rodada final validou a suíte estática e os testes reais de navegador, incluindo 360/390/430/768 px e desktop. Veja `AUDITORIA_LAYOUT_GLOBAL_v36_2.md` e `QA_ENGENHARIA_v36_2.md`.
-
-## v36 — evolução para ferramenta principal da 1ª fase
-
-A v36 transforma os bloqueios da auditoria comparativa em código, conteúdo e testes. O objetivo é permitir que o OAB Focus seja usado como **ferramenta principal** de preparação da 1ª fase, sem promessa de aprovação e sem apagar as ressalvas de conteúdo que ainda não recebeu revisão individual.
-
-- **Seguro atualizado:** o bloco atual de Direito Civil passa a usar a **Lei 15.040/2024**, vigente desde 11/12/2025, e impede regressão que volte a ensinar os arts. 757 a 802 do Código Civil como regime vigente.
-- **Empresarial aprofundado:** os cinco capítulos centrais recebem expansão proporcional ao peso da disciplina.
-- **18 questões autorais revisadas:** casos concretos, proveniência explícita, fundamento, armadilha, regra de revisão e análise das quatro alternativas.
-- **Simulado de 80 questões ponderado:** distribuição disciplinar baseada na prova atual validada, priorizando questões oficiais quando há quantidade suficiente.
-- **Prioridade adaptativa:** peso da prova + recorrência + fraqueza + revisão vencida + lacuna de cobertura + dificuldade + proximidade da prova.
-- **Transparência preservada:** questão oficial e autoral continuam separadas; autorais v36 ficam fora das estatísticas históricas da FGV.
-- **Gate de release:** erro jurídico, perda de conteúdo/questões, quebra de progressão, transparência insuficiente e cobertura desproporcional bloqueiam a versão.
-
-Veja `AUDITORIA_JURIDICA_v36.md`, `MATRIZ_COBERTURA_v36.md`, `FONTES_V36.md`, `QA_ENGENHARIA_v36.md` e `PROMPT_MESTRE_OAB_FOCUS_PRINCIPAL_v36.md`.
+# OAB Focus SUPER v35
 
 ## Novidades estruturais da v35
 
@@ -92,3 +71,13 @@ Hardening técnico baseado na auditoria humana da v35.7: estado compartilhado `O
 - A cobertura autoral de questões permanece sob o motor v34/v35.7, usando somente conteúdo da unidade e o mapeamento estrito da trilha.
 - Novo teste `tests/v35_content_coverage.py` bloqueia publicação se disciplina do menu ficar sem teoria ou se um dos 30 tópicos corrigidos perder seu capítulo correspondente.
 - Novo `PROMPT_MESTRE_COBERTURA_PEDAGOGICA_v35_9.md` formaliza o padrão de conteúdo, trilhas e questões para futuras versões.
+
+
+### v35.10 — Higienização textual global
+- Nova camada `data/v35-text-quality.js` reconstrói semanticamente o texto extraído de PDFs sem alterar o conteúdo jurídico substantivo.
+- Continuações físicas de bullets, artigos, parágrafos e súmulas deixam de ser cortadas em blocos separados.
+- Espaçamento largo residual de PDF não cria mais tabela falsa por uma única linha.
+- Quadros comparativos só são reconstruídos quando existe evidência de múltiplas colunas; no celular viram cartões empilhados.
+- Casos reais de regressão incluem Poder Constituinte Originário, controle preventivo de constitucionalidade, Art. 37 da CF e o quadro de reedição/reapreciação.
+- `PROMPT_MESTRE_HIGIENIZACAO_TEXTUAL_v35_10.md` formaliza a regra global: quebra física não é quebra semântica.
+- `tests/v35_text_readability.py` bloqueia retorno das quebras demonstradas pelo usuário.

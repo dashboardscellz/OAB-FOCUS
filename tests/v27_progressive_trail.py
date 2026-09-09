@@ -277,4 +277,4 @@ def test_v27_does_not_write_context_to_window_qfilters():
 
 def test_v27_release_cache_busts_context_fix():
     html=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert '<script src="data/v27-patch.js?v=36.2"></script>' in html
+    assert '<script src="data/v27-patch.js?v=35.9"></script>' in html
