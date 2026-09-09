@@ -1,4 +1,18 @@
-# OAB Focus SUPER v35
+# OAB Focus SUPER v36
+
+## v36 — evolução para ferramenta principal da 1ª fase
+
+A v36 transforma os bloqueios da auditoria comparativa em código, conteúdo e testes. O objetivo é permitir que o OAB Focus seja usado como **ferramenta principal** de preparação da 1ª fase, sem promessa de aprovação e sem apagar as ressalvas de conteúdo que ainda não recebeu revisão individual.
+
+- **Seguro atualizado:** o bloco atual de Direito Civil passa a usar a **Lei 15.040/2024**, vigente desde 11/12/2025, e impede regressão que volte a ensinar os arts. 757 a 802 do Código Civil como regime vigente.
+- **Empresarial aprofundado:** os cinco capítulos centrais recebem expansão proporcional ao peso da disciplina.
+- **18 questões autorais revisadas:** casos concretos, proveniência explícita, fundamento, armadilha, regra de revisão e análise das quatro alternativas.
+- **Simulado de 80 questões ponderado:** distribuição disciplinar baseada na prova atual validada, priorizando questões oficiais quando há quantidade suficiente.
+- **Prioridade adaptativa:** peso da prova + recorrência + fraqueza + revisão vencida + lacuna de cobertura + dificuldade + proximidade da prova.
+- **Transparência preservada:** questão oficial e autoral continuam separadas; autorais v36 ficam fora das estatísticas históricas da FGV.
+- **Gate de release:** erro jurídico, perda de conteúdo/questões, quebra de progressão, transparência insuficiente e cobertura desproporcional bloqueiam a versão.
+
+Veja `AUDITORIA_JURIDICA_v36.md`, `MATRIZ_COBERTURA_v36.md`, `FONTES_V36.md`, `QA_ENGENHARIA_v36.md` e `PROMPT_MESTRE_OAB_FOCUS_PRINCIPAL_v36.md`.
 
 ## Novidades estruturais da v35
 
