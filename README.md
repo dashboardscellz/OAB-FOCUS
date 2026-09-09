@@ -114,3 +114,26 @@ A aba principal **Questões** agora mantém seu próprio estado de filtros e nã
 - Bloqueia referências a “material”, “conteúdo estudado” e “unidade” em questões autorais.
 - Gera comentário estruturado com análise da correta, das erradas, fundamento, pegadinha e regra de revisão.
 - Mantém vínculo estrito com disciplina, capítulo e microtópico da trilha.
+
+
+### v35.15 — Diversidade semântica das questões autorais
+- Remove o fallback repetitivo que concentrava enunciados em um mesmo molde.
+- Introduz 20 famílias narrativas e 120 estruturas-base, selecionadas conforme a disciplina e o instituto.
+- Mantém memória antirrepetição das últimas 50 aberturas por disciplina e rejeita alta similaridade.
+- Internacional, Penal, Ética, Administrativo, Consumidor, ECA, Financeiro e demais áreas recebem cenários próprios.
+- Quando um caso concreto seria artificial, o motor prefere pergunta doutrinária direta e específica.
+- Distratores genéricos recorrentes foram removidos.
+- Prompt mestre: `PROMPT_MESTRE_DIVERSIDADE_QUESTOES_FGV_v35_15.md`.
+
+### v35.16 — Hardening final do layout mobile
+- Corrige o overflow real da Home que cortava a pill de nível em iPhone.
+- Reorganiza marca/nível/saudação e protege o resumo `Hoje` contra corte horizontal.
+- Resolve a causa raiz da barra de grifos sobre a navegação: um CSS legado da v28 era injetado depois do CSS mobile e voltava a forçar `bottom:10px!important`.
+- O adaptador mobile agora instala uma pequena camada crítica em runtime, por último na cascata, para preservar as invariantes do leitor.
+- `Salvo` passa a ser confirmação transitória no celular; `Salvando`/falhas continuam visíveis.
+- Touch targets principais passam a 44 px; enunciados e texto jurídico principal usam escala mobile legível.
+- Header passa a respeitar safe-area superior e o bottom sheet acompanha `visualViewport`/teclado.
+- Smartphone em paisagem (ex. 844×390) continua usando arquitetura mobile.
+- Novo prompt: `PROMPT_MESTRE_MOBILE_v35_16.md`.
+- Auditoria e QA: `AUDITORIA_MOBILE_v35_16.md` e `QA_MOBILE_v35_16.md`.
+- O adaptador de Questões deixa de presumir que `.question-layout` é filho direto de `#content`, eliminando `NotFoundError` encontrado apenas no runtime completo.

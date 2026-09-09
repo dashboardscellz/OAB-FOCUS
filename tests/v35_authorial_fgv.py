@@ -4,8 +4,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def test_engine_loaded_before_generators():
     idx=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert 'data/v35-authorial-fgv.js?v=35.14' in idx
-    assert idx.index('v35-authorial-fgv.js?v=35.14') < idx.index('v20-patch.js') < idx.index('v34-patch.js')
+    assert 'data/v35-authorial-fgv.js?v=35.15' in idx
+    assert idx.index('v35-authorial-fgv.js?v=35.15') < idx.index('v20-patch.js') < idx.index('v34-patch.js')
 
 def test_prompt_master_exists_and_bans_dead_prompts():
     p=(ROOT/'PROMPT_MESTRE_QUESTOES_AUTORAIS_ESTILO_FGV_v35_14.md').read_text(encoding='utf-8')
@@ -27,9 +27,9 @@ def test_generator_delegates_to_fgv_engine():
 def test_engine_has_quality_gate_and_multiple_archetypes():
     js=(ROOT/'data/v35-authorial-fgv.js').read_text(encoding='utf-8')
     assert 'qualityGate' in js
-    assert 'consultation' in js and 'chronology' in js and 'authority' in js and 'criminal' in js
+    assert 'scenarioCatalog' in js and 'recentOpenings' in js and 'similarity' in js
+    assert 'ethics' in js and 'international' in js and 'criminal' in js and 'constitutional' in js
     assert 'considerando o material' in js.lower()
-    assert 'mechanical' in js.lower() or 'negação mecânica' in js.lower()
 
 
 def test_specialized_ethics_case_is_alive_and_distractors_are_plausible():
@@ -40,5 +40,5 @@ def test_specialized_ethics_case_is_alive_and_distractors_are_plausible():
 
 def test_cache_bust_for_modified_generators():
     idx=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert 'data/v20-patch.js?v=35.14' in idx
-    assert 'data/v34-patch.js?v=35.14' in idx
+    assert 'data/v20-patch.js?v=35.15' in idx
+    assert 'data/v34-patch.js?v=35.15' in idx

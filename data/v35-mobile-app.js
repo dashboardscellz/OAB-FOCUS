@@ -1,13 +1,14 @@
-/* OAB Focus v35.13 — mobile app architecture adapter */
+/* OAB Focus v35.16 — mobile app architecture + hardening adapter */
 (function(){
   'use strict';
-  const VERSION='35.13';
+  const VERSION='35.16';
   const api=window.OAB_MOBILE_APP=window.OAB_MOBILE_APP||{};
   const ROUTE_LABELS={home:'Início',study:'Estudar',reader:'Estudar',prepare:'Prepare-se',questions:'Questões',review:'Revisar',performance:'Desempenho',highyield:'Mais cobrados',ranking:'Ranking',profile:'Perfil',settings:'Configurações',admin:'Admin'};
   let homeNext=null;
   let resizeTimer=0;
+  let syncHideTimer=0;
 
-  const mobileQuery=()=>typeof matchMedia==='function'?matchMedia('(max-width: 768px)').matches:innerWidth<=768;
+  const mobileQuery=()=>typeof matchMedia==='function'?matchMedia('(max-width: 768px), (max-width: 950px) and (max-height: 500px)').matches:(innerWidth<=768||(innerWidth<=950&&innerHeight<=500));
   const getRoute=()=>{try{return typeof route==='string'?route:'home';}catch{return 'home'}};
   const getContent=()=>document.getElementById('content');
   const clone=v=>{try{return JSON.parse(JSON.stringify(v));}catch{return v}};
@@ -32,7 +33,7 @@
   }
   function syncShell(){
     const app=document.getElementById('app');if(!app)return;const r=getRoute();
-    app.dataset.v3513Route=r;document.body.dataset.v3513Route=r;
+    app.dataset.v3513Route=r;app.dataset.v3516Route=r;document.body.dataset.v3513Route=r;document.body.dataset.v3516Route=r;
     const brand=app.querySelector('.v35-mobile-brand');
     if(brand&&mobileQuery())brand.innerHTML=`<span>OAB Focus</span><small class="v3513-mobile-route-label">${escHtml(routeTitle(r))}</small>`;
     app.querySelectorAll('.bottom-nav [data-route]').forEach(b=>{
@@ -52,7 +53,7 @@
     const nextLabel=next?String(next.title||next.target?.title||next.topic||next.id||'Retomar conteúdo'):'Escolher conteúdo';
     const nextDisc=next?String(next.discipline||'Seu estudo'):'Estudar';
     host.innerHTML=`<section class="v3513-mobile-home" aria-label="Início mobile">
-      <header class="v3513-home-head"><div><small>OAB Focus</small><h1>${escHtml(first)}, vamos avançar?</h1></div><span class="v3513-level-pill"><b>LV ${Number(L.level||1)}</b>${escHtml(L.name||'Calouro')}</span></header>
+      <header class="v3513-home-head"><div class="v3516-home-top"><small>OAB Focus</small><span class="v3513-level-pill"><b>LV ${Number(L.level||1)}</b>${escHtml(L.name||'Calouro')}</span></div><h1>${escHtml(first)}, vamos avançar?</h1></header>
       <button type="button" class="v3513-continue" data-mobile-continue><span><span class="kicker">${next?'Continuar de onde parou':'Começar agora'}</span><strong>${escHtml(nextLabel)}</strong><small>${escHtml(nextDisc)}${s.streak?` · ${Number(s.streak)} dias de sequência`:''}</small></span><span class="arrow" aria-hidden="true">→</span></button>
       <div class="v3513-quick-grid" aria-label="Ações principais">
         <button class="v3513-quick-action" data-mobile-go="study"><span class="icon">▤</span><b>Estudar</b><small>Disciplinas e capítulos</small></button>
@@ -103,17 +104,45 @@
     host.querySelectorAll('.v3513-question-tools,.v3513-filter-sheet,.v3513-filter-backdrop').forEach(n=>n.remove());
     const search=panel.querySelector('#fSearch');
     const tools=document.createElement('div');tools.className='v3513-question-tools';tools.innerHTML=`<label class="v3513-question-search-wrap"><span class="sr-only">Buscar questões</span><input id="v3513QuestionSearch" type="search" autocomplete="off" placeholder="Buscar assunto, palavra ou questão…" value="${escHtml(search?.value||'')}"></label><button type="button" id="v3513FilterToggle">Filtros${filterCount(panel)?` · ${filterCount(panel)}`:''}</button>`;
-    const sheet=document.createElement('section');sheet.className='v3513-filter-sheet';sheet.dataset.open='false';sheet.setAttribute('aria-hidden','true');sheet.setAttribute('aria-label','Filtros do banco de questões');sheet.innerHTML='<header class="v3513-filter-head"><h3>Filtrar questões</h3><button type="button" class="v3513-filter-close" aria-label="Fechar filtros">×</button></header><div class="v3513-filter-body"></div><footer class="v3513-filter-footer"><button type="button" class="v3513-filter-apply">Ver questões</button></footer>';
+    const sheet=document.createElement('section');sheet.className='v3513-filter-sheet';sheet.dataset.open='false';sheet.setAttribute('aria-hidden','true');sheet.setAttribute('aria-label','Filtros do banco de questões');sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.innerHTML='<header class="v3513-filter-head"><h3>Filtrar questões</h3><button type="button" class="v3513-filter-close" aria-label="Fechar filtros">×</button></header><div class="v3513-filter-body"></div><footer class="v3513-filter-footer"><button type="button" class="v3513-filter-apply">Ver questões</button></footer>';
     const backdrop=document.createElement('div');backdrop.className='v3513-filter-backdrop';backdrop.dataset.open='false';
-    const layout=host.querySelector('.question-layout');host.insertBefore(tools,layout||host.firstChild);host.appendChild(backdrop);host.appendChild(sheet);sheet.querySelector('.v3513-filter-body').appendChild(panel);
+    const layout=host.querySelector('.question-layout');let anchor=layout;while(anchor&&anchor.parentElement!==host)anchor=anchor.parentElement;host.insertBefore(tools,anchor||host.firstChild);host.appendChild(backdrop);host.appendChild(sheet);sheet.querySelector('.v3513-filter-body').appendChild(panel);
     const proxy=tools.querySelector('#v3513QuestionSearch');
     proxy?.addEventListener('input',()=>{if(!search)return;search.value=proxy.value;search.dispatchEvent(new Event('input',{bubbles:true}));});
     tools.querySelector('#v3513FilterToggle')?.addEventListener('click',openQuestionFilters);sheet.querySelector('.v3513-filter-close')?.addEventListener('click',closeQuestionFilters);sheet.querySelector('.v3513-filter-apply')?.addEventListener('click',closeQuestionFilters);backdrop.addEventListener('click',closeQuestionFilters);
     panel.addEventListener('change',()=>setTimeout(()=>{const b=document.getElementById('v3513FilterToggle');if(b)b.textContent=`Filtros${filterCount(panel)?` · ${filterCount(panel)}`:''}`;},0));
   }
   function enhanceReader(){if(!mobileQuery()||getRoute()!=='reader')return;getContent()?.classList.add('v3513-reader-screen');}
+  function installRuntimeCss(){
+    let style=document.getElementById('v3516-mobile-runtime-css');
+    if(!style){style=document.createElement('style');style.id='v3516-mobile-runtime-css';style.dataset.version=VERSION;style.textContent=`
+      @media(max-width:768px),(max-width:950px) and (max-height:500px){
+        html body.v26-reader-active .v18-highlight-dock.v18-highlight-dock{position:fixed!important;left:12px!important;right:12px!important;bottom:calc(72px + env(safe-area-inset-bottom) + 10px)!important;transform:none!important;width:auto!important;max-width:none!important;min-height:48px!important;box-sizing:border-box!important;display:flex!important;visibility:visible!important;justify-content:center!important;gap:6px!important;overflow:hidden!important;}
+        html body.v26-reader-active .v18-highlight-dock.v18-highlight-dock .label{display:none!important;}
+        html body.v26-reader-active .v18-highlight-dock.v18-highlight-dock .v18-color{width:26px!important;height:26px!important;min-width:26px!important;flex:0 0 26px!important;}
+        html body.v26-reader-active .v18-highlight-dock.v18-highlight-dock .tool{min-height:34px!important;padding:0 7px!important;font-size:.62rem!important;white-space:nowrap!important;}
+        html body.v26-reader-active .v35-sync-status{bottom:calc(72px + env(safe-area-inset-bottom) + 70px)!important;}
+      }
+      @media(max-width:950px) and (max-height:500px){html body.v26-reader-active .v18-highlight-dock.v18-highlight-dock{left:50%!important;right:auto!important;width:min(520px,calc(100vw - 24px))!important;transform:translateX(-50%)!important;}}
+    `;}
+    document.head.appendChild(style);return style;
+  }
+  function syncStatusVisibility(){
+    const el=document.querySelector('[data-sync-status]');if(!el||!mobileQuery())return;
+    const state=el.dataset.syncStatus||((el.classList.contains('retrying')&&'retrying')||(el.classList.contains('saving')&&'saving')||(el.classList.contains('saved')&&'saved')||'');
+    clearTimeout(syncHideTimer);el.classList.remove('v3516-sync-hidden');
+    if(state==='saved')syncHideTimer=setTimeout(()=>el.classList.add('v3516-sync-hidden'),1400);
+  }
+  function installSyncObserver(){
+    const attach=()=>{const el=document.querySelector('[data-sync-status]');if(!el||el.dataset.v3516Observed)return false;el.dataset.v3516Observed='1';syncStatusVisibility();new MutationObserver(syncStatusVisibility).observe(el,{attributes:true,attributeFilter:['data-sync-status','hidden']});return true;};
+    if(!attach())new MutationObserver((_,obs)=>{if(attach())obs.disconnect();}).observe(document.body,{childList:true,subtree:true});
+  }
+  function syncVisualViewport(){
+    const vv=window.visualViewport;const height=vv?.height||innerHeight;document.documentElement.style.setProperty('--v3516-visual-h',`${Math.max(240,height)}px`);
+    const keyboard=mobileQuery()&&innerHeight-height>120;document.body.classList.toggle('v3516-keyboard-open',keyboard);
+  }
   function enhanceCurrentRoute(){
-    syncShell();if(!mobileQuery())return;
+    installRuntimeCss();syncShell();if(!mobileQuery())return;
     const r=getRoute();
     if(r==='home')renderMobileHome();
     else if(r==='study')enhanceStudy();
@@ -137,10 +166,13 @@
   }
   function install(){
     ['renderHome','renderStudy','renderPrepare','renderQuestions','renderReader','renderRoute','setRoute'].forEach(wrap);
-    bindBottomTabs();syncShell();schedule();
-    window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{closeQuestionFilters();syncShell();if(mobileQuery())schedule();},120);});
+    bindBottomTabs();installSyncObserver();syncVisualViewport();syncShell();schedule();
+    window.visualViewport?.addEventListener('resize',syncVisualViewport,{passive:true});
+    window.visualViewport?.addEventListener('scroll',syncVisualViewport,{passive:true});
+    window.addEventListener('orientationchange',()=>setTimeout(()=>{syncVisualViewport();schedule();},120),{passive:true});
+    window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{closeQuestionFilters();syncVisualViewport();syncShell();if(mobileQuery())schedule();},120);});
     document.documentElement.dataset.oabMobileVersion=VERSION;
   }
-  Object.assign(api,{VERSION,isMobile:mobileQuery,routeTitle,syncShell,renderMobileHome,enhanceStudy,enhancePrepare,enhanceQuestions,enhanceReader,enhanceCurrentRoute,openQuestionFilters,closeQuestionFilters,install});
+  Object.assign(api,{VERSION,isMobile:mobileQuery,routeTitle,syncShell,renderMobileHome,enhanceStudy,enhancePrepare,enhanceQuestions,enhanceReader,enhanceCurrentRoute,openQuestionFilters,closeQuestionFilters,syncStatusVisibility,syncVisualViewport,installRuntimeCss,install});
   install();
 })();
