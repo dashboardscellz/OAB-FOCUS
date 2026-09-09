@@ -6,6 +6,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 V26 = ROOT / 'data' / 'v26-patch.js'
 V27 = ROOT / 'data' / 'v27-patch.js'
+V35STATE = ROOT / 'data' / 'v35-state.js'
 
 
 @pytest.fixture(scope='module')
@@ -80,6 +81,7 @@ def bootstrap(browser, width=1366, height=900):
         document.getElementById('v18UnitQuestions').onclick=()=>{};
       };
     ''')
+    page.add_script_tag(path=str(V35STATE))
     page.add_script_tag(path=str(V26))
     page.add_script_tag(path=str(V27))
     return page
@@ -275,4 +277,4 @@ def test_v27_does_not_write_context_to_window_qfilters():
 
 def test_v27_release_cache_busts_context_fix():
     html=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert '<script src="data/v27-patch.js?v=35.6"></script>' in html
+    assert '<script src="data/v27-patch.js?v=35.9"></script>' in html

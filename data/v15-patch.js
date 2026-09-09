@@ -84,15 +84,16 @@
   }
   function v15OpenQuestions({discipline,chapter=null,subtopic='',topicHint='',label=''}){
     const set=v15QuestionsForUnit(discipline,chapter,subtopic,topicHint);
-    qFilters={discipline:'',topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:set.ids,studyContext:{discipline,label:label||subtopic||chapter?.title||topicHint||discipline,mode:set.mode,count:set.ids.length}};
-    qIndex=0;safeRoute('questions');
+    const opened=window.OAB_STATE.openQuestionContext({discipline,questionIds:set.ids,studyContext:{discipline,label:label||subtopic||chapter?.title||topicHint||discipline,mode:set.mode,count:set.ids.length}});
+    if(!opened){toast('Ainda não há questão específica validada para esta unidade.','bad');return;}
+    safeRoute('questions');
   }
 
   /* O filtro por caderno explícito impede que uma busca textual genérica substitua a relação conteúdo → questão. */
   buildQueue=function(){
     const f=qFilters,scored=[],allowed=Array.isArray(f.questionIds)&&f.questionIds.length?new Set(f.questionIds):null;
     for(const q of QUESTIONS){
-      if(allowed&&!allowed.has(q.id))continue;if(f.questionId&&q.id!==f.questionId)continue;if(f.discipline&&q.discipline!==f.discipline)continue;if(f.topic&&q.topic!==f.topic)continue;if(f.exam&&q.exam!==f.exam)continue;
+      if(!hasValidAnswerKey(q))continue;if(allowed&&!allowed.has(q.id))continue;if(f.questionId&&q.id!==f.questionId)continue;if(f.discipline&&q.discipline!==f.discipline)continue;if(f.topic&&q.topic!==f.topic)continue;if(f.exam&&q.exam!==f.exam)continue;
       const a=progress.answers[q.id];if(f.status==='unanswered'&&a)continue;if(f.status==='correct'&&(!a||!a.correct))continue;if(f.status==='wrong'&&(!a||a.correct))continue;if(f.status==='favorite'&&!progress.favorites[q.id])continue;
       const score=f.search?.trim()?questionSearchScore(q,f.search,{allowApprox:false}):0;if(score<0)continue;scored.push({q,score});
     }

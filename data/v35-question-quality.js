@@ -5,7 +5,7 @@
   if(root) root.OAB_V35_QUESTION_QUALITY=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const VERSION='35.7';
+  const VERSION='35.8';
   const LETTERS='ABCDE';
   const GENERIC_PATTERNS=[
     /Questão autoral de fixação/i,
@@ -173,5 +173,7 @@
     const counts={};for(const r of rows)for(const i of r.issues)counts[i.code]=(counts[i.code]||0)+1;
     return {version:VERSION,total:(qs||[]).length,flagged:rows.length,counts,rows};
   }
-  return {VERSION,isCompleteLegalStatement,isObviouslyTruncated,logicalParagraphs,extractLegalBasis,extractRule,buildDistractors,buildResearch,auditQuestion,auditBank};
+  function hasStructuredResearch(q={}){const r=q?.research;if(!r||!clean(r.whyCorrect)||!clean(r.basis))return false;const alts=r.alternatives||{};return Object.keys(alts).filter(k=>LETTERS.includes(k)&&clean(alts[k])).length>=Math.min(4,(q.options||[]).length||4);}
+  function commentTrust(q={}){if(q?.qualityReviewVersion&&hasStructuredResearch(q))return 'reviewed';if(hasStructuredResearch(q)&&/^v35\.7-authorial/i.test(String(q?.researchVersion||'')))return 'generated-reviewed';if(hasStructuredResearch(q)&&(/^v34-2026/i.test(String(q?.researchVersion||''))||/revisado/i.test(String(q?.officialStatus||''))))return 'reviewed';if(q?.authorial&&hasStructuredResearch(q))return 'generated-reviewed';return 'legacy';}
+  return {VERSION,isCompleteLegalStatement,isObviouslyTruncated,logicalParagraphs,extractLegalBasis,extractRule,buildDistractors,buildResearch,auditQuestion,auditBank,hasStructuredResearch,commentTrust};
 });

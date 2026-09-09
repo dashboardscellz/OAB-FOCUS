@@ -125,3 +125,23 @@ Validação v35.4: **169 testes passaram** quando as 12 suítes foram executadas
 - Nenhuma unidade pedagógica pode receber rótulo genérico `parte X/Y` nos materiais teóricos/complementares auditados.
 - Assets v35 versionados com `?v=35.5`.
 - Validação v35.5: **187 testes automatizados** aprovados nas 13 suítes v26–v35, incluindo 18 testes específicos da taxonomia global.
+
+## v35.8 — hardening técnico e confiabilidade (2026-09-08)
+- `data/v35-state.js` centraliza o contexto de questões e filtra IDs pela disciplina antes de abrir prática contextual.
+- v15/v16/v18/v20/v27 usam o mesmo serviço para filas de unidade.
+- A fila final v15 continua rejeitando questões sem gabarito válido.
+- `data/v35-auth.js` mostra estado `Salvando… / Salvo / Falha ao salvar · tentando novamente` e preserva `dirty` em falhas.
+- Todos os `data/*.js` usam `?v=35.8`; `defer` não foi aplicado aos quatro scripts de dados consumidos imediatamente pelo script principal, pois isso quebraria o bootstrap atual sem uma refatoração assíncrona maior.
+- Regras Firebase ganharam `.validate` para campos centrais do perfil.
+- Comentários mostram selo revisado/autoral revisado/legado em revisão.
+- `tests/v35_8_real_app_e2e.py` executa o HTML completo com todos os scripts reais na ordem de produção e valida Constitucional → prática sem vazamento de disciplina.
+- Verificação final v35.8: **211 testes aprovados** nas 16 suítes do pacote, executadas em grupos estáveis (82 + 11 + 52 + 66); sintaxe dos JS alterados e `database.rules.json` válidos; 30/30 scripts locais de `data/` versionados com `?v=35.8`.
+- Limitação do harness: a política deste ambiente bloqueia navegação local por `page.goto()`; o teste de integração executa o `index.html` completo e injeta os arquivos reais na mesma ordem de produção via `page.set_content`, cobrindo a composição integral sem afirmar teste de hospedagem/rede real.
+
+## v35.9 — cobertura pedagógica das 20 disciplinas (2026-09-08)
+- `data/v35-content-coverage.js` corrige o conteúdo ausente de Filosofia e a cobertura degradada de Financeiro, Internacional, Ambiental, Direitos Humanos e Empresarial.
+- 30/30 tópicos reparados possuem `Teoria completa` própria, todos com mais de 250 palavras.
+- 25 blocos normativos específicos foram adicionados às cinco disciplinas jurídicas; a legislação integral antiga é preservada apenas como referência.
+- `PROMPT_MESTRE_COBERTURA_PEDAGOGICA_v35_9.md` torna cobertura disciplina→tópico→trilha→questão um critério de bloqueio de publicação.
+- `tests/v35_content_coverage.py` testa cobertura de todas as 20 disciplinas, correspondência dos 30 tópicos, profundidade mínima e elegibilidade estrutural para questões autorais.
+- Regressão v35.9: **218 testes aprovados** em três grupos (81 + 48 + 89).

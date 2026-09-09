@@ -1,6 +1,11 @@
 /* OAB Focus v35 — account isolation and collision-resistant identity */
 (function(){
   'use strict';
+  const syncState={state:'saved',failures:0,lastSavedAt:null,lastErrorAt:null};
+  function ensureSyncStatus(){let el=document.querySelector('[data-sync-status]');if(!el){el=document.createElement('div');el.className='v35-sync-status saved';el.setAttribute('data-sync-status','saved');el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.hidden=true;document.body.appendChild(el);}return el;}
+  function setSyncState(state,message=''){syncState.state=state;if(state==='saved'){syncState.failures=0;syncState.lastSavedAt=Date.now();}if(state==='retrying')syncState.lastErrorAt=Date.now();const el=ensureSyncStatus();el.hidden=!user;el.dataset.syncStatus=state;el.className=`v35-sync-status ${state}`;const labels={saving:'Salvando…',saved:'Salvo',retrying:'Falha ao salvar · tentando novamente'};el.textContent=message||labels[state]||state;return state;}
+  function syncSnapshot(){return {...syncState,dirty:!!dirty,visible:!ensureSyncStatus().hidden};}
+  window.addEventListener('beforeunload',e=>{if(user&&dirty&&syncState.failures>=3){e.preventDefault();e.returnValue='';}});
   // significant punctuation preserved: [._-]
   function canonicalUsernameKey(username=''){
     return String(username).trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');
@@ -107,19 +112,16 @@
     try{stopV11LeaderboardStream?.();}catch{}try{stopAccountGuard?.();}catch{}
     try{if(typeof v11AdminTimer!=='undefined'&&v11AdminTimer)clearInterval(v11AdminTimer);}catch{}
     currentStudy=null;currentQuestionId=null;qQueue=[];qIndex=0;selectedAnswer=null;routePayload=null;mobileSideOpen=false;dirty=false;progressOwnerUid=null;
+    syncState.state='saved';syncState.failures=0;const syncEl=document.querySelector('[data-sync-status]');if(syncEl)syncEl.hidden=true;
     document.body.classList.remove('focus-mode');document.querySelector('.focus-exit')?.remove();
     if(clearIdentity){authSession=null;user=null;profile=null;progress=null;}
   }
   async function saveProgressV35(force=false){
-    if(!user||!progress||(!dirty&&!force))return false;
-    if(!progressOwnerUid||user.uid!==progressOwnerUid||authSession?.uid!==progressOwnerUid){dirty=true;console.warn('PROGRESS_OWNER_MISMATCH');return false;}
-    const owner=progressOwnerUid,payload=JSON.parse(JSON.stringify(progress)),wasDirty=dirty;dirty=false;
-    try{
-      const id=await tokenForOwner(owner);
-      if(!user||user.uid!==owner||progressOwnerUid!==owner||authSession?.uid!==owner)throw makeCodeError('PROGRESS_OWNER_MISMATCH');
-      await dbRequestWithToken(`users/${owner}/progress`,id,{method:'PUT',body:payload});
-      try{await publishV11Leaderboard?.();}catch{}try{await updateV11Presence?.();}catch{}return true;
-    }catch(ex){dirty=wasDirty||true;if(ex?.code==='PROGRESS_OWNER_MISMATCH')console.warn('PROGRESS_OWNER_MISMATCH');else console.warn('Falha ao salvar progresso',ex);return false;}
+    if(!user||!progress||(!dirty&&!force)){if(user&&progress&&!dirty)setSyncState('saved');return false;}
+    if(!progressOwnerUid||user.uid!==progressOwnerUid||authSession?.uid!==progressOwnerUid){dirty=true;syncState.failures+=1;setSyncState('retrying');console.warn('PROGRESS_OWNER_MISMATCH');return false;}
+    const owner=progressOwnerUid,payload=JSON.parse(JSON.stringify(progress)),wasDirty=dirty;dirty=false;setSyncState('saving');
+    try{const id=await tokenForOwner(owner);if(!user||user.uid!==owner||progressOwnerUid!==owner||authSession?.uid!==owner)throw makeCodeError('PROGRESS_OWNER_MISMATCH');await dbRequestWithToken(`users/${owner}/progress`,id,{method:'PUT',body:payload});try{await publishV11Leaderboard?.();}catch{}try{await updateV11Presence?.();}catch{}setSyncState('saved');return true;}
+    catch(ex){dirty=wasDirty||true;syncState.failures+=1;setSyncState('retrying');if(ex?.code==='PROGRESS_OWNER_MISMATCH')console.warn('PROGRESS_OWNER_MISMATCH');else console.warn('Falha ao salvar progresso',ex);return false;}
   }
   async function completeLoginV35(d,username,password){
     const typed=String(username||'').trim();let prof=d.__profile||null;
@@ -131,7 +133,7 @@
     const now=Date.now();try{await dbRequestWithToken(`users/${d.localId}/profile`,d.idToken,{method:'PATCH',body:{lastActiveAt:now}});prof.lastActiveAt=now;}catch{}
     const ps=await dbRequestWithToken(`users/${d.localId}/progress`,d.idToken).catch(()=>null);
     resetAccountRuntimeState({clearIdentity:true});keepSession(d,typed);user={uid:d.localId,email:d.email};profile=prof;progress=mergeProgress(ps);progressOwnerUid=user.uid;
-    showApp();bindRoleUI();updateLevelUI();setRoute('home');startSaveLoop();setTimeout(prepareSearchCache,500);try{publishV11Leaderboard?.();startV11LeaderboardStream?.();startAccountGuard?.();}catch{}
+    showApp();bindRoleUI();updateLevelUI();setSyncState('saved');setRoute('home');startSaveLoop();setTimeout(prepareSearchCache,500);try{publishV11Leaderboard?.();startV11LeaderboardStream?.();startAccountGuard?.();}catch{}
   }
   async function restoreSessionV35(){
     try{
@@ -142,7 +144,7 @@
       const now=Date.now();try{await dbRequestWithToken(`users/${owner}/profile`,id,{method:'PATCH',body:{lastActiveAt:now}});prof.lastActiveAt=now;}catch{}
       const ps=await dbRequestWithToken(`users/${owner}/progress`,id).catch(()=>null);
       resetAccountRuntimeState({clearIdentity:false});user={uid:owner,email:authSession.email};profile=prof;progress=mergeProgress(ps);progressOwnerUid=user.uid;
-      showApp();bindRoleUI();updateLevelUI();setRoute('home');startSaveLoop();setTimeout(prepareSearchCache,500);try{publishV11Leaderboard?.();startV11LeaderboardStream?.();startAccountGuard?.();}catch{}
+      showApp();bindRoleUI();updateLevelUI();setSyncState('saved');setRoute('home');startSaveLoop();setTimeout(prepareSearchCache,500);try{publishV11Leaderboard?.();startV11LeaderboardStream?.();startAccountGuard?.();}catch{}
     }catch(ex){storageRemove(SESSION_KEY);resetAccountRuntimeState({clearIdentity:true});showLogin();}
   }
   async function logoutV35(){
@@ -170,6 +172,6 @@
 
   try{signInUser=signInUserV35;completeLogin=completeLoginV35;restoreSession=restoreSessionV35;logout=logoutV35;saveProgress=saveProgressV35;installRegistrationV35();}catch(ex){console.error('Falha ao instalar isolamento de conta v35',ex);}
   const logoutBtn=document.getElementById('logoutBtn');logoutBtn?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();logoutV35();},true);
-  window.OAB_V35_AUTH={canonicalUsernameKey,assertNewUsername,legacyTechnicalEmail,technicalEmailV35,dbRequestWithToken,validateAuthenticatedProfile,submitRegistrationV35,signInUserV35,completeLoginV35,restoreSessionV35,logoutV35,resetAccountRuntimeState,saveProgressV35,createStudentV35,installRegistrationV35,runtimeSnapshot};
+  window.OAB_V35_AUTH={canonicalUsernameKey,assertNewUsername,legacyTechnicalEmail,technicalEmailV35,dbRequestWithToken,validateAuthenticatedProfile,submitRegistrationV35,signInUserV35,completeLoginV35,restoreSessionV35,logoutV35,resetAccountRuntimeState,saveProgressV35,createStudentV35,installRegistrationV35,runtimeSnapshot,syncSnapshot,setSyncState};
   restoreSessionV35();
 })();

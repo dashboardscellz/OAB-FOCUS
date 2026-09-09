@@ -72,7 +72,7 @@ def page_for(browser, width, height):
 
 def test_v32_is_loaded_after_v30():
     html = INDEX.read_text(encoding='utf-8')
-    assert '<script src="data/v32-patch.js"></script>' in html
+    assert '<script src="data/v32-patch.js?v=35.9"></script>' in html
     assert html.rfind('data/v32-patch.js') > html.rfind('data/v30-patch.js')
 
 

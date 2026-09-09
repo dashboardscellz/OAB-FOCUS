@@ -46,7 +46,8 @@
       : `<div class="v34-answer-verdict bad"><strong>✕ Você marcou ${selLetter} — incorreta.</strong><span>Gabarito oficial: ${correctLetter}</span></div>`;
     const wrong=a?.correct?'':`<section class="v34-explain-block wrong"><h4>Por que sua alternativa está errada</h4><p><b>Alternativa ${selLetter}:</b> ${esc34(selectedText)}</p><p>${esc34(selectedAnalysis)}</p></section>`;
     const alternatives=Object.entries(r.alternatives||{}).map(([letter,text])=>`<article class="v34-alt-analysis ${letter===correctLetter?'correct':''} ${letter===selLetter?'chosen':''}"><b>${letter}${letter===correctLetter?' · correta':''}${letter===selLetter?' · sua marcação':''}</b><p>${esc34(text)}</p></article>`).join('');
-    return `<div class="feedback v34-feedback">${status}${wrong}
+    const trust=QUALITY?.commentTrust?.(q)||'reviewed';const trustLabel=trust==='generated-reviewed'?'Comentário autoral revisado':'Comentário revisado';
+    return `<div class="feedback v34-feedback">${status}<div class="v34-trust-row"><span class="comment-trust-badge ${trust}">${trustLabel}</span></div>${wrong}
       <section class="v34-explain-block"><h4>Por que a correta está certa</h4><p>${esc34(r.whyCorrect)}</p></section>
       <section class="v34-explain-block legal"><h4>Fundamento jurídico</h4><p>${esc34(r.basis)}</p><small>${esc34(r.sourceNote||'')}</small></section>
       <section class="v34-explain-block trap"><h4>Armadilha da questão</h4><p>${esc34(r.trap||'')}</p></section>

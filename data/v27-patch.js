@@ -223,16 +223,16 @@
       return false;
     }
     const origin=readerOrigin();
-    qFilters={
-      discipline:fresh.discipline,topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:ids,
+    const opened=window.OAB_STATE.openQuestionContext({
+      discipline:fresh.discipline,questionIds:ids,
       studyContext:{
         discipline:fresh.discipline,label:`${fresh.chapterTitle} · ${fresh.label}`,mode:'v27-progression-verified',
         count:ids.length,verified:true,chapterId:fresh.chapterId,subtopic:fresh.subtopicTitle||'',
         progression:true,required:requiredQuestionCount(ids),unitKey:fresh.key,
         ...(origin?{readerOrigin:origin}:{})
       }
-    };
-    try{ qIndex=0; }catch{}
+    });
+    if(!opened){try{toast('Não foi possível montar a prática específica desta unidade.','bad');}catch{}return false;}
     if(origin && window.OAB_V26?.readerSession){
       window.OAB_V26.readerSession.pendingQuestionOrigin=clone27(origin);
     }

@@ -58,3 +58,16 @@ Acabamento visual do login e navegação de saída das questões: retrato instit
 
 ### v35.5
 Taxonomia pedagógica global: subtítulos deixam de virar unidades automaticamente. O sistema agrupa microtópicos juridicamente dependentes em unidades completas, preserva institutos autônomos separados, agrega questões dos microtópicos de origem e mantém compatibilidade com progresso legado. Poder Constituinte passa a reunir conceito, originário, derivado/modalidades e limites em uma única unidade. Materiais aprofundados de Improbidade, Licitações e Ética recebem recortes semânticos próprios para impedir sumários, citações e fragmentos de PDF de virarem assuntos. Assets v35 usam `?v=35.5`.
+
+### v35.8
+Hardening técnico baseado na auditoria humana da v35.7: estado compartilhado `OAB_STATE` para contexto de questões, sincronização visível do progresso, cache `?v=35.8` em todos os scripts locais, validação de perfil no Firebase, distinção de comentários revisados/legados e teste da aplicação completa com todos os scripts reais na ordem de produção.
+
+
+### v35.9 — Cobertura pedagógica completa
+- Corrige a ausência total de conteúdo em Filosofia: 5 tópicos do menu agora possuem teoria própria.
+- Corrige Financeiro, Internacional, Ambiental, Direitos Humanos e Empresarial: cada uma passa a ter 5 capítulos teóricos alinhados aos 5 tópicos do menu.
+- O antigo bloco único de `Legislação integral` dessas cinco matérias é preservado como arquivo de referência, mas deixa de ser repetido dentro de todos os tópicos.
+- Cada tópico jurídico recebe um bloco normativo específico (`Lei seca e súmulas`) com as referências centrais do assunto.
+- A cobertura autoral de questões permanece sob o motor v34/v35.7, usando somente conteúdo da unidade e o mapeamento estrito da trilha.
+- Novo teste `tests/v35_content_coverage.py` bloqueia publicação se disciplina do menu ficar sem teoria ou se um dos 30 tópicos corrigidos perder seu capítulo correspondente.
+- Novo `PROMPT_MESTRE_COBERTURA_PEDAGOGICA_v35_9.md` formaliza o padrão de conteúdo, trilhas e questões para futuras versões.

@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v35 - ATUALIZACAO DO REPOSITORIO
+echo   OAB FOCUS v35.9 - COBERTURA PEDAGOGICA
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -141,6 +141,24 @@ if not exist "%SRC%data\v35-shell.css" (
   exit /b 4
 )
 
+if not exist "%SRC%data\v35-state.js" (
+  echo ERRO: o estado compartilhado da v35.8 nao foi encontrado.
+  pause
+  exit /b 4
+)
+
+if not exist "%SRC%data\v35-question-quality.js" (
+  echo ERRO: o motor de qualidade de questoes da v35.8 nao foi encontrado.
+  pause
+  exit /b 4
+)
+
+if not exist "%SRC%data\v35-content-coverage.js" (
+  echo ERRO: a cobertura pedagogica da v35.9 nao foi encontrada.
+  pause
+  exit /b 4
+)
+
 if not exist "%SRC%data\v35-taxonomy.js" (
   echo ERRO: a taxonomia pedagogica global da v35.5 nao foi encontrada.
   pause
@@ -204,18 +222,21 @@ if not exist "%DST%\data\v34-patch.js" goto :verify_error
 if not exist "%DST%\data\v35-auth.js" goto :verify_error
 if not exist "%DST%\data\v35-shell.js" goto :verify_error
 if not exist "%DST%\data\v35-shell.css" goto :verify_error
+if not exist "%DST%\data\v35-state.js" goto :verify_error
+if not exist "%DST%\data\v35-question-quality.js" goto :verify_error
+if not exist "%DST%\data\v35-content-coverage.js" goto :verify_error
 if not exist "%DST%\data\v35-taxonomy.js" goto :verify_error
 if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v35.5 copiada e arquivos essenciais validados.
+echo OK: v35.9 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v35.5 - taxonomia pedagogica global
+echo 2. Summary: OAB Focus v35.9 - cobertura pedagogica completa
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

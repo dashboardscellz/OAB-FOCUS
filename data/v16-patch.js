@@ -107,8 +107,9 @@
   function openStrictQuestions({discipline,chapter,subtopic='',label=''}){
     const set=questionsForUnitStrict(discipline,chapter,subtopic);
     if(!set.ids.length){toast('Ainda não há questão validada especificamente para esta unidade. O OAB Focus não vai misturar outro assunto.','bad');return;}
-    qFilters={discipline:'',topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:set.ids,studyContext:{discipline,label:label||set.label,mode:set.mode,count:set.ids.length,verified:true,chapterId:chapter.id,subtopic}};
-    qIndex=0;safeRoute('questions');
+    const opened=window.OAB_STATE.openQuestionContext({discipline,questionIds:set.ids,studyContext:{discipline,label:label||set.label,mode:set.mode,count:set.ids.length,verified:true,chapterId:chapter.id,subtopic}});
+    if(!opened){toast('Ainda não há questão específica validada para esta unidade.','bad');return;}
+    safeRoute('questions');
   }
 
   /* ---------- Disciplina: índices com contagem validada ---------- */

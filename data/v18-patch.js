@@ -81,7 +81,7 @@
   }
   function openQIds(ids,ctx){
     if(!ids.length){toast('Ainda não há questão específica validada para esta unidade.','bad');return;}
-    qFilters={discipline:'',topic:'',exam:'',status:'all',search:'',questionId:'',questionIds:ids,studyContext:{discipline:ctx.discipline,label:ctx.label,mode:'v18-verified',count:ids.length,verified:true,chapterId:ctx.chapterId||'',subtopic:ctx.subtopic||''}};qIndex=0;safeRoute('questions');
+    const opened=window.OAB_STATE.openQuestionContext({discipline:ctx.discipline,questionIds:ids,studyContext:{discipline:ctx.discipline,label:ctx.label,mode:'v18-verified',count:ids.length,verified:true,chapterId:ctx.chapterId||'',subtopic:ctx.subtopic||''}});if(!opened){toast('Ainda não há questão específica validada para esta unidade.','bad');return;}safeRoute('questions');
   }
   function learningState(){
     progress.learningPath=progress.learningPath||{completed:{},createdAt:Date.now(),version:18};

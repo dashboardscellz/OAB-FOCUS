@@ -274,20 +274,11 @@
 
   function openQuestionBlock(ctx,set){
     if(!ctx || !set?.ids?.length) return;
-    qFilters = {
-      discipline:'', topic:'', exam:'', status:'all', search:'', questionId:'',
-      questionIds:set.ids,
-      studyContext:{
-        discipline: ctx.discipline,
-        label: ctx.label,
-        mode: set.authorial ? 'v20-hybrid-topic' : 'v20-real-topic',
-        count: set.ids.length,
-        verified: !set.authorial,
-        chapterId: ctx.chapter?.id || '',
-        subtopic: ctx.subtopic || ''
-      }
-    };
-    qIndex = 0;
+    const opened=window.OAB_STATE.openQuestionContext({
+      discipline:ctx.discipline,questionIds:set.ids,
+      studyContext:{discipline:ctx.discipline,label:ctx.label,mode:set.authorial?'v20-hybrid-topic':'v20-real-topic',count:set.ids.length,verified:!set.authorial,chapterId:ctx.chapter?.id||'',subtopic:ctx.subtopic||''}
+    });
+    if(!opened){toast('Ainda não há questão específica validada para esta unidade.','bad');return;}
     safeRoute('questions');
   }
 
