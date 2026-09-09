@@ -91,3 +91,6 @@ Hardening técnico baseado na auditoria humana da v35.7: estado compartilhado `O
 - Alertas que já trazem conteúdo na mesma linha (`IMPORTANTE! ...`) permanecem junto de sua continuação, em vez de cortar a frase.
 - Quadros comparativos verdadeiros continuam sendo reconstruídos semanticamente quando há evidência suficiente de colunas.
 - `tests/v35_text_runtime_integration.py` cobre os três sintomas reproduzidos pelo usuário e verifica a delegação do renderizador legado.
+
+### v35.12 — Questões independentes do Prepare-se
+A aba principal **Questões** agora mantém seu próprio estado de filtros e não herda o caderno contextual aberto pelo **Prepare-se**, leitor ou trilha. Práticas guiadas continuam estritas à unidade; o banco livre restaura os filtros escolhidos pelo aluno.
