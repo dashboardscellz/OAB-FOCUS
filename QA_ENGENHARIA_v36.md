@@ -32,7 +32,7 @@ Os testes v36 foram escritos antes da implementação correspondente e tiveram f
 - Questões autorais mecânicas legadas são reclassificadas como reforço de regra, sem alegar fidelidade FGV.
 - Simulado completo deve usar 80 questões ponderadas pela distribuição disciplinar validada.
 - Diagnóstico usa 40 questões ponderadas, priorizando oficiais.
-- Todos os scripts locais usam cache `?v=36.0`.
+- Todos os scripts locais usam cache `?v=36.1`.
 - 47º EOU deve permanecer com 80 questões.
 
 ## Limitações

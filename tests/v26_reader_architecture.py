@@ -88,7 +88,7 @@ def mount_reader(browser, width=1366, height=900):
 
 def test_v26_script_is_loaded_last():
     html = (ROOT / 'index.html').read_text(encoding='utf-8')
-    assert '<script src="data/v26-patch.js?v=36.0"></script>' in html
+    assert '<script src="data/v26-patch.js?v=36.1"></script>' in html
     assert html.rfind('data/v26-patch.js') > html.rfind('data/v25-patch.js')
 
 

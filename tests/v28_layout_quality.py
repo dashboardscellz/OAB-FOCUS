@@ -52,7 +52,7 @@ def mount_reader(browser, width=1041, height=595, subtopic='Controle de Constitu
 
 def test_v28_script_is_loaded_after_v27():
     html=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert '<script src="data/v28-patch.js?v=36.0"></script>' in html
+    assert '<script src="data/v28-patch.js?v=36.1"></script>' in html
     assert html.rfind('data/v28-patch.js') > html.rfind('data/v27-patch.js')
 
 

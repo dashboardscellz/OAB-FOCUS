@@ -7,8 +7,8 @@ def js(): return AUTH.read_text(encoding='utf-8')
 
 def test_v35_auth_loaded_after_v34():
     html=INDEX.read_text(encoding='utf-8')
-    assert 'src="data/v35-auth.js?v=36.0"' in html
-    assert html.index('src="data/v35-auth.js?v=36.0"') > html.index('data/v34-patch.js')
+    assert 'src="data/v35-auth.js?v=36.1"' in html
+    assert html.index('src="data/v35-auth.js?v=36.1"') > html.index('data/v34-patch.js')
 
 def test_canonical_identity_and_hash_email():
     s=js()

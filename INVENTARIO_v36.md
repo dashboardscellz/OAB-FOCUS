@@ -7,7 +7,7 @@
 - `data/v36-primary-prep.css` — componentes visuais de prontidão/diagnóstico e regras mobile.
 
 ## Arquivos de produção alterados
-- `index.html` — carregamento dos assets v36, cache `?v=36.0` e marcador da versão.
+- `index.html` — carregamento dos assets v36, cache `?v=36.1` e marcador da versão.
 - `README.md` — escopo e mudanças da v36.
 - `ATUALIZAR_GITHUB.cmd` — validação dos novos assets e mensagem de release.
 
@@ -24,4 +24,4 @@
 - `PROMPT_MESTRE_OAB_FOCUS_PRINCIPAL_v36.md`
 
 ## Ajuste de testes legados
-Os testes que verificavam exclusivamente a chave de cache `?v=35.9` foram atualizados para `?v=36.0`. As demais asserções funcionais foram preservadas.
+Os testes que verificavam exclusivamente a chave de cache `?v=35.9` foram atualizados para `?v=36.1`. As demais asserções funcionais foram preservadas.

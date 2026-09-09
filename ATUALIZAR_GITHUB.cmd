@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v36 - PREPARACAO PRINCIPAL 1a FASE
+echo   OAB FOCUS v36.1 - PREPARACAO PRINCIPAL 1a FASE
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -16,13 +16,13 @@ echo.
 
 if not exist "%SRC%index.html" (
   echo ERRO: index.html nao foi encontrado ao lado deste arquivo.
-  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v36.
+  echo Extraia o ZIP inteiro e execute este .cmd de dentro da pasta v36.1.
   pause
   exit /b 2
 )
 
 if not exist "%SRC%data\integral-material.js" (
-  echo ERRO: a pasta data da v36 nao foi encontrada.
+  echo ERRO: a pasta data da v36.1 nao foi encontrada.
   pause
   exit /b 3
 )
@@ -154,7 +154,7 @@ if not exist "%SRC%data\v35-question-quality.js" (
 )
 
 if not exist "%SRC%data\v35-content-coverage.js" (
-  echo ERRO: a cobertura pedagogica da v36 nao foi encontrada.
+  echo ERRO: a cobertura pedagogica da v36.1 nao foi encontrada.
   pause
   exit /b 4
 )
@@ -173,7 +173,7 @@ if not exist "%DST%\.git" (
   exit /b 5
 )
 
-echo Copiando a v36...
+echo Copiando a v36.1...
 echo.
 robocopy "%SRC%" "%DST%" /E /R:1 /W:1 /XD ".git" /XF "ATUALIZAR_GITHUB.cmd" "_qa_inline.html"
 set "RC=%ERRORLEVEL%"
@@ -234,13 +234,13 @@ if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v36 copiada e arquivos essenciais validados.
+echo OK: v36.1 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v36 - ferramenta principal 1a fase
+echo 2. Summary: OAB Focus v36.1 - acabamento editorial e ferramenta principal 1a fase
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

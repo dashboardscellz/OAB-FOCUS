@@ -6,3 +6,8 @@
 @media (max-width: 768px){.v36-readiness{padding:18px;margin:12px 0 18px}.v36-readiness-head{display:block}.v36-readiness-score{margin-top:14px;text-align:left;grid-template-columns:auto 1fr}.v36-mission-grid{grid-template-columns:1fr}.v36-source-row{gap:5px}.v36-source-badge{font-size:.66rem}}
 .v36-diagnostic-action{display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line,#e4e8ec)}.v36-diagnostic-action small{color:var(--muted,#5a6675);line-height:1.4}
 @media (max-width: 768px){.v36-diagnostic-action{align-items:stretch;flex-direction:column}.v36-diagnostic-action .btn{width:100%}}
+
+/* v36.1 — matriz mobile validada também nos breakpoints usados pelo shell */
+@media (max-width: 430px){.v36-readiness{padding:16px}.v36-readiness-score{min-width:0}.v36-mission-grid article{padding:12px}.v36-source-badge{line-height:1.25}}
+@media (max-width: 390px){.v36-readiness-head h3{font-size:1.24rem}.v36-readiness-score strong{font-size:1.28rem}.v36-diagnostic-action{gap:10px}}
+@media (max-width: 360px){.v36-readiness{padding:14px}.v36-mission-grid article{gap:9px;padding:11px}.v36-diagnostic-action .btn{min-height:44px}}
