@@ -59,8 +59,8 @@ def make_page(browser,w=390,h=844,route='home',content='<section class="dashboar
 
 def test_mobile_files_are_loaded_last_with_v3513_cache_bust():
     txt=INDEX.read_text(encoding='utf-8')
-    assert 'data/v35-mobile-app.css?v=35.16' in txt
-    assert 'data/v35-mobile-app.js?v=35.16' in txt
+    assert 'data/v35-mobile-app.css?v=35.17' in txt
+    assert 'data/v35-mobile-app.js?v=35.17' in txt
     assert txt.rfind('v35-mobile-app.js') > txt.rfind('v35-question-navigation.js')
 
 def test_hidden_login_cannot_override_authenticated_app(browser):

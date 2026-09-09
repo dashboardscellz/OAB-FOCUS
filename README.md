@@ -137,3 +137,11 @@ A aba principal **Questões** agora mantém seu próprio estado de filtros e nã
 - Novo prompt: `PROMPT_MESTRE_MOBILE_v35_16.md`.
 - Auditoria e QA: `AUDITORIA_MOBILE_v35_16.md` e `QA_MOBILE_v35_16.md`.
 - O adaptador de Questões deixa de presumir que `.question-layout` é filho direto de `#content`, eliminando `NotFoundError` encontrado apenas no runtime completo.
+
+
+### v35.17 — Revisão pesada mobile
+- Auditoria passa a corrigir classes de falha e procurar **bugs irmãos**, em vez de tratar só o screenshot informado.
+- Neutraliza herança de `min-height` e cores do desktop nos `hero-card` mobile.
+- Corrige chips invisíveis no “De onde parou”, excesso de vazio e reserva de rolagem acima da bottom navigation.
+- Garante uma única aba ativa na navegação inferior e reforça `min-width:0/max-width:100%` em containers críticos.
+- Inclui `OAB_MOBILE_APP.auditMobileGeometry()` e o `PROMPT_MESTRE_REVISAO_PESADA_MOBILE_v35_17.md`.

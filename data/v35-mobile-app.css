@@ -1,4 +1,4 @@
-/* OAB Focus v35.16 — mobile app architecture + layout hardening
+/* OAB Focus v35.17 — mobile app architecture + layout hardening
    Mobile-only application layer. Desktop (>768px) intentionally unchanged. */
 
 /* Auth state must win over historical login patches that used display:block!important. */
@@ -6,7 +6,7 @@
 #app.app-shell.hidden{display:none!important;visibility:hidden!important;pointer-events:none!important;}
 
 @media(max-width:768px),(max-width:950px) and (max-height:500px){
-  :root{--v3513-nav-h:72px;--v3513-top-h:56px;--v3513-gutter:14px;--v3516-top-safe:env(safe-area-inset-top);--v3516-bottom-safe:env(safe-area-inset-bottom);--v3513-card:#fff;--v3513-soft:#f3f6f8;--v3513-line:#dfe5eb;--v3513-shadow:0 1px 2px rgba(15,23,42,.04);}
+  :root{--v3517-nav-h:64px;--v3513-nav-h:var(--v3517-nav-h);--v3513-top-h:56px;--v3513-gutter:14px;--v3516-top-safe:env(safe-area-inset-top);--v3516-bottom-safe:env(safe-area-inset-bottom);--v3513-card:#fff;--v3513-soft:#f3f6f8;--v3513-line:#dfe5eb;--v3513-shadow:0 1px 2px rgba(15,23,42,.04);}
   html,body{max-width:100%;overflow-x:hidden;}
   body{background:#f7f8fa;}
 
@@ -37,6 +37,24 @@
   #app .bottom-nav button span{font-size:1.12rem!important;line-height:1!important;}
   #app .bottom-nav button small{font-size:.68rem!important;line-height:1!important;font-weight:650!important;}
   #app .bottom-nav button.active{color:var(--brand)!important;background:color-mix(in srgb,var(--brand) 7%,transparent)!important;}
+
+
+  /* v35.17 heavy audit: neutralize desktop geometry/color inheritance on mobile. */
+  #app .hero-card{min-height:0!important;max-width:100%!important;color:var(--ink)!important;overflow:visible!important;}
+  #app .hero-card:after{display:none!important;}
+  #app .content{scroll-padding-bottom:calc(var(--v3517-nav-h) + var(--v3516-bottom-safe) + 32px)!important;}
+  #app .bottom-nav button:not(.active){background:transparent!important;box-shadow:none!important;}
+  #app[data-v3513-route="study"] .study-hero{min-height:0!important;color:var(--ink)!important;gap:12px!important;}
+  #app[data-v3513-route="study"] .study-hero:after{display:none!important;}
+  #app[data-v3513-route="study"] .study-hero .hero-copy{min-width:0!important;}
+  #app[data-v3513-route="study"] .study-hero .eyebrow{color:var(--brand)!important;}
+  #app[data-v3513-route="study"] .study-hero p{color:var(--muted)!important;}
+  #app[data-v3513-route="study"] .study-hero .metric-row{margin-top:10px!important;gap:6px!important;}
+  #app[data-v3513-route="study"] .study-hero .metric-chip{background:var(--surface-2)!important;color:var(--muted)!important;border:1px solid var(--line)!important;white-space:normal!important;overflow-wrap:anywhere!important;}
+  #app[data-v3513-route="study"] .study-hero .btn{width:100%!important;min-height:48px!important;}
+  #app[data-v3513-route="prepare"] .content{padding-bottom:calc(var(--v3517-nav-h) + var(--v3516-bottom-safe) + 56px)!important;scroll-padding-bottom:calc(var(--v3517-nav-h) + var(--v3516-bottom-safe) + 40px)!important;}
+  #app[data-v3513-route="prepare"] :where(.v18-learning-item,.v18-prereq,.v18-today-head p,.v18-plan-card p,.week-day small){overflow-wrap:anywhere!important;min-width:0!important;}
+  #app :where(.section,.hero-card,.card,.discipline-card,.chapter-card,.plan-dashboard,.today-plan,.plan-side,.plan-stat,.question-panel,.side-card,.v18-plan-grid,.v18-today,.v18-plan-card){min-width:0!important;max-width:100%!important;box-sizing:border-box!important;}
 
   /* Mobile home: app dashboard, not compressed desktop. */
   #app .v3513-mobile-home{display:grid;gap:16px;}
@@ -169,7 +187,7 @@
   #app img,#app video,#app canvas,#app svg{max-width:100%;}
 }
 
-  /* v35.16: hardening found in real iPhone captures. */
+  /* v35.16–v35.17: hardening found in real iPhone captures and sibling-bug audit. */
   #app .content>*{max-width:100%;min-width:0;}
   #app :where(.v3513-mobile-home,.v3513-continue,.v3513-quick-grid,.v3513-today,.v3513-plan-card,.question-layout,.question-panel,.question-side,.v26-reader-shell,.v26-reading-stage,#readerArticle){box-sizing:border-box;max-width:100%;min-width:0;}
   #app .bottom-nav button{min-width:44px!important;}

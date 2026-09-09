@@ -169,3 +169,9 @@ A v35.10 adicionou `data/v35-text-quality.js`, mas `data/v16-patch.js` ainda man
 - 230 testes aprovados na árvore, contando todas as suítes individualmente.
 - teste integral Playwright com o `index.html` completo e todos os scripts reais inline, na ordem de produção, confirma que o runtime usa `OAB_TEXT_QUALITY.VERSION === 35.11` e não gera `v16-compare-row` nos dois casos falsos relatados.
 - varredura do motor v35.11 sobre 229 seções do material integral: 120 quadros comparativos detectados; nenhum cabeçalho de quadro iniciou por bullet ou fragmento minúsculo suspeito na auditoria automática.
+
+
+## v35.17 — revisão pesada mobile
+- Novo teste `tests/v35_mobile_heavy_audit.py`: herança desktop, contraste, bottom-nav, tabs e release gate.
+- Evidências reais: hero de Estudar com 300px e chips brancos; Prepare-se com conteúdo longo sob barra fixa.
+- Runtime expõe `auditMobileGeometry()` para detectar overflow, elementos fora da viewport, ghost-content e interseção com bottom nav.

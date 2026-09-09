@@ -19,7 +19,7 @@ def test_full_real_app_mobile_home_and_bank_are_bounded():
         page=b.new_page(viewport={'width':390,'height':844})
         page.on('pageerror',lambda e: errors.append(str(e)))
         page.set_content(inline_real_app(),wait_until='load',timeout=90000)
-        page.wait_for_function("() => window.__OAB_BOOT_OK===true&&window.OAB_MOBILE_APP?.VERSION==='35.16'",timeout=30000)
+        page.wait_for_function("() => window.__OAB_BOOT_OK===true&&window.OAB_MOBILE_APP?.VERSION==='35.17'",timeout=30000)
         result=page.evaluate("""()=>{
           user={uid:'mobile-test',email:'mobile@example.invalid'};
           profile={name:'Cellzinho',username:'cellzinho',role:'student',active:true,approvalStatus:'approved'};

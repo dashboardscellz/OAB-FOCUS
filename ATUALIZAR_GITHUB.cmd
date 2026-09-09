@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v35.16 - MOBILE FINAL
+echo   OAB FOCUS v35.17 - REVISAO PESADA MOBILE
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -184,13 +184,13 @@ if not exist "%SRC%data\v35-question-navigation.js" (
 )
 
 if not exist "%SRC%data\v35-mobile-app.js" (
-  echo ERRO: a arquitetura mobile JS da v35.16 nao foi encontrada.
+  echo ERRO: a arquitetura mobile JS da v35.17 nao foi encontrada.
   pause
   exit /b 4
 )
 
 if not exist "%SRC%data\v35-mobile-app.css" (
-  echo ERRO: a arquitetura mobile CSS da v35.16 nao foi encontrada.
+  echo ERRO: a arquitetura mobile CSS da v35.17 nao foi encontrada.
   pause
   exit /b 4
 )
@@ -265,13 +265,13 @@ if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v35.16 copiada e arquivos essenciais validados.
+echo OK: v35.17 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v35.16 - mobile final
+echo 2. Summary: OAB Focus v35.17 - revisao pesada mobile
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

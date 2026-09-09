@@ -1,7 +1,7 @@
-/* OAB Focus v35.16 — mobile app architecture + hardening adapter */
+/* OAB Focus v35.17 — mobile app architecture + hardening adapter */
 (function(){
   'use strict';
-  const VERSION='35.16';
+  const VERSION='35.17';
   const api=window.OAB_MOBILE_APP=window.OAB_MOBILE_APP||{};
   const ROUTE_LABELS={home:'Início',study:'Estudar',reader:'Estudar',prepare:'Prepare-se',questions:'Questões',review:'Revisar',performance:'Desempenho',highyield:'Mais cobrados',ranking:'Ranking',profile:'Perfil',settings:'Configurações',admin:'Admin'};
   let homeNext=null;
@@ -33,14 +33,16 @@
   }
   function syncShell(){
     const app=document.getElementById('app');if(!app)return;const r=getRoute();
-    app.dataset.v3513Route=r;app.dataset.v3516Route=r;document.body.dataset.v3513Route=r;document.body.dataset.v3516Route=r;
+    app.dataset.v3513Route=r;app.dataset.v3516Route=r;app.dataset.v3517Route=r;document.body.dataset.v3513Route=r;document.body.dataset.v3516Route=r;document.body.dataset.v3517Route=r;
     const brand=app.querySelector('.v35-mobile-brand');
     if(brand&&mobileQuery())brand.innerHTML=`<span>OAB Focus</span><small class="v3513-mobile-route-label">${escHtml(routeTitle(r))}</small>`;
-    app.querySelectorAll('.bottom-nav [data-route]').forEach(b=>{
-      const active=b.dataset.route===r||(r==='reader'&&b.dataset.route==='study');b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
-    });
+    const tabs=[...app.querySelectorAll('.bottom-nav button')];tabs.forEach(b=>{b.classList.remove('active');b.removeAttribute('aria-current');});
+    const desired=r==='reader'?'study':r;
+    const direct=app.querySelector(`.bottom-nav [data-route="${desired}"]`);
     const more=app.querySelector('.bottom-nav [data-v35-mobile-more]');
-    if(more){const moreActive=['review','performance','highyield','ranking','profile','settings','admin'].includes(r);more.classList.toggle('active',moreActive);if(moreActive)more.setAttribute('aria-current','page');else more.removeAttribute('aria-current');}
+    const moreActive=['review','performance','highyield','ranking','profile','settings','admin'].includes(r);
+    const active=direct||((moreActive&&more)||null);
+    if(active){active.classList.add('active');active.setAttribute('aria-current','page');}
   }
 
   function renderMobileHome(){
@@ -141,6 +143,19 @@
     const vv=window.visualViewport;const height=vv?.height||innerHeight;document.documentElement.style.setProperty('--v3516-visual-h',`${Math.max(240,height)}px`);
     const keyboard=mobileQuery()&&innerHeight-height>120;document.body.classList.toggle('v3516-keyboard-open',keyboard);
   }
+  function auditMobileGeometry(){
+    if(!mobileQuery())return {mobile:false,findings:[]};
+    const findings=[],nav=document.querySelector('.bottom-nav'),nb=nav?.getBoundingClientRect?.();
+    if(document.documentElement.scrollWidth>innerWidth+1)findings.push({type:'overflow-x',value:document.documentElement.scrollWidth-innerWidth});
+    document.querySelectorAll('#app *').forEach(el=>{
+      const cs=getComputedStyle(el),r=el.getBoundingClientRect();if(cs.display==='none'||cs.visibility==='hidden'||r.width<1||r.height<1)return;
+      if(r.left<-2||r.right>innerWidth+2)findings.push({type:'out-of-viewport',selector:el.className||el.id||el.tagName,left:r.left,right:r.right});
+      const txt=(el.childElementCount===0?(el.textContent||'').trim():'');
+      if(txt&&r.height>8&&parseFloat(cs.opacity)<.12)findings.push({type:'ghost-content',selector:el.className||el.id||el.tagName,text:txt.slice(0,60)});
+      if(nb&&txt&&!nav.contains(el)&&cs.position!=='fixed'&&r.bottom>nb.top+1&&r.top<nb.bottom-1)findings.push({type:'bottom-nav-overlap',selector:el.className||el.id||el.tagName,text:txt.slice(0,60)});
+    });
+    return {mobile:true,findings};
+  }
   function enhanceCurrentRoute(){
     installRuntimeCss();syncShell();if(!mobileQuery())return;
     const r=getRoute();
@@ -173,6 +188,6 @@
     window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{closeQuestionFilters();syncVisualViewport();syncShell();if(mobileQuery())schedule();},120);});
     document.documentElement.dataset.oabMobileVersion=VERSION;
   }
-  Object.assign(api,{VERSION,isMobile:mobileQuery,routeTitle,syncShell,renderMobileHome,enhanceStudy,enhancePrepare,enhanceQuestions,enhanceReader,enhanceCurrentRoute,openQuestionFilters,closeQuestionFilters,syncStatusVisibility,syncVisualViewport,installRuntimeCss,install});
+  Object.assign(api,{VERSION,isMobile:mobileQuery,routeTitle,syncShell,renderMobileHome,enhanceStudy,enhancePrepare,enhanceQuestions,enhanceReader,enhanceCurrentRoute,openQuestionFilters,closeQuestionFilters,syncStatusVisibility,syncVisualViewport,installRuntimeCss,auditMobileGeometry,install});
   install();
 })();
