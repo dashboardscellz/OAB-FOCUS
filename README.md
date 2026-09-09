@@ -94,3 +94,23 @@ Hardening técnico baseado na auditoria humana da v35.7: estado compartilhado `O
 
 ### v35.12 — Questões independentes do Prepare-se
 A aba principal **Questões** agora mantém seu próprio estado de filtros e não herda o caderno contextual aberto pelo **Prepare-se**, leitor ou trilha. Práticas guiadas continuam estritas à unidade; o banco livre restaura os filtros escolhidos pelo aluno.
+
+### v35.13 — Arquitetura mobile em formato de aplicativo
+- A experiência em telas de até 768 px deixa de ser o desktop comprimido e passa a ter uma camada mobile própria, preservando a versão desktop.
+- Corrige o conflito que permitia `#loginView.login-v11` continuar visível após autenticação em alguns layouts móveis.
+- Início mobile compacto com retomada de estudo, atalhos Estudar/Questões/Prepare-se/Revisar, resumo do dia e acesso a desempenho.
+- Estudar usa lista vertical de disciplinas e capítulos com alvos de toque adequados.
+- Prepare-se permanece um ambiente próprio de planejamento e não interfere no Banco de Questões.
+- Questões mantém o banco livre da v35.12 e recebe busca própria + filtros em bottom sheet, reutilizando os controles reais do sistema (sem duplicar estado).
+- Leitor ocupa a largura útil do aparelho, respeita safe-area e mantém tabelas/quadros com rolagem horizontal quando necessário.
+- Navegação inferior fixa em cinco áreas: Início, Estudar, Prepare-se, Questões e Mais.
+- A arquitetura foi inspirada em padrões observados no OAB de Bolso (acesso direto a questões, planejamento separado e filtros por assunto), sem copiar identidade visual ou conteúdo.
+- Novas suítes: `tests/v35_mobile_app.py` e `tests/v35_mobile_questions.py`, com matrizes 375×812, 390×844, 430×932 e 768×1024.
+
+
+### v35.14 — Motor autoral padrão FGV/OAB
+- Substitui os templates genéricos de questões autorais por casos/controvérsias jurídicas.
+- Usa as 2.416 questões reais existentes no projeto como corpus de estilo, sem copiar enunciados.
+- Bloqueia referências a “material”, “conteúdo estudado” e “unidade” em questões autorais.
+- Gera comentário estruturado com análise da correta, das erradas, fundamento, pegadinha e regra de revisão.
+- Mantém vínculo estrito com disciplina, capítulo e microtópico da trilha.

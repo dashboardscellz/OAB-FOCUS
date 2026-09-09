@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v35.12 - QUESTOES INDEPENDENTES DO PREPARE-SE
+echo   OAB FOCUS v35.13 - ARQUITETURA MOBILE
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -177,6 +177,18 @@ if not exist "%SRC%data\v35-question-navigation.js" (
   exit /b 4
 )
 
+if not exist "%SRC%data\v35-mobile-app.js" (
+  echo ERRO: a arquitetura mobile JS da v35.13 nao foi encontrada.
+  pause
+  exit /b 4
+)
+
+if not exist "%SRC%data\v35-mobile-app.css" (
+  echo ERRO: a arquitetura mobile CSS da v35.13 nao foi encontrada.
+  pause
+  exit /b 4
+)
+
 if not exist "%DST%\.git" (
   echo ERRO: a pasta de destino nao parece ser o repositorio OAB-FOCUS.
   echo O destino esperado e:
@@ -240,17 +252,19 @@ if not exist "%DST%\data\v35-content-coverage.js" goto :verify_error
 if not exist "%DST%\data\v35-taxonomy.js" goto :verify_error
 if not exist "%DST%\data\v35-text-quality.js" goto :verify_error
 if not exist "%DST%\data\v35-question-navigation.js" goto :verify_error
+if not exist "%DST%\data\v35-mobile-app.js" goto :verify_error
+if not exist "%DST%\data\v35-mobile-app.css" goto :verify_error
 if exist "%DST%\maps" goto :verify_error
 if exist "%DST%\maps-hd" goto :verify_error
 if exist "%DST%\data\map-manifest.js" goto :verify_error
 
-echo OK: v35.12 copiada e arquivos essenciais validados.
+echo OK: v35.13 copiada e arquivos essenciais validados.
 echo.
 echo ==============================================
 echo COPIA CONCLUIDA.
 echo Agora abra o GitHub Desktop:
 echo 1. Confira a aba Changes.
-echo 2. Summary: OAB Focus v35.12 - questoes independentes do Prepare-se
+echo 2. Summary: OAB Focus v35.13 - arquitetura mobile
 echo 3. Commit to main
 echo 4. Push origin
 echo ==============================================

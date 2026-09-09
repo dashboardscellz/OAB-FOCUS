@@ -222,35 +222,16 @@
     return nodes.map(n => n.textContent.trim()).filter(t => t.length > 35).join(' ');
   }
 
+  // v35.14 delegates buildResearch and quality gating to OAB_V35_AUTHORIAL_FGV.
   function makeAuthorialQuestion(ctx, idx, theoryText){
     const topic = clean(ctx.subtopic || ctx.chapter?.title || ctx.unit?.title || ctx.discipline);
     const id = `v20-auto-${toSlug(ctx.discipline)}-${toSlug(topic)}-${idx}`;
     if(qExists(id)) return id;
-    const extracted=QUALITY?.extractRule?.(theoryText,topic),correct=extracted?.rule||'';
-    if(!correct||!QUALITY?.isCompleteLegalStatement?.(correct))return '';
-    const wrong=QUALITY?.buildDistractors?.(correct,topic)||[];
-    if(wrong.length<3)return '';
-    const options=[correct,...wrong.slice(0,3)];
-    if(options.some(x=>!QUALITY?.isCompleteLegalStatement?.(x)))return '';
-    const research=QUALITY?.buildResearch?.(correct,options,0,topic,theoryText)||null;
-    const q = {
-      id,
-      number: idx,
-      displayNumber: idx,
-      discipline: ctx.discipline,
-      exam: `${SUPP_TAG} — estilo FGV/OAB`,
-      statement: `${SUPP_TAG} — estilo FGV/OAB. Sobre ${topic}, assinale a alternativa correta.`,
-      options,
-      answer: 0,
-      comment: research?`${research.whyCorrect} Fundamento jurídico: ${research.basis}`:`A alternativa A reproduz a regra jurídica completa estudada em ${topic}.`,
-      research: research||undefined,
-      researchVersion: research?'v35.7-authorial':undefined,
-      sourceType:'authorial',authorial:true,
-      topic
-    };
-    QUESTION_POOL.push(q);
-    window.OAB_QUESTIONS = QUESTION_POOL;
-    return id;
+    const extracted=QUALITY?.extractRule?.(theoryText,topic),rule=extracted?.rule||'';
+    if(!rule||!QUALITY?.isCompleteLegalStatement?.(rule))return '';
+    const q=window.OAB_V35_AUTHORIAL_FGV?.buildQuestion?.({id,discipline:ctx.discipline,topic,chapterId:ctx.chapter?.id||'',seq:idx,rule,context:theoryText,exam:`${SUPP_TAG} — padrão FGV/OAB`});
+    if(!q)return '';
+    QUESTION_POOL.push(q);window.OAB_QUESTIONS=QUESTION_POOL;return id;
   }
 
   function questionSetForCtx(ctx){

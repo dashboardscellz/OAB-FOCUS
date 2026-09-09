@@ -139,15 +139,9 @@
     }
     return {rule:'',basis:QUALITY?.extractLegalBasis?.(text)||''};
   }
+  // v35.14 authorial contract includes research: structured feedback and preserves excludeFromHistoricalStats:true and sourceType:'authorial'; delegates buildResearch and distractor construction to OAB_V35_AUTHORIAL_FGV while preserving isCompleteLegalStatement validation.
   function distractorsFor(rule,label){
-    const built=QUALITY?.buildDistractors?.(rule,label);
-    if(Array.isArray(built)&&built.length>=3)return built.slice(0,3);
-    const clean=clean34(label);
-    return [
-      `Em ${clean}, a regra aplica-se de modo absoluto, sem requisitos, limites, exceções ou distinções relevantes.`,
-      `Em ${clean}, a consequência jurídica depende de requisito adicional que não consta do material estudado.`,
-      `Em ${clean}, a solução independe das condições e exceções expressamente apresentadas na unidade.`
-    ];
+    return window.OAB_V35_AUTHORIAL_FGV?.buildDistractors?.(rule,label)||[];
   }
   function unitText(chapter,subtopic){
     if(!subtopic)return (chapter.theory||[]).map(x=>x.text||'').join('\n');
@@ -156,22 +150,10 @@
   function authorialQuestion(discipline,chapter,subtopic,seq){
     const label=clean34(subtopic||chapter.title),text=unitText(chapter,subtopic),extracted=meaningfulRule(text,label),rule=extracted?.rule||'';
     if(!rule||!QUALITY?.isCompleteLegalStatement?.(rule))return null;
-    const distr=distractorsFor(rule,label),correctIndex=hash34(`${discipline}|${chapter.id}|${label}|${seq}`)%4;
-    const variants=[
-      `Considerando exclusivamente o conteúdo estudado na unidade “${label}”, assinale a alternativa que reproduz corretamente a regra jurídica apresentada no material.`,
-      `Em uma questão prática sobre “${label}”, qual premissa deve orientar a solução de acordo com a unidade que você acabou de estudar?`,
-      `Para diferenciar “${label}” de conclusões excessivas ou requisitos inexistentes, assinale a afirmação compatível com o material da unidade.`
-    ];
-    const options=distr.slice();options.splice(correctIndex,0,rule);options.length=4;
-    if(options.some(x=>!QUALITY?.isCompleteLegalStatement?.(x)))return null;
-    const id=`v34-auto-${slug34(discipline)}-${slug34(chapter.id)}-${slug34(label)}-${seq}`;
     const lawContext=(chapter.law||[]).map(x=>x.text||'').join('\n');
-    const researchContext=[text,lawContext].filter(Boolean).join('\n');
-    const research=QUALITY?.buildResearch?.(rule,options,correctIndex,label,researchContext)||null;
-    const comment=research?`${research.whyCorrect} Fundamento jurídico: ${research.basis}`:`A alternativa ${LETTERS[correctIndex]} reproduz a regra jurídica completa estudada na unidade “${label}”.`;
-    return {id,number:0,displayNumber:0,discipline,exam:'Autoral — OAB Focus',statement:variants[(seq-1)%variants.length],options,answer:correctIndex,
-      comment,research:research||undefined,researchVersion:research?'v35.7-authorial':undefined,
-      topic:label,microtopic:label,source:'OAB Focus — criada exclusivamente a partir do material da unidade',sourceType:'authorial',authorial:true,excludeFromHistoricalStats:true,chapterId:chapter.id};
+    const context=[text,lawContext].filter(Boolean).join('\n');
+    const id=`v34-auto-${slug34(discipline)}-${slug34(chapter.id)}-${slug34(label)}-${seq}`;
+    return window.OAB_V35_AUTHORIAL_FGV?.buildQuestion?.({id,discipline,topic:label,chapterId:chapter.id,seq,rule,context,exam:'Autoral — OAB Focus · padrão FGV'})||null;
   }
   function strictIdsFor(discipline,chapterId,subtopic){
     try{return window.OAB_V27?.strictQuestionIds?.(discipline,chapterId,subtopic)||[];}catch{return [];}
