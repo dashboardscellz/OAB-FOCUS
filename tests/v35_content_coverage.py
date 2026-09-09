@@ -31,8 +31,8 @@ console.log(JSON.stringify({disciplines:ctx.window.OAB_INTEGRAL.disciplines,meta
     return json.loads(out)
 
 def test_patch_is_loaded_immediately_after_integral_material():
-    a=INDEX.index('data/integral-material.js?v=36.1')
-    b=INDEX.index('data/v35-content-coverage.js?v=36.1')
+    a=INDEX.index('data/integral-material.js?v=36.2')
+    b=INDEX.index('data/v35-content-coverage.js?v=36.2')
     assert a < b
     assert '?v=35.8' not in INDEX
 

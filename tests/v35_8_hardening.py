@@ -2,7 +2,7 @@ from pathlib import Path
 import json, subprocess, re
 ROOT=Path(__file__).resolve().parents[1];INDEX=ROOT/'index.html';STATE=ROOT/'data'/'v35-state.js';AUTH=ROOT/'data'/'v35-auth.js';QUALITY=ROOT/'data'/'v35-question-quality.js';CSS=ROOT/'data'/'v35-shell.css';RULES=ROOT/'database.rules.json'
 def test_state_service_and_context_migration():
-    h=INDEX.read_text(encoding='utf-8');assert STATE.exists();assert 'src="data/v35-state.js?v=36.1"' in h;assert h.index('data/v35-state.js?v=36.1')<h.index('data/v15-patch.js?v=36.1')
+    h=INDEX.read_text(encoding='utf-8');assert STATE.exists();assert 'src="data/v35-state.js?v=36.2"' in h;assert h.index('data/v35-state.js?v=36.2')<h.index('data/v15-patch.js?v=36.2')
     src=STATE.read_text(encoding='utf-8');
     for x in ['getQuestionFilters','setQuestionFilters','patchQuestionFilters','openQuestionContext','snapshot']: assert x in src
     for n in ['v15-patch.js','v16-patch.js','v18-patch.js','v20-patch.js','v27-patch.js']: assert 'OAB_STATE.openQuestionContext' in (ROOT/'data'/n).read_text(encoding='utf-8')
@@ -13,7 +13,7 @@ def test_sync_status_contract():
     a=AUTH.read_text(encoding='utf-8');c=CSS.read_text(encoding='utf-8');assert 'syncSnapshot' in a and 'data-sync-status' in a and '.v35-sync-status' in c
     for x in ['saving','saved','retrying']: assert x in a
 def test_all_data_scripts_v358():
-    h=INDEX.read_text(encoding='utf-8');tags=re.findall(r'<script[^>]*src="(data/[^"]+\.js(?:\?[^\"]*)?)"[^>]*>',h);assert len(tags)>=25;assert all('?v=36.1' in t for t in tags),[t for t in tags if '?v=36.1' not in t]
+    h=INDEX.read_text(encoding='utf-8');tags=re.findall(r'<script[^>]*src="(data/[^"]+\.js(?:\?[^\"]*)?)"[^>]*>',h);assert len(tags)>=25;assert all('?v=36.2' in t for t in tags),[t for t in tags if '?v=36.2' not in t]
 def test_firebase_validation():
     d=json.loads(RULES.read_text(encoding='utf-8'));assert d['rules']['.read'] is False and d['rules']['.write'] is False;p=d['rules']['users']['$uid']['profile']
     for f in ['name','username','role','active','approvalStatus']: assert '.validate' in p[f]

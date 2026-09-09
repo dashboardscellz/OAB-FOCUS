@@ -1,11 +1,11 @@
-# OAB Focus SUPER v36.1
+# OAB Focus SUPER v36.2
 
 
-## v36.1 — acabamento editorial, tabelas e responsividade
+## v36.2 — acabamento editorial global, tabelas e filtros
 
-A v36.1 corrige a auditoria de layout/escrita/tabelas sem alterar Firebase, trilha ou banco de questões. Dois quadros comparativos foram reconstruídos semanticamente após conferência contra os PDFs-fonte; regiões de layout fixo ainda não reconstruídas deixaram de ser colapsadas em frases embaralhadas e passam a preservar o arranjo original com aviso explícito de revisão estrutural. A tipografia de leitura longa foi consolidada em `--font-read` (Georgia/Times), o breakpoint responsivo de administração/ranking ficou centralizado no v29 em 1180px, a camada v36 passou a ter verificações explícitas em 360/390/430/768px e a foto institucional foi extraída do HTML para `assets/manasses.webp`.
+A v36.2 trata o problema de quadros extraídos de PDF de forma sistêmica, sem alterar Firebase, trilha ou banco de questões. O leitor agora tenta agrupar regiões tabulares reconhecíveis em uma única estrutura semântica e responsiva; quando a reconstrução não é segura, preserva o arranjo original em bloco monoespaçado, sem exibir avisos técnicos de manutenção ao aluno. Também corrige o estado visual duplicado dos filtros, remove textos de bastidor da interface pública, recupera espaço útil do leitor e mantém rolagem interna em tabelas estreitas sem provocar overflow da página.
 
-Veja `AUDITORIA_LAYOUT_EDITORIAL_v36_1.md` e `QA_ENGENHARIA_v36_1.md`.
+A rodada final validou a suíte estática e os testes reais de navegador, incluindo 360/390/430/768 px e desktop. Veja `AUDITORIA_LAYOUT_GLOBAL_v36_2.md` e `QA_ENGENHARIA_v36_2.md`.
 
 ## v36 — evolução para ferramenta principal da 1ª fase
 

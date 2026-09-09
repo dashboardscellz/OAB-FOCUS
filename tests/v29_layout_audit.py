@@ -38,7 +38,7 @@ def shell(inner):
 
 def test_v29_script_is_loaded_last():
     html = INDEX.read_text(encoding='utf-8')
-    assert '<script src="data/v29-patch.js?v=36.1"></script>' in html
+    assert '<script src="data/v29-patch.js?v=36.2"></script>' in html
     assert html.rfind('data/v29-patch.js') > html.rfind('data/v28-patch.js')
 
 

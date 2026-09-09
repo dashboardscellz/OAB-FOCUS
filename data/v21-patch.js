@@ -38,8 +38,6 @@
       .v21-context-chips span{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.72rem;font-weight:760;color:var(--muted)}
       .v21-context-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
       .v21-context-actions .btn{min-height:42px}
-      .v21-mode-note{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--brand) 8%, var(--card));font-size:.78rem;color:var(--muted);line-height:1.55}
-      .v21-mode-note b{color:var(--ink)}
       .v21-questions-context .page-head,
       .v21-questions-context .filter-panel,
       .v21-questions-context #v16AdaptiveBanner,
@@ -156,12 +154,11 @@
       <section class="v21-context-head">
         <span class="kicker">Prática desta unidade</span>
         <h2>${esc21(ctx.label || 'Questões do conteúdo estudado')}</h2>
-        <p>Você entrou em uma sessão específica de prática vinculada ao conteúdo que acabou de estudar. Aqui aparecem somente as questões validadas para esta unidade — sem simulado aleatório, sem filtros livres e sem pesquisa global desviando o foco.</p>
+        <p>Resolva as questões desta unidade e acompanhe seu desempenho antes de voltar ao material.</p>
         <div class="v21-context-breadcrumbs"><span>${esc21(ctx.discipline || '')}</span>${ctx.chapterId?`<span>${esc21(ctx.label || '')}</span>`:''}</div>
-        <div class="v21-context-chips"><span>${(qFilters.questionIds||[]).length} questões nesta sessão</span><span>${ctx.verified===false?'vínculo parcial':'vínculo temático validado'}</span>${ctx.subtopic?`<span>${esc21(ctx.subtopic)}</span>`:''}</div>
+        <div class="v21-context-chips"><span>${(qFilters.questionIds||[]).length} questões nesta sessão</span>${ctx.subtopic?`<span>${esc21(ctx.subtopic)}</span>`:''}</div>
         <div class="v21-context-actions"><button class="btn ghost" id="v21BackToMaterial">Voltar ao material</button><button class="btn primary" id="v21ContinuePractice">Continuar sessão</button></div>
-      </section>
-      <div class="v21-mode-note"><b>O que faz sentido aqui:</b> responder este conteúdo e voltar ao material. <b>O que não faz sentido aqui:</b> simulado, filtros gerais, pesquisa aleatória e blocos de outros modos.</div>`;
+      </section>`;
     host.parentNode.insertBefore(shell, host);
     document.getElementById('v21ContinuePractice')?.addEventListener('click',()=>host.scrollIntoView({behavior:'smooth',block:'start'}));
     document.getElementById('v21BackToMaterial')?.addEventListener('click',questionBackTarget(ctx));

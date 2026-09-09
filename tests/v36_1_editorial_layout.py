@@ -18,10 +18,12 @@ def test_let01_verified_tables_are_encoded_without_manual_column_spacing():
     assert 'PRESENCIAL PARA O REMOTO                                                      REMOTO PARA O PRESENCIAL' not in INTEGRAL
 
 
-def test_let01_unreviewed_fixed_layout_is_preserved_and_flagged_not_reordered():
+def test_let01_unreviewed_fixed_layout_is_preserved_neutrally_not_reordered():
     assert 'integral-layout-preserved' in V16
-    assert 'Revisão estrutural pendente' in V16
-    assert 'rawLayout' in V16
+    assert 'Revisão estrutural pendente' not in V16
+    assert 'integral-layout-status' not in V16
+    assert 'neutralFallback' in V16
+    assert 'data-review-status=\"source-layout\"' in V16
 
 
 def test_let02_semantic_table_renderer_has_caption_headers_and_scopes():
@@ -59,7 +61,7 @@ def test_let05_v36_mobile_breakpoint_coverage_is_explicit():
 
 def test_let06_institutional_photo_is_external_cacheable_asset():
     assert 'data:image/webp;base64,' not in INDEX
-    assert 'assets/manasses.webp?v=36.1' in INDEX
+    assert 'assets/manasses.webp?v=36.2' in INDEX
     assert 'decoding="async"' in INDEX
     p=ROOT/'assets'/'manasses.webp'
     assert p.exists() and p.stat().st_size>1000
@@ -69,5 +71,5 @@ def test_let06_institutional_photo_is_external_cacheable_asset():
 def test_all_local_data_assets_use_v36_1_cache_key():
     refs=re.findall(r'(?:src|href)="(data/[^"?#]+\.(?:js|css))(\?v=[^"]+)?"',INDEX)
     assert refs
-    stale=[(p,q) for p,q in refs if q!='?v=36.1']
+    stale=[(p,q) for p,q in refs if q!='?v=36.2']
     assert not stale,stale[:20]

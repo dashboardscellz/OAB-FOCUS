@@ -244,7 +244,10 @@
   }
   function enhanceActionStates(){
     enhanceQuestionUI();augmentHighlightPalettes();enhanceStudyInternalView();mountStudyTimer();
-    document.querySelectorAll('.seg.active,.nav-item.active,.v26-toolbar-btn.active,[aria-current="page"]').forEach(x=>x.classList.add('v34-active-state'));
+    /* Estado visual derivado do estado real: remove resíduos de cliques anteriores antes de marcar o atual. */
+    document.querySelectorAll('.seg,.nav-item,.v26-toolbar-btn').forEach(x=>x.classList.remove('v34-active-state'));
+    document.querySelectorAll('[data-v27-view]').forEach(x=>x.classList.remove('v34-active-state'));
+    document.querySelectorAll('.seg.active,.nav-item.active,.v26-toolbar-btn.active,[data-v27-view].active,[aria-current="page"]').forEach(x=>x.classList.add('v34-active-state'));
     document.querySelectorAll('button').forEach(b=>{if(!b.hasAttribute('type'))b.setAttribute('type','button');});
   }
   function scheduleEnhance(){if(actionRaf)return;actionRaf=requestAnimationFrame(()=>{actionRaf=0;enhanceActionStates();});}

@@ -93,7 +93,7 @@ def test_v20_generator_uses_quality_gate_instead_of_raw_sentence_fragments():
 
 def test_quality_engine_loads_before_authorial_generators_and_uses_cache_version():
     html = INDEX.read_text(encoding='utf-8')
-    marker = 'src="data/v35-question-quality.js?v=36.1"'
+    marker = 'src="data/v35-question-quality.js?v=36.2"'
     assert marker in html
     assert html.index(marker) < html.index('data/v20-patch.js')
     assert html.index(marker) < html.index('data/v34-patch.js')
