@@ -20,11 +20,11 @@ def load_integral():
     return json.loads(raw[len(prefix):].rstrip().rstrip(';'))
 
 
-def test_v3510_text_quality_patch_is_loaded_last():
-    assert PATCH.exists(), 'v35.10 must add a dedicated global text-quality layer'
+def test_v3511_text_quality_patch_is_loaded_last():
+    assert PATCH.exists(), 'v35.11 must keep a dedicated global text-quality layer'
     html = INDEX.read_text(encoding='utf-8')
-    assert 'data/v35-text-quality.js?v=35.10' in html
-    assert html.rfind('data/v35-text-quality.js?v=35.10') > html.rfind('data/v35-content-coverage.js')
+    assert 'data/v35-text-quality.js?v=35.11' in html
+    assert html.rfind('data/v35-text-quality.js?v=35.11') > html.rfind('data/v35-content-coverage.js')
 
 
 def test_bullet_wrapped_sentence_is_one_logical_block():

@@ -81,3 +81,13 @@ Hardening técnico baseado na auditoria humana da v35.7: estado compartilhado `O
 - Casos reais de regressão incluem Poder Constituinte Originário, controle preventivo de constitucionalidade, Art. 37 da CF e o quadro de reedição/reapreciação.
 - `PROMPT_MESTRE_HIGIENIZACAO_TEXTUAL_v35_10.md` formaliza a regra global: quebra física não é quebra semântica.
 - `tests/v35_text_readability.py` bloqueia retorno das quebras demonstradas pelo usuário.
+
+
+### v35.11 — Renderização semântica efetiva
+- Corrige a causa raiz que permitia o formatador legado da v16 continuar transformando qualquer sequência de 3+ espaços do PDF em uma tabela falsa.
+- O formatador legado passa a delegar obrigatoriamente ao motor `OAB_TEXT_QUALITY` em tempo de execução.
+- Bullets como `●           a separação dos Poderes` não podem mais virar duas colunas artificiais.
+- Espaços residuais no meio de frases, como `lei,                   os parlamentares`, são normalizados dentro do mesmo parágrafo.
+- Alertas que já trazem conteúdo na mesma linha (`IMPORTANTE! ...`) permanecem junto de sua continuação, em vez de cortar a frase.
+- Quadros comparativos verdadeiros continuam sendo reconstruídos semanticamente quando há evidência suficiente de colunas.
+- `tests/v35_text_runtime_integration.py` cobre os três sintomas reproduzidos pelo usuário e verifica a delegação do renderizador legado.

@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VERSION='35.10';
+  const VERSION='35.11';
   const W=typeof window!=='undefined'?window:globalThis;
   const escHtml=s=>typeof W.esc==='function'?W.esc(String(s)):String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   const escAttr=s=>escHtml(s).replace(/`/g,'&#96;');
@@ -28,7 +28,8 @@
   }
   function isAlert(line=''){
     const s=normalizePiece(line);
-    return (alertRe.test(s)&&s.length<110)||((isUpperHeading(s)||isNumberedHeading(s))&&noiseHeading(s));
+    const labelOnly=/^(?:ATENÇÃO|IMPORTANTE|CUIDADO|PEGADINHA|NÃO ESQUECER|PARA LEMBRAR)\s*[!:]?$/i.test(s);
+    return labelOnly||((isUpperHeading(s)||isNumberedHeading(s))&&noiseHeading(s));
   }
   function terminal(s=''){
     const x=normalizePiece(s).replace(/\*[^*]{0,80}\*$/,'').trim();

@@ -68,6 +68,7 @@
 
   /* ---------- Formatação do leitor sem alterar o conteúdo ---------- */
   formatIntegralText=function(text='',sectionKey=''){
+    if(window.OAB_TEXT_QUALITY?.format)return window.OAB_TEXT_QUALITY.format(text,sectionKey);
     const lines=String(text).replace(/\r/g,'').split('\n');let out='',buf=[],block=0;
     const attrs=(extra='')=>` data-read-block="${block++}" data-section-key="${escAttr(sectionKey)}"${extra}`;
     const flush=()=>{if(!buf.length)return;out+=`<p${attrs()}>${esc(buf.join(' ').replace(/\s+/g,' ').trim())}</p>`;buf=[];};

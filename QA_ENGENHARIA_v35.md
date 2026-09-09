@@ -153,3 +153,19 @@ Validação v35.4: **169 testes passaram** quando as 12 suítes foram executadas
 - A camada produziu, na auditoria global, 2.410 bullets refluídos, 11.797 blocos legais refluídos, 15.273 parágrafos e 112 quadros comparativos semanticamente detectados.
 - O arquivo textual original `data/integral-material.js` não foi reescrito pela correção.
 - Suíte final: 224 testes aprovados em dois grupos (124 + 100), incluindo 6 testes novos específicos de legibilidade.
+
+## v35.11 — Renderização semântica efetiva
+
+### Causa raiz reproduzida
+A v35.10 adicionou `data/v35-text-quality.js`, mas `data/v16-patch.js` ainda mantinha uma heurística própria que executava `raw.trim().split(/\s{3,}|\t+/)` e transformava qualquer linha com dois ou mais fragmentos em `v16-compare-row`. Os prints do usuário reproduziram a assinatura dessa camada legada: bullet separado em duas células e frase comum transformada em quadro por um espaço residual do PDF.
+
+### Correção
+- `v16-patch.js` delega para `window.OAB_TEXT_QUALITY.format(text, sectionKey)` sempre que o motor atual estiver carregado.
+- `v35-text-quality.js` passa à versão 35.11.
+- Alertas com conteúdo na mesma linha deixam de cortar sua continuação; somente rótulos isolados como `IMPORTANTE!` são tratados como alertas autônomos.
+- `v16-patch.js` e `v35-text-quality.js` usam cache-busting `?v=35.11`.
+
+### Evidência
+- 230 testes aprovados na árvore, contando todas as suítes individualmente.
+- teste integral Playwright com o `index.html` completo e todos os scripts reais inline, na ordem de produção, confirma que o runtime usa `OAB_TEXT_QUALITY.VERSION === 35.11` e não gera `v16-compare-row` nos dois casos falsos relatados.
+- varredura do motor v35.11 sobre 229 seções do material integral: 120 quadros comparativos detectados; nenhum cabeçalho de quadro iniciou por bullet ou fragmento minúsculo suspeito na auditoria automática.
