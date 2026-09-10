@@ -5,7 +5,7 @@
   if(root) root.OAB_V35_QUESTION_QUALITY=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const VERSION='35.18';
+  const VERSION='35.19';
   const LETTERS='ABCDE';
   const GENERIC_PATTERNS=[
     /Questão autoral de fixação/i,
@@ -16,7 +16,7 @@
   ];
   const STRICT_DANGLING=new Set(['que','de','do','da','dos','das','em','para','por','com','sem','se','e','ou','nem','nao','sao','e','ser','estar','ter','deve','devem','pode','podem','como','quando','cujo','cuja','cujos','cujas','qual','quais']);
   const AUDIT_DANGLING_SET=new Set(['que','de','do','da','dos','das','em','para','por','com','sem','e','ou','nem','sao','e','deve','devem','pode','podem','como','quando','cujo','cuja','cujos','cujas','qual','quais']);
-  const VERB_HINT=/\b(?:é|são|foi|será|serão|deve|devem|deverá|deverão|pode|podem|poderá|poderão|compete|cabe|exige|depend|veda|proíbe|permite|admite|assegura|garante|constitu|consiste|prevê|determina|responde|incumbe|aplica|afasta|impede|ocorre|possui|inclui|considera|autoriza|obriga|prescreve|decai|requer|pressupõe)\w*\b/i;
+  const VERB_HINT=/(?:\b(?:foi|será|serão|deve|devem|deverá|deverão|pode|podem|poderá|poderão|compete|cabe|exige|depend|veda|proíbe|permite|admite|assegura|garante|constitu|consiste|prevê|determina|responde|incumbe|aplica|afasta|impede|ocorre|possui|inclui|considera|autoriza|obriga|prescreve|decai|requer|pressupõe)\w*\b|(?:^|\s)(?:é|são)(?=\s|$))/i;
 
   const clean=(s='')=>String(s).replace(/\s+/g,' ').trim();
   function sanitizeRule(s=''){
@@ -56,10 +56,12 @@
   }
   function logicalParagraphs(text=''){
     const raw=String(text).replace(/\r/g,'').split('\n').map(x=>sanitizeRule(x.replace(/^[-•▪◦]\s*/,''))).map(x=>x.trim());
-    const out=[]; let buf='';
+    const out=[]; let buf='',skipIllustration=false;
     const flush=()=>{const x=clean(buf);if(x)out.push(x);buf='';};
     for(const line of raw){
-      if(!line){flush();continue;}
+      if(!line){flush();skipIllustration=false;continue;}
+      if(/^(?:exemplo|ex\.|caso hipot[eé]tico)\s*:/i.test(line)){flush();skipIllustration=true;continue;}
+      if(skipIllustration)continue;
       if(looksHeading(line)){flush();continue;}
       const n=norm(line);
       if(/^(?:fonte|refer[eê]ncia|bibliografia|sum[aá]rio|[ií]ndice|p[aá]gina)\b/.test(n))continue;
@@ -76,10 +78,12 @@
   }
   function scoreRule(s,label=''){
     let score=0; const n=norm(s),lab=norm(label);
-    if(/\b(?:não|deve|pode|compete|cabe|exige|depende|prazo|direito|obrigação|vedad|permitid|privativ|exclusiv|prescrev|decai|nul|responsab)\w*\b/i.test(s))score+=7;
-    if(/\b(?:art\.?|lei|constitui[cç][aã]o|cpc|cpp|clt|c[oó]digo|s[uú]mula|tema)\b/i.test(s))score+=5;
+    if(/^(?:exemplo|ex\.|caso hipot[eé]tico)\s*:/i.test(clean(s)))score-=12;
+    if(/\b(?:não|deve|pode|compete|cabe|exige|depende|prazo|direito|obrigação|vedad|permitid|privativ|exclusiv|prescrev|decai|nul|responsab|considera-se|adota-se)\w*\b/i.test(s))score+=7;
+    if(/\b(?:art\.?|lei|constitui[cç][aã]o|cpc|cpp|clt|c[oó]digo|s[uú]mula|tema|teoria)\b/i.test(s))score+=5;
     if(lab){for(const w of lab.split(/\s+/).filter(w=>w.length>=5)){if(n.includes(w))score+=1;}}
-    if(s.length>=80&&s.length<=360)score+=3;
+    if(s.length>=55&&s.length<=360)score+=3;
+    if(/^(?:ou seja|em outras palavras|resumindo)\b/i.test(clean(s)))score+=2;
     if(s.length>500)score-=3;
     return score;
   }
@@ -101,15 +105,26 @@
     candidates.sort((a,b)=>scoreRule(b,label)-scoreRule(a,label));
     let rule=candidates[0]||'';
     if(!rule){
-      const lines=String(text).replace(/\r/g,'').split('\n').map(x=>sanitizeRule(x)).filter(x=>x&&!looksHeading(x));
+      const rawLines=String(text).replace(/\r/g,'').split('\n').map(x=>sanitizeRule(x));
+      const lines=[];let skipIllustration=false;
+      for(const line of rawLines){
+        if(!line){skipIllustration=false;continue;}
+        if(/^(?:exemplo|ex\.|caso hipot[eé]tico)\s*:/i.test(line)){skipIllustration=true;continue;}
+        if(skipIllustration||looksHeading(line))continue;
+        lines.push(line);
+      }
       for(let i=0;i<lines.length;i++){
         const joined=sanitizeRule([lines[i],lines[i+1]||'',lines[i+2]||''].join(' '));
         if(isCompleteLegalStatement(joined)){rule=joined;break;}
       }
     }
-    rule=sanitizeRule(rule);
+    rule=sanitizeRule(rule).replace(/^(?:ou seja|em outras palavras|resumindo)\s*,?\s*/i,'');
     const lab=clean(label);
     if(lab && norm(rule).startsWith(norm(lab)+' ')) rule=sanitizeRule(rule.slice(lab.length));
+    if(/tempo do crime/.test(norm(lab||rule))){
+      rule=rule.replace(/^o\s+TEMPO\s+do\s+crime/i,'O tempo do crime').replace(/TEORIA DA ATIVIDADE/g,'Teoria da Atividade');
+    }
+    if(rule){rule=rule.charAt(0).toUpperCase()+rule.slice(1);rule=rule.replace(/!+$/,'.');}
     return {rule,basis:extractLegalBasis(text),candidates:candidates.length};
   }
   function negateRule(rule=''){

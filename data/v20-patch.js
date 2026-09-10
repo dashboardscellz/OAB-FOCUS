@@ -222,7 +222,7 @@
     return nodes.map(n => n.textContent.trim()).filter(t => t.length > 35).join(' ');
   }
 
-  // v35.18 delegates buildResearch and quality gating to OAB_V35_AUTHORIAL_FGV.
+  // v35.19 delegates buildResearch and quality gating to OAB_V35_AUTHORIAL_FGV.
   function makeAuthorialQuestion(ctx, idx, theoryText){
     const topic = clean(ctx.subtopic || ctx.chapter?.title || ctx.unit?.title || ctx.discipline);
     const id = `v20-auto-${toSlug(ctx.discipline)}-${toSlug(topic)}-${idx}`;

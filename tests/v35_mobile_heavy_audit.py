@@ -16,9 +16,9 @@ def merged_css():
 
 
 def test_v3517_release_contract():
-    assert 'v35-mobile-app.css?v=35.17' in INDEX
-    assert 'v35-mobile-app.js?v=35.17' in INDEX
-    assert "const VERSION='35.17'" in JS
+    assert 'v35-mobile-app.css?v=36.0' in INDEX
+    assert 'v35-mobile-app.js?v=36.0' in INDEX
+    assert "const VERSION='36.0'" in JS
     assert PROMPT.exists()
 
 
@@ -29,7 +29,7 @@ def test_prompt_is_adversarial_and_searches_bug_siblings():
 
 
 def test_mobile_neutralizes_desktop_hero_geometry_and_colors():
-    assert re.search(r'#app\s+\.hero-card\{[^}]*min-height:0\s*!important',CSS)
+    assert re.search(r'#app\s+\.hero-card\{[^}]*min-height:0',CSS)
     assert re.search(r'data-v3513-route="study"[^\n]*\.study-hero\{[^}]*color:var\(--ink\)',CSS)
     assert re.search(r'data-v3513-route="study"[^\n]*\.study-hero\s+\.metric-chip\{[^}]*color:var\(--muted\)',CSS)
     assert re.search(r'data-v3513-route="study"[^\n]*\.study-hero:after\{[^}]*display:none',CSS)
@@ -41,7 +41,7 @@ def test_prepare_and_all_routes_reserve_bottom_navigation_space():
 
 
 def test_inactive_bottom_tabs_are_forced_transparent_and_single_active_logic_exists():
-    assert re.search(r'\.bottom-nav button:not\(\.active\)\{[^}]*background:transparent\s*!important',CSS)
+    assert re.search(r'\.bottom-nav button:not\(\.active\)\{[^}]*background:transparent',CSS)
     assert 'const moreActive=' in JS
     assert "tabs.forEach(b=>{b.classList.remove('active')" in JS
     assert "active.classList.add('active')" in JS

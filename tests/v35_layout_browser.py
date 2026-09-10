@@ -4,12 +4,12 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
-INDEX=ROOT/'index.html'; SHELL=ROOT/'data'/'v35-shell.js'; CSS=ROOT/'data'/'v35-shell.css'
+INDEX=ROOT/'index.html'; SHELL=ROOT/'data'/'v35-shell.js'; CSS=ROOT/'data'/'v35-shell.css'; MOBILE_CSS=ROOT/'data'/'v35-mobile-app.css'
 VIEWPORTS=[(1366,768),(1440,900),(1920,1080),(768,1024),(430,932),(390,844),(360,800)]
 
 def base_css():
     text=INDEX.read_text(encoding='utf-8')
-    return '\n'.join(re.findall(r'<style[^>]*>(.*?)</style>',text,re.S|re.I))+'\n'+CSS.read_text(encoding='utf-8')
+    return '\n'.join(re.findall(r'<style[^>]*>(.*?)</style>',text,re.S|re.I))+'\n'+CSS.read_text(encoding='utf-8')+'\n'+MOBILE_CSS.read_text(encoding='utf-8')
 
 APP_HTML='''<div id="app" class="app-shell"><aside class="sidebar"></aside><main class="main-area"><header class="topbar"></header><div id="content" class="content"><section class="dashboard-hero"><div class="dashboard-hero-copy"><span class="eyebrow">OAB FOCUS · SUA MESA DE ESTUDOS</span><h2>Manassés, seu próximo passo está aqui.</h2><p>Estude o conteúdo completo por capítulos, pratique e volte exatamente ao ponto onde parou.</p><div class="hero-actions"><button class="btn primary">Continuar estudo</button><button class="btn ghost">Abrir Prepare-se</button></div></div><aside class="hero-level-panel"><span>SEU NÍVEL</span><strong>LV 8</strong><b>Estrategista</b><div class="xp-track"><i style="width:63%"></i></div><small>12.490 XP acumulados</small></aside></section><section class="section command-grid"><article class="card command-card"><div><span class="eyebrow">HOJE</span><h3>Feche um ciclo completo</h3><p>Material explicado, questões e revisão.</p></div></article><article class="card path-card"><span class="eyebrow">PRIORIDADES</span><h3>O que estudar agora</h3><button class="trail-step"><span>01</span><div><b>Constitucional</b><small>Poder Constituinte Originário</small></div><em>novo</em></button></article></section></div></main><nav class="bottom-nav mobile-only"><button data-route="home" class="active"><span>⌂</span><small>Início</small></button><button data-route="study"><span>▤</span><small>Estudar</small></button><button data-route="prepare"><span>◎</span><small>Prepare-se</small></button><button data-route="questions"><span>?</span><small>Questões</small></button><button type="button" data-v35-mobile-more><span>•••</span><small>Mais</small></button></nav></div><div id="modalRoot"></div>'''
 STUBS="""var route='home',profile={name:'Manassés',role:'admin'},currentStudy=null; function setRoute(r){route=r;} function openGlobalSearch(){} function openModal(x){document.getElementById('modalRoot').innerHTML=x;} function closeModal(){document.getElementById('modalRoot').innerHTML='';} function formatTime(){return '00:00';} window.OAB_V35_AUTH={logoutV35(){}};"""

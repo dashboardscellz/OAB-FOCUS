@@ -1,7 +1,7 @@
-/* OAB Focus v35.17 — mobile app architecture + hardening adapter */
+/* OAB Focus v36.0 — consolidated responsive/mobile adapter */
 (function(){
   'use strict';
-  const VERSION='35.17';
+  const VERSION='36.0';
   const api=window.OAB_MOBILE_APP=window.OAB_MOBILE_APP||{};
   const ROUTE_LABELS={home:'Início',study:'Estudar',reader:'Estudar',prepare:'Prepare-se',questions:'Questões',review:'Revisar',performance:'Desempenho',highyield:'Mais cobrados',ranking:'Ranking',profile:'Perfil',settings:'Configurações',admin:'Admin'};
   let homeNext=null;
@@ -102,6 +102,8 @@
     if(!mobileQuery()||getRoute()!=='questions')return;
     const host=getContent();if(!host)return;host.classList.add('v3513-questions-screen');
     if(questionMode()==='context'){host.classList.add('v3513-context-questions');return;}
+    const existingSheet=host.querySelector('.v3513-filter-sheet');
+    if(existingSheet?.querySelector('.filter-panel')&&host.querySelector('.v3513-question-tools'))return;
     const panel=host.querySelector('.filter-panel');if(!panel)return;
     host.querySelectorAll('.v3513-question-tools,.v3513-filter-sheet,.v3513-filter-backdrop').forEach(n=>n.remove());
     const search=panel.querySelector('#fSearch');

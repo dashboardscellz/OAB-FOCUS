@@ -1,12 +1,12 @@
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-INDEX=ROOT/'index.html'; CSS=ROOT/'data'/'v35-shell.css'; JS=ROOT/'data'/'v35-shell.js'
+INDEX=ROOT/'index.html'; CSS=ROOT/'data'/'v35-shell.css'; MOBILE=ROOT/'data'/'v35-mobile-app.css'; JS=ROOT/'data'/'v35-shell.js'
 def css(): return CSS.read_text(encoding='utf-8')
 def js(): return JS.read_text(encoding='utf-8')
 
 def test_assets_loaded_after_v34():
     h=INDEX.read_text(encoding='utf-8')
-    assert 'href="data/v35-shell.css?v=35.9"' in h
+    assert 'href="data/v35-shell.css?v=36.0"' in h
     assert 'src="data/v35-shell.js?v=35.9"' in h
     assert 'src="data/v35-auth.js?v=35.9"' in h
     assert h.index('src="data/v35-shell.js?v=35.9"') > h.index('data/v34-patch.js')
@@ -38,8 +38,8 @@ def test_dashboard_reader_and_controls_are_refined():
     assert 'line-height:1.7' in s.replace(' ','') or 'line-height:1.68' in s.replace(' ','')
 
 def test_mobile_breakpoints_safe_area_and_five_destinations():
-    s=css()
-    for width in ['768','430','390','360']: assert width in s
+    s=MOBILE.read_text(encoding='utf-8')
+    for width in ['768','390','950']: assert width in s
     assert 'env(safe-area-inset-bottom)' in s
     h=INDEX.read_text(encoding='utf-8')
     block=h[h.index('<nav class="bottom-nav'):h.index('</nav>',h.index('<nav class="bottom-nav'))]
@@ -86,19 +86,19 @@ def test_v35_navigation_clears_legacy_v34_active_state_classes():
 def test_v35_css_neutralizes_legacy_active_state_inside_primary_navigation():
     source=css().replace(' ','')
     assert '.v35-primary-nav>button.v34-active-state' in source
-    assert 'box-shadow:none!important' in source
+    assert 'box-shadow:none' in source
 
 def test_v35_home_hero_explicitly_resets_legacy_shadow_and_radius():
     source=css().replace(' ','')
     start=source.find('#app.dashboard-hero{')
     assert start>=0
     block=source[start:source.find('}',start)+1]
-    assert 'box-shadow:none!important' in block
-    assert 'border-radius:0!important' in block
+    assert 'box-shadow:none' in block
+    assert 'border-radius:0' in block
 
 def test_v35_versioned_assets_avoid_stale_github_pages_shell_cache():
     h=INDEX.read_text(encoding='utf-8')
-    for asset in ['data/v35-shell.css?v=35.9','data/v35-auth.js?v=35.9','data/v35-shell.js?v=35.9']:
+    for asset in ['data/v35-shell.css?v=36.0','data/v35-auth.js?v=35.9','data/v35-shell.js?v=35.9']:
         assert asset in h
 
 def test_v35_reader_redesign_declares_single_centered_reading_architecture():
@@ -122,10 +122,10 @@ def test_v35_reader_highlighter_is_centered_and_content_reserves_space_for_it():
     assert 'body.v26-reader-active.v18-highlight-dock{' in source
     start=source.find('body.v26-reader-active.v18-highlight-dock{')
     block=source[start:source.find('}',start)+1]
-    assert 'left:50%!important' in block
-    assert 'transform:translateX(-50%)!important' in block
-    assert 'right:auto!important' in block
-    assert 'bottom:18px!important' in block
+    assert 'left:50%' in block
+    assert 'transform:translateX(-50%)' in block
+    assert 'right:auto' in block
+    assert 'bottom:18px' in block
     article=source[source.find('body.v26-reader-active.v26-reading-stage#readerArticle{'):]
     article=article[:article.find('}')+1]
     assert 'padding-bottom:' in article
@@ -137,9 +137,9 @@ def test_v35_reader_primary_material_is_flat_not_nested_card_on_card():
     start=source.find(selector)
     assert start>=0
     block=source[start:source.find('}',start)+1]
-    assert 'border:0!important' in block
-    assert 'box-shadow:none!important' in block
-    assert 'background:transparent!important' in block
+    assert 'border:0' in block
+    assert 'box-shadow:none' in block
+    assert 'background:transparent' in block
 
 def test_v35_reader_removes_redundant_practice_and_legacy_finish_blocks():
     source=js()
@@ -192,5 +192,5 @@ def test_v35_4_questions_get_contextual_sticky_exit_control():
 
 def test_v35_4_cache_version_is_bumped():
     h=INDEX.read_text(encoding='utf-8')
-    for asset in ['data/v35-shell.css?v=35.9','data/v35-auth.js?v=35.9','data/v35-shell.js?v=35.9']:
+    for asset in ['data/v35-shell.css?v=36.0','data/v35-auth.js?v=35.9','data/v35-shell.js?v=35.9']:
         assert asset in h

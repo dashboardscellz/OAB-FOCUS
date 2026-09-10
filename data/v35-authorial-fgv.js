@@ -1,4 +1,4 @@
-/* OAB Focus v35.18 — Motor autoral FGV/OAB com diversidade semântica e memória antirrepetição.
+/* OAB Focus v35.19 — Motor autoral FGV/OAB com autossuficiência factual, diversidade semântica e memória antirrepetição.
    O corpus real orienta estrutura e ritmo; nenhum enunciado oficial é reproduzido. */
 (function(root,factory){
   const api=factory(root);
@@ -6,7 +6,7 @@
   if(root) root.OAB_V35_AUTHORIAL_FGV=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(root){
   'use strict';
-  const VERSION='35.18';
+  const VERSION='35.19';
   const LETTERS='ABCD';
   // Gate inclui a frase morta “considerando o material” e equivalentes.
   const DEAD_PROMPTS=[/considerando (?:exclusivamente )?o material/i,/conte[uú]do estudado/i,/unidade que voc[eê] acabou de estudar/i,/regra apresentada no material/i,/compat[ií]vel com o material/i,/texto apresentado/i,/de acordo com a unidade/i];
@@ -30,6 +30,27 @@
   const companies=['Aurora Ltda.','Horizonte S.A.','Ponte Norte Ltda.','Estação Comércio Digital','Via Clara Serviços','Serra Azul Participações'];
   const publicBodies=['Município de Vale Verde','Estado de Serra Clara','Agência Estadual de Regulação','Secretaria Municipal de Administração','Autarquia de Desenvolvimento Regional'];
   const recentOpenings=new Map();
+  const extraPersonNames=['Pedro','Matheus','João','Maria','Carlos','Ana','Paulo','Lucas','Marcos','Fernanda','Júlia','Luiz','José','Antônio','Miguel','Mariana','Gabriel','Daniel','Patrícia','Ricardo'];
+  const entityLexicon=[...new Set([...names,...extraPersonNames,...cities])];
+  const genericDistractorPatterns=[
+    /conduz [aà] conclus[aã]o oposta/i,
+    /efeito jur[ií]dico previsto pode ser afastado/i,
+    /depende de requisito adicional que n[aã]o integra/i
+  ];
+
+  function entityWords(text=''){
+    const hay=` ${norm(text).replace(/[^a-z0-9]+/g,' ')} `,out=[];
+    for(const raw of entityLexicon){
+      const key=norm(raw).replace(/[^a-z0-9]+/g,' ').trim();
+      if(key&&hay.includes(` ${key} `))out.push(raw);
+    }
+    return [...new Set(out)];
+  }
+  function orphanEntities(q={}){
+    const st=new Set(entityWords(q.statement||'').map(norm)),orph=[];
+    for(const opt of (q.options||[]))for(const ent of entityWords(opt))if(!st.has(norm(ent)))orph.push(ent);
+    return [...new Set(orph.map(norm))];
+  }
 
   function vars(discipline,topic,seq,key){
     return {
@@ -247,7 +268,20 @@
   ];
 
   function specificScenario(discipline,topic,rule,seq,id=''){
-    const n=norm(rule),key=`${discipline}|${topic}|${id}|${seq}|specific`,v=vars(discipline,topic,seq,key);
+    const n=norm(rule),nt=norm(topic),key=`${discipline}|${topic}|${id}|${seq}|specific`,v=vars(discipline,topic,seq,key);
+    if(/tempo do crime/.test(nt)||(/momento da acao ou omissao/.test(n)&&/teoria da atividade/.test(n))){
+      const victim=v.p2===v.p?pick(names,key+'|victim',seq+9):v.p2;
+      const variants=[
+        `${v.p} efetuou um disparo contra ${victim} em 10 de março. Em razão do ferimento, ${victim} permaneceu hospitalizado e faleceu cinco dias depois.`,
+        `${v.p} desferiu um golpe contra ${victim} em 4 de abril. O resultado morte, decorrente da agressão, ocorreu somente em 9 de abril.`,
+        `No dia 12 de maio, ${v.p} praticou a conduta destinada a causar a morte de ${victim}. A vítima faleceu em decorrência dessa conduta no dia 18 do mesmo mês.`,
+        `${v.p} realizou a ação criminosa em 7 de junho. O resultado naturalístico diretamente ligado à conduta somente se produziu três dias depois.`,
+        `Em 15 de agosto, ${v.p} praticou a ação que deu início ao fato criminoso. Por consequência direta dessa conduta, o resultado ocorreu em 20 de agosto.`,
+        `${v.p} executou a conduta penalmente relevante em 2 de setembro. O resultado correspondente ocorreu apenas em 6 de setembro, sem nova ação do agente.`
+      ];
+      const i=(hash(key)+seq)%variants.length;
+      return {base:variants[i],family:'penalTimeCrime',variant:i};
+    }
     if(/sentenca.*transitad.*julgad/.test(n)&&/lei posterior/.test(n)&&( /favore.*reu/.test(n)||/mais (?:favoravel|benefic)/.test(n))&&(/execucao penal/.test(n)||/reducao da pena/.test(n))){
       const variants=[
         `${v.p} cumpre pena imposta por sentença já transitada em julgado. Depois da condenação definitiva, entrou em vigor lei penal posterior mais favorável ao réu, e a defesa avalia a repercussão dessa mudança na execução.`,
@@ -376,7 +410,12 @@
     return inter/Math.max(1,Math.min(A.size,B.size));
   }
   function semanticDistractors(rule,topic,discipline=''){
-    const label=clean(topic)||clean(discipline)||'o instituto',nr=norm(rule);
+    const label=clean(topic)||clean(discipline)||'o instituto',nr=norm(rule),nt=norm(topic);
+    if(/tempo do crime/.test(nt)||(/momento da acao ou omissao/.test(nr)&&/teoria da atividade/.test(nr)))return [
+      'Considera-se praticado o crime no momento em que ocorre o resultado, ainda que a ação ou omissão tenha ocorrido anteriormente.',
+      'O tempo do crime abrange simultaneamente o momento da conduta e o momento do resultado, aplicando-se entre eles a solução mais favorável ao agente.',
+      'Quando o resultado é posterior à conduta, considera-se praticado o crime apenas no momento da consumação do resultado naturalístico.'
+    ];
     if(/sentenca.*transitad.*julgad/.test(nr)&&/lei posterior/.test(nr)&&( /favore.*reu/.test(nr)||/mais (?:favoravel|benefic)/.test(nr))&&(/execucao penal/.test(nr)||/reducao da pena/.test(nr)))return [
       'O trânsito em julgado impede que lei penal posterior mais favorável produza efeito sobre a pena que já está em execução.',
       'Lei penal superveniente somente pode repercutir na condenação definitiva quando agravar a situação do réu, não quando lhe for mais benéfica.',
@@ -455,11 +494,18 @@
     const reasons=[];if(!q||DEAD_PROMPTS.some(re=>re.test(q.statement||'')))reasons.push('dead_prompt');
     const joined=[q?.statement,...(q?.options||[]),q?.comment].filter(Boolean).join(' ');
     if(/(?:CAIU\s+NA\s+OAB|NA\s+OAB)\s*\d+/i.test(joined)||/^\s*OBS\s*:/im.test(joined))reasons.push('exam_annotation');
-    if((clean(q.statement).match(/\S+/g)||[]).length<18)reasons.push('statement_too_short');
-    if(!Array.isArray(q.options)||q.options.length!==4)reasons.push('option_count');
-    if(q.options?.some(o=>!clean(o)||DEAD_PROMPTS.some(re=>re.test(o))))reasons.push('bad_option');
-    if(new Set((q.options||[]).map(norm)).size!==4)reasons.push('duplicate_options');
-    if(!Number.isInteger(q.answer)||q.answer<0||q.answer>3)reasons.push('answer');
+    if((clean(q?.statement).match(/\S+/g)||[]).length<18)reasons.push('statement_too_short');
+    if(!Array.isArray(q?.options)||q.options.length!==4)reasons.push('option_count');
+    if(q?.options?.some(o=>!clean(o)||DEAD_PROMPTS.some(re=>re.test(o))))reasons.push('bad_option');
+    if(new Set((q?.options||[]).map(norm)).size!==4)reasons.push('duplicate_options');
+    if(!Number.isInteger(q?.answer)||q.answer<0||q.answer>3)reasons.push('answer');
+    if(orphanEntities(q).length)reasons.push('orphan_entity');
+    const topic=norm(q?.topic||q?.microtopic||''),st=norm(q?.statement||'');
+    if(/tempo do crime/.test(topic)){
+      const hasConduct=/(acao|omissao|conduta|dispar|golpe|ferimento)/.test(st);
+      const hasLaterResult=/(resultado|faleceu|morreu|obito|depois|posterior|dias|mes)/.test(st);
+      if(!hasConduct||!hasLaterResult)reasons.push('missing_operational_fact');
+    }
     return {ok:reasons.length===0,reasons};
   }
 
@@ -468,9 +514,9 @@
     const sc=scenario(discipline,topic,rule,seq,id),wrong=buildDistractors(rule,topic,discipline);if(wrong.length<3)return null;
     const answer=hash(`${id}|${seq}`)%4,options=wrong.slice();options.splice(answer,0,rule);options.length=4;
     const research=buildResearch(rule,options,answer,topic,context);
-    const q={id,number:seq,displayNumber:seq,discipline,exam,statement:sc.statement,options,answer,comment:`${research.whyCorrect} Fundamento jurídico: ${research.basis}`,research,researchVersion:'v35.18-fgv-coherence',topic,microtopic:topic,source:'OAB Focus — questão autoral em padrão FGV/OAB com diversidade semântica',sourceType:'authorial',authorial:true,excludeFromHistoricalStats:true,chapterId,styleArchetype:sc.family,styleVariant:sc.variant};
+    const q={id,number:seq,displayNumber:seq,discipline,exam,statement:sc.statement,options,answer,comment:`${research.whyCorrect} Fundamento jurídico: ${research.basis}`,research,researchVersion:'v35.19-fgv-self-contained',topic,microtopic:topic,source:'OAB Focus — questão autoral em padrão FGV/OAB com diversidade semântica',sourceType:'authorial',authorial:true,excludeFromHistoricalStats:true,chapterId,styleArchetype:sc.family,styleVariant:sc.variant};
     const gate=qualityGate(q);return gate.ok?q:null;
   }
 
-  return {VERSION,sanitizeRule,corpusProfile,familyFor,scenarioCatalog,safeScenarioCatalog,recentOpenings,similarity,resetHistory,specificScenario,buildDistractors,buildResearch,buildQuestion,qualityGate,DEAD_PROMPTS};
+  return {VERSION,sanitizeRule,corpusProfile,familyFor,scenarioCatalog,safeScenarioCatalog,recentOpenings,similarity,resetHistory,specificScenario,buildDistractors,buildResearch,buildQuestion,qualityGate,orphanEntities,entityWords,genericDistractorPatterns,DEAD_PROMPTS};
 });

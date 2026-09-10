@@ -32,9 +32,9 @@ def page(browser,w=390,h=844,route='home',content=''):
 
 def test_version_and_cache_are_v3516():
     idx=INDEX.read_text(encoding='utf-8')
-    assert 'v35-mobile-app.css?v=35.17' in idx
-    assert 'v35-mobile-app.js?v=35.17' in idx
-    assert "const VERSION='35.17'" in MOBILE_JS.read_text(encoding='utf-8')
+    assert 'v35-mobile-app.css?v=36.0' in idx
+    assert 'v35-mobile-app.js?v=36.0' in idx
+    assert "const VERSION='36.0'" in MOBILE_JS.read_text(encoding='utf-8')
 
 def test_home_level_and_today_never_escape_viewport(browser):
     for w,h in VIEWPORTS[:6]:

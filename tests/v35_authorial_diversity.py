@@ -28,7 +28,7 @@ def test_prompt_master_diversity_exists_and_encodes_core_rule():
 
 def test_engine_version_and_no_old_fallback_templates():
     js=ENGINE.read_text(encoding='utf-8').lower()
-    assert "const version='35.18'" in js
+    assert "const version='35.19'" in js
     for phrase in BANNED:
         assert phrase not in js
 
@@ -107,8 +107,8 @@ def test_distractors_do_not_use_old_generic_crutches():
     assert 'consequência jurídica é automática em qualquer hipótese' not in js
 
 
-def test_index_cache_bumped_to_3518():
+def test_index_cache_bumped_to_3519():
     idx=(ROOT/'index.html').read_text(encoding='utf-8')
-    assert 'data/v35-authorial-fgv.js?v=35.18' in idx
-    assert 'data/v20-patch.js?v=35.18' in idx
-    assert 'data/v34-patch.js?v=35.18' in idx
+    assert 'data/v35-authorial-fgv.js?v=35.19' in idx
+    assert 'data/v20-patch.js?v=35.19' in idx
+    assert 'data/v34-patch.js?v=35.19' in idx
