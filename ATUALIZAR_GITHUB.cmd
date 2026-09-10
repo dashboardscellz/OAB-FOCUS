@@ -7,7 +7,7 @@ set "SRC=%~dp0"
 set "DST=C:\Users\endoa\Documents\GitHub\OAB-FOCUS"
 
 echo ==============================================
-echo   OAB FOCUS v35.18 - MOTOR DE QUESTOES FINAL
+echo   OAB FOCUS v35.19 - MOTOR DE QUESTOES FINAL
 echo ==============================================
 echo.
 echo Origem: %SRC%
@@ -34,7 +34,7 @@ if not exist "%SRC%data\v20-patch.js" (
 )
 
 if not exist "%SRC%data\v35-authorial-fgv.js" (
-  echo ERRO: o motor autoral FGV da v35.18 nao foi encontrado.
+  echo ERRO: o motor autoral FGV da v35.19 nao foi encontrado.
   pause
   exit /b 5
 )
